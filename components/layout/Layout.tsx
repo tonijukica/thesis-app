@@ -8,7 +8,7 @@ import Footer from './Footer';
 const Layout: FunctionComponent = ({
   children
 }) => (
-  <div>
+  <>
     <Head>
       <title>App</title>
       <meta charSet="utf-8" />
@@ -17,7 +17,7 @@ const Layout: FunctionComponent = ({
     <Header/>
     <Main>{children}</Main>
     <Footer/>
-  </div>
+  </>
 )
 
 export default Layout

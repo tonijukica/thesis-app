@@ -1,32 +1,51 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/link';
-import { Container, Grid,  } from '@material-ui/core';
+import { Container, Grid, makeStyles, createStyles } from '@material-ui/core';
 
-const Header: FunctionComponent = () => (
-    <Container maxWidth = 'xl' >
-        <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start'>
+const useStyles = makeStyles(() => createStyles({
+  header: {
+    backgroundColor: '#24292e',
+    paddingTop: '16px',
+    paddingBottom: '21px',
+    fontSize: '14px',
+    lineHeight: 1.5,
+    color: 'white'
+  },
+  row: {
+   height: '16px'
+  },
+  link: {
+    marginRight: '16px',
+    color: 'white'
+  }   
+}));
+
+
+const Header: FunctionComponent = () => {
+  const classes = useStyles();
+  return(
+    <Container maxWidth = {false} className = {classes.header}>
+        <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start' className = {classes.row}>
             <Grid item xs = {12} sm = {6}>
                 <div>
-                    app
+                    APP
                 </div>
             </Grid>
             <Grid item xs = {12} sm = {6}>
                 <nav style = {{textAlign: 'end'}}>
                     <Link href="/">
-                        <a>Home</a>
-                    </Link>{' '}
-                    |{' '}
+                        <a className = {classes.link}>Home</a>
+                    </Link>
                     <Link href="/about">
-                        <a>About</a>
-                    </Link>{' '}
-                    |{' '}
+                        <a className = {classes.link}>About</a>
+                    </Link>
                     <Link href="/users">
-                        <a>Users List</a>
+                        <a className = {classes.link}>Users List</a>
                     </Link>
                 </nav>
             </Grid>
         </Grid>
     </Container>
-);
-
+  )
+}
 export default Header;
