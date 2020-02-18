@@ -3,7 +3,8 @@ import { Container, Grid, makeStyles, createStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => createStyles({
     footer: {
-      borderTop: '1px solid #e1e4e8 !important'
+      borderTop: '1px solid #d1d5da !important',
+      color: 'grey'
     }
   }));
   
