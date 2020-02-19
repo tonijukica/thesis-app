@@ -1,9 +1,11 @@
 import { FunctionComponent } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 type CourseItemProps = {
     name: string,
-    studentProjects: number
+    studentProjects: number,
+    deleteMode: boolean
 
 }
 
@@ -15,10 +17,11 @@ const useStyles = makeStyles(() => createStyles({
    }
   }));
 
-const CourseBox: FunctionComponent<CourseItemProps> = ({name, studentProjects}) => {
+const CourseBox: FunctionComponent<CourseItemProps> = ({name, studentProjects, deleteMode}) => {
     const classes = useStyles();
     return(
         <Grid container xs = {3} item className = {classes.box} justify = 'center'>
+            {deleteMode ? <DeleteIcon/> : null }
             {name}
             <br/>
             Number of projects: {studentProjects}
