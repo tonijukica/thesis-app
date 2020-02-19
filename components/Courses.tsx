@@ -37,6 +37,9 @@ const useStyles = makeStyles(() => createStyles({
    container: {
        paddingBottom: '16px',
        borderBottom: '1px solid #e1e4e8 !important'
+   },
+   button: {
+       marginRight: '8px'
    }
   }));
 
@@ -49,10 +52,10 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
                 {title}
             </Grid>
             <Grid container item xs = {4} justify = 'flex-end' alignItems = 'flex-end'>
-                <Button variant = 'contained' color = 'primary'>
+                <Button variant = 'contained' color = 'primary' className = {classes.button}>
                     New
                 </Button>
-                <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> }>
+                <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> } className = {classes.button}>
                     Delete
                 </Button>
             </Grid>

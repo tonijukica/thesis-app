@@ -36,8 +36,8 @@ const Header: FunctionComponent = () => {
                     <Link href="/">
                         <a className = {classes.link}>Home</a>
                     </Link>
-                    <Link href="/about">
-                        <a className = {classes.link}>About</a>
+                    <Link href="/projects">
+                        <a className = {classes.link}>Projects</a>
                     </Link>
                     <Link href="/users">
                         <a className = {classes.link}>Users List</a>
