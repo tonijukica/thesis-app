@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState, createContext, useReducer } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 import  DeleteIcon from '@material-ui/icons/Delete';
@@ -6,6 +6,19 @@ import CourseBox from './CourseBox';
 
 type CourseProps = {
     title: string,
+}
+interface Course {
+    name: string,
+    studentProjects: number
+}
+interface ActionType {
+    type: 'add' | 'remove',
+    course: Course
+}
+type Dispatch = (action: ActionType) => void;
+interface Context {
+    dispatch: Dispatch,
+    courses: Course[]
 }
 const dummyCourses = [
     {
@@ -33,7 +46,20 @@ const dummyCourses = [
         studentProjects: 20
     },
 ]
-
+const Context = createContext<Context | undefined>(undefined);
+function coursesReducer(courses: Course[], action: ActionType) {
+    switch(action.type) {
+        case 'add': {
+            const newCourses = [ ...courses];
+            newCourses.push(action.course);
+            return newCourses;
+        }
+        case 'remove': { 
+            const newCourses = courses.filter(el => el.name !== action.course.name)
+            return newCourses;
+        }
+    }
+}
 const useStyles = makeStyles(() => createStyles({
    container: {
        paddingBottom: '16px',
@@ -47,7 +73,7 @@ const useStyles = makeStyles(() => createStyles({
 const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const [courses, setCourses] = useState(dummyCourses);
+    const [courses, dispatch] = useReducer(coursesReducer, dummyCourses);
     const [courseName, setCourseName] = useState('');
     const [projectNum, setProjectNum] = useState('');
     const [deleteMode, setDeleteCourse] = useState(false); 
@@ -65,7 +91,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
         setProjectNum(e.target.value);
     }
     const addCourse = () => {
-        setCourses([ ...courses, { name: courseName, studentProjects: Number(projectNum)}]);
+        dispatch({type: 'add', course: {name: courseName, studentProjects: Number(projectNum)}})
         setOpen(false);
     }
     const handleDelete = () => {
@@ -115,13 +141,15 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
             </Grid>
         </Grid>
         <Grid container direction = 'row' justify = 'center'>
-            {courses.map((element) => {
-                return(
-                    <CourseBox name = {element.name} studentProjects = {element.studentProjects} deleteMode = {deleteMode} />
-                )
-            })}
+            <Context.Provider value = {{courses, dispatch}}>
+                {courses.map((element) => {
+                    return(
+                        <CourseBox name = {element.name} studentProjects = {element.studentProjects} deleteMode = {deleteMode} />
+                    )
+                })}
+            </Context.Provider>
         </Grid>
         </>
     );
 }
-export default Courses;
+export {Courses, Context};

@@ -1,5 +1,6 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useContext } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
+import { Context } from './Courses';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 type CourseItemProps = {
@@ -17,11 +18,17 @@ const useStyles = makeStyles(() => createStyles({
    }
   }));
 
+
 const CourseBox: FunctionComponent<CourseItemProps> = ({name, studentProjects, deleteMode}) => {
     const classes = useStyles();
+    const context: any = useContext(Context); 
+    const { dispatch } = context; 
+    const handleDelete = () => {
+        dispatch({type: 'remove', course: {name, studentProjects}});
+    }
     return(
         <Grid container xs = {3} item className = {classes.box} justify = 'center'>
-            {deleteMode ? <DeleteIcon/> : null }
+            {deleteMode ? <DeleteIcon onClick = {handleDelete} /> : null }
             {name}
             <br/>
             Number of projects: {studentProjects}
