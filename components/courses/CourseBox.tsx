@@ -1,13 +1,12 @@
 import { FunctionComponent, useContext } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
-import { Context } from './Courses';
+import { Context } from '.';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-type CourseItemProps = {
+type CourseBoxProps = {
     name: string,
     studentProjects: number,
     deleteMode: boolean
-
 }
 
 const useStyles = makeStyles(() => createStyles({
@@ -19,7 +18,7 @@ const useStyles = makeStyles(() => createStyles({
   }));
 
 
-const CourseBox: FunctionComponent<CourseItemProps> = ({name, studentProjects, deleteMode}) => {
+const CourseBox: FunctionComponent<CourseBoxProps> = ({name, studentProjects, deleteMode}) => {
     const classes = useStyles();
     const context: any = useContext(Context); 
     const { dispatch } = context; 

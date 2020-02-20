@@ -1,24 +1,12 @@
-import { FunctionComponent, useState, createContext, useReducer } from 'react';
-import { Grid, Button, makeStyles, createStyles, TextField } from '@material-ui/core';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
+import { FunctionComponent, useState, useReducer } from 'react';
+import { Grid, Button, makeStyles, createStyles } from '@material-ui/core';
+import { Context, coursesReducer } from './helper';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
+import CourseDialog from './CourseDialog';
 
 type CourseProps = {
     title: string,
-}
-interface Course {
-    name: string,
-    studentProjects: number
-}
-interface ActionType {
-    type: 'add' | 'remove',
-    course: Course
-}
-type Dispatch = (action: ActionType) => void;
-interface Context {
-    dispatch: Dispatch,
-    courses: Course[]
 }
 const dummyCourses = [
     {
@@ -46,20 +34,6 @@ const dummyCourses = [
         studentProjects: 20
     },
 ]
-const Context = createContext<Context | undefined>(undefined);
-function coursesReducer(courses: Course[], action: ActionType) {
-    switch(action.type) {
-        case 'add': {
-            const newCourses = [ ...courses];
-            newCourses.push(action.course);
-            return newCourses;
-        }
-        case 'remove': { 
-            const newCourses = courses.filter(el => el.name !== action.course.name)
-            return newCourses;
-        }
-    }
-}
 const useStyles = makeStyles(() => createStyles({
    container: {
        paddingBottom: '16px',
@@ -107,37 +81,10 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
                 <Button variant = 'contained' color = 'primary' className = {classes.button} onClick = {handleClickOpen}>
                     New
                 </Button>
-                <Dialog open = {open} onClose = {handleClose}>
-                    <DialogTitle>Add new course</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Fill out the following:
-                        </DialogContentText>
-                        <TextField
-                            margin = 'dense'
-                            label = 'Course name'
-                            onChange = {handleNameChange}
-                            fullWidth
-                        />
-                        <TextField
-                            margin = 'dense'
-                            label = 'Number of projects'
-                            onChange = {handleNumChange}
-                            fullWidth
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick = {handleClose} color = 'primary'>
-                            Cancel
-                        </Button>
-                        <Button onClick = {addCourse} color = 'primary'>
-                            Save
-                        </Button>
-                    </DialogActions>
-                </Dialog>
                 <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> } className = {classes.button} onClick = {handleDelete}>
                     Delete
                 </Button>
+                <CourseDialog open = {open} handleClose = {handleClose} handleNameChange = {handleNameChange} handleNumChange = {handleNumChange} addCourse = {addCourse} />
             </Grid>
         </Grid>
         <Grid container direction = 'row' justify = 'center'>
