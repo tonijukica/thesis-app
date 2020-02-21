@@ -1,6 +1,6 @@
 import { FunctionComponent, useContext } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
-import { Context } from '.';
+import { Context } from './CourseList';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 type CourseBoxProps = {

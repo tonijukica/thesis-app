@@ -2,7 +2,7 @@ import { FunctionComponent } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment } from '@material-ui/core';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
-import StudentBox from './StudentBox';
+import ProjectBox from './ProjectBox';
 
 
 const useStyles = makeStyles(() => createStyles({
@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => createStyles({
    }
   }));
 
-const StudentList: FunctionComponent = ({}) => {
+const ProjectList: FunctionComponent = ({}) => {
     const classes = useStyles();
     return(
         <>
@@ -54,10 +54,10 @@ const StudentList: FunctionComponent = ({}) => {
         </Grid>
         <Grid container direction = 'row' justify = 'space-evenly' className = { classes.header }>
             <Grid item xs = {3}>
-                Student name
+                Project name
             </Grid>
             <Grid item xs = {3}>
-                Project name
+                Student name
             </Grid> 
             <Grid item xs = {3}>
                 Number of commits
@@ -66,8 +66,8 @@ const StudentList: FunctionComponent = ({}) => {
                 Last commit
             </Grid> 
         </Grid>
-        <StudentBox name = 'Toni Jukica' projectName = 'Diplomski' commitsNum = {5} lastCommit = '23.11.2019' />
+        <ProjectBox name = 'Toni Jukica' projectName = 'Diplomski' commitsNum = {5} lastCommit = '23.11.2019' />
         </>
     );
 }
-export default StudentList;
+export default ProjectList;

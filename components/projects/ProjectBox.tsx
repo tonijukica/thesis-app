@@ -28,15 +28,15 @@ const useStyles = makeStyles(() => createStyles({
    }
   }));
 
-const StudentBox: FunctionComponent<StudentProps> = ({name, projectName, commitsNum, lastCommit }) => {
+const ProjectBox: FunctionComponent<StudentProps> = ({name, projectName, commitsNum, lastCommit }) => {
     const classes = useStyles();
     return(
         <Grid container item className = {[classes.box, classes.good].join(' ')  } justify = 'center' >
             <Grid item xs = {3}>
-                {name}
+                {projectName}
             </Grid>
             <Grid item xs = {3}>
-                {projectName}
+                {name}
             </Grid> 
             <Grid item xs = {3}>
                 {commitsNum}
@@ -47,4 +47,4 @@ const StudentBox: FunctionComponent<StudentProps> = ({name, projectName, commits
         </Grid>
     );
 }
-export default StudentBox;
+export default ProjectBox;

@@ -14,23 +14,23 @@ const dummyCourses = [
         studentProjects: 20
     },
     {
-        name: 'HCI',
+        name: 'HCI1',
         studentProjects: 20
     },
     {
-        name: 'HCI',
+        name: 'HCI2',
         studentProjects: 20
     },
     {
-        name: 'HCI',
+        name: 'HCI3',
         studentProjects: 20
     },
     {
-        name: 'HCI',
+        name: 'HCI4',
         studentProjects: 20
     },
     {
-        name: 'HCI',
+        name: 'HCI5',
         studentProjects: 20
     },
 ]
@@ -89,9 +89,9 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
         </Grid>
         <Grid container direction = 'row' justify = 'center'>
             <Context.Provider value = {{courses, dispatch}}>
-                {courses.map((element) => {
+                {courses.map((course) => {
                     return(
-                        <CourseBox name = {element.name} studentProjects = {element.studentProjects} deleteMode = {deleteMode} />
+                        <CourseBox key = {course.name} name = {course.name} studentProjects = {course.studentProjects} deleteMode = {deleteMode} />
                     )
                 })}
             </Context.Provider>
