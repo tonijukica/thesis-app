@@ -3,7 +3,7 @@ import { Grid, makeStyles, createStyles } from '@material-ui/core';
 
 type StudentProps = {
     name: string,
-    projectName: string,
+    studentName: string,
     commitsNum: number,
     lastCommit: string,
 }
@@ -28,15 +28,15 @@ const useStyles = makeStyles(() => createStyles({
    }
   }));
 
-const ProjectBox: FunctionComponent<StudentProps> = ({name, projectName, commitsNum, lastCommit }) => {
+const ProjectBox: FunctionComponent<StudentProps> = ({name, studentName, commitsNum, lastCommit }) => {
     const classes = useStyles();
     return(
         <Grid container item className = {[classes.box, classes.good].join(' ')  } justify = 'center' >
             <Grid item xs = {3}>
-                {projectName}
+                {name}
             </Grid>
             <Grid item xs = {3}>
-                {name}
+                {studentName}
             </Grid> 
             <Grid item xs = {3}>
                 {commitsNum}

@@ -1,8 +1,9 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment } from '@material-ui/core';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import ProjectBox from './ProjectBox';
+import ProjectDialog from './ProjectDialog';
 
 
 const useStyles = makeStyles(() => createStyles({
@@ -20,9 +21,35 @@ const useStyles = makeStyles(() => createStyles({
        borderBottom: '1px solid #e1e4e8 !important'
    }
   }));
-
+const dummyProjects = [
+    {
+        name: 'Diplomski',
+        studentName: 'Toni Jukica'
+    }
+]
 const ProjectList: FunctionComponent = ({}) => {
     const classes = useStyles();
+    const [dialog, setDialog] = useState(false);
+    const [projects, setProjects] = useState(dummyProjects);
+    const [projectName, setProjectName] = useState('');
+    const [studentName, setStudentName] = useState('');
+
+    const handleDialogOpen = () => {
+        setDialog(true)
+    }
+    const handleDialogClose = () => {
+        setDialog(false)
+    }
+    const handleProjectNameChange = (e: any) => {
+        setProjectName(e.target.value);
+    }
+    const handleStudentNameChange = (e: any) => {
+        setStudentName(e.target.value);
+    }
+    const addProject = () => {
+        setProjects([ ...projects, { name: projectName, studentName}]);
+        setDialog(false);
+    }
     return(
         <>
         <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start' className = {classes.container}>
@@ -41,7 +68,7 @@ const ProjectList: FunctionComponent = ({}) => {
                     />
             </Grid>
             <Grid container item xs = {4} justify = 'flex-end' alignItems = 'flex-end'>
-                <Button variant = 'contained' color = 'primary' className = {classes.button}>
+                <Button variant = 'contained' color = 'primary' className = {classes.button} onClick = {handleDialogOpen}>
                     New
                 </Button>
                 <Button variant = 'contained' color = 'primary' className = {classes.button}>
@@ -52,6 +79,7 @@ const ProjectList: FunctionComponent = ({}) => {
                 </Button>
             </Grid>
         </Grid>
+        <ProjectDialog open = {dialog} handleClose = {handleDialogClose} handleNameChange = {handleProjectNameChange} handleStudenNameChange = {handleStudentNameChange} addProject = {addProject} />
         <Grid container direction = 'row' justify = 'space-evenly' className = { classes.header }>
             <Grid item xs = {3}>
                 Project name
@@ -66,7 +94,11 @@ const ProjectList: FunctionComponent = ({}) => {
                 Last commit
             </Grid> 
         </Grid>
-        <ProjectBox name = 'Toni Jukica' projectName = 'Diplomski' commitsNum = {5} lastCommit = '23.11.2019' />
+        {projects.map((project) => {
+            return(
+                <ProjectBox name = {project.name} studentName = {project.studentName} commitsNum = {0} lastCommit = '1212' />
+            )
+        })}
         </>
     );
 }
