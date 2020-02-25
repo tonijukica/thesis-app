@@ -8,3 +8,8 @@ export type User = {
   id: number
   name: string
 }
+export type Commit = {
+  user: string,
+  commitMsg: string,
+  date: string,
+}
