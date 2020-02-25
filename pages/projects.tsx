@@ -1,12 +1,12 @@
 import Layout from '../components/layout/Layout'
-import { Courses } from '../components/courses/CourseList';
 import { NextPage } from 'next'
+import ProjectList from '../components/projects/ProjectList';
 
 const IndexPage: NextPage = () => {
   return (
     <Layout>
-      <Courses title = 'Courses'>
-      </Courses>
+        <ProjectList>
+        </ProjectList>
     </Layout>
   )
 }
