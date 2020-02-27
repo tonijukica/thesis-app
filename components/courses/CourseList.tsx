@@ -5,7 +5,7 @@ import  DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
 import CourseDialog from './CourseDialog';
 import { gql } from 'apollo-boost';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 const GET_COURSES_QUERY = gql`
 {
@@ -19,6 +19,17 @@ const GET_COURSES_QUERY = gql`
       }
     }
 }
+`;
+const INSERT_COURSE = gql `
+    mutation insertCourse($name: String!, $numProjects: String!) {
+        insert_courses(objects: {course_name: $name, year: $numProjects}) {
+        returning {
+            course_name
+            id
+            year
+        }
+        }
+    }
 `;
 
 type CourseProps = {
@@ -36,7 +47,8 @@ const useStyles = makeStyles(() => createStyles({
 
 const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const classes = useStyles();
-    const {data} = useQuery(GET_COURSES_QUERY)
+    const {data} = useQuery(GET_COURSES_QUERY);
+    const [insertCourse] = useMutation(INSERT_COURSE);
     const [dialog, setDialog] = useState(false);
     const [courses, dispatch] = useReducer(coursesReducer, []);
     const [courseName, setCourseName] = useState('');
@@ -56,7 +68,13 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
         setProjectNum(e.target.value);
     }
     const addCourse = () => {
-        dispatch({type: 'add', course: {name: courseName, studentProjects: Number(projectNum)}})
+        insertCourse({
+            variables: {
+                name: courseName,
+                numProjects: projectNum
+            }
+        });
+        dispatch({type: 'add', course: {name: courseName, studentProjects: Number(projectNum)}});
         setDialog(false);
     }
     const handleDelete = () => {
