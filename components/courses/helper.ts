@@ -6,7 +6,8 @@ interface Course {
 }
 interface ActionType {
     type: 'add' | 'remove',
-    course: Course
+    course: Course,
+
 }
 type Dispatch = (action: ActionType) => void;
 

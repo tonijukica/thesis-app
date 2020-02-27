@@ -3,6 +3,8 @@ import Head from 'next/head'
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
+import client from '../../gql';
+import { ApolloProvider } from '@apollo/react-hooks';
 
 
 const Layout: FunctionComponent = ({
@@ -14,9 +16,11 @@ const Layout: FunctionComponent = ({
       <meta charSet="utf-8" />
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
-    <Header/>
-    <Main>{children}</Main>
-    <Footer/>
+    <ApolloProvider client = {client}>
+      <Header/>
+      <Main>{children}</Main>
+      <Footer/>
+    </ApolloProvider>
   </>
 )
 

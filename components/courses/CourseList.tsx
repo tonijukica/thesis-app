@@ -1,39 +1,29 @@
-import { FunctionComponent, useState, useReducer } from 'react';
+import { FunctionComponent, useState, useReducer, useEffect } from 'react';
 import { Grid, Button, makeStyles, createStyles } from '@material-ui/core';
 import { Context, coursesReducer } from './helper';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
 import CourseDialog from './CourseDialog';
+import { gql } from 'apollo-boost';
+import { useQuery } from '@apollo/react-hooks';
+
+const GET_COURSES_QUERY = gql`
+{
+    courses {
+      course_name
+      id
+      projects_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+}
+`;
 
 type CourseProps = {
     title: string,
 }
-const dummyCourses = [
-    {
-        name: 'HCI',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI1',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI2',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI3',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI4',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI5',
-        studentProjects: 20
-    },
-]
 const useStyles = makeStyles(() => createStyles({
    container: {
        paddingBottom: '16px',
@@ -46,8 +36,9 @@ const useStyles = makeStyles(() => createStyles({
 
 const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const classes = useStyles();
+    const {data} = useQuery(GET_COURSES_QUERY)
     const [dialog, setDialog] = useState(false);
-    const [courses, dispatch] = useReducer(coursesReducer, dummyCourses);
+    const [courses, dispatch] = useReducer(coursesReducer, []);
     const [courseName, setCourseName] = useState('');
     const [projectNum, setProjectNum] = useState('');
     const [deleteMode, setDeleteCourse] = useState(false); 
@@ -71,6 +62,13 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const handleDelete = () => {
         setDeleteCourse(!deleteMode);
     }
+    useEffect(() => {
+       if(data) {
+        data.courses.forEach((course: any) => 
+            dispatch({type: 'add', course: {name: course.course_name, studentProjects: course.projects_aggregate.aggregate.count}})
+        );
+       }
+    }, [data]);
     return(
         <>
         <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start' className = {classes.container}>
