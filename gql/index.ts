@@ -4,7 +4,7 @@ import { HttpLink } from 'apollo-link-http';
 import fetch from 'isomorphic-unfetch';
 
 
-const GRAPHQL_URL = 'https://hasura-graphql-db.herokuapp.com/v1/graphql';
+const GRAPHQL_URL = process.env.GRAPHQL_URL;
 
 const link = new HttpLink({
   fetch, 

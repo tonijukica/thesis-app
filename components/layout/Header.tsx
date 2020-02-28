@@ -33,8 +33,8 @@ const Header: FunctionComponent = () => {
             </Grid>
             <Grid item xs = {12} sm = {6}>
                 <nav style = {{textAlign: 'end'}}>
-                    <Link href="/">
-                        <a className = {classes.link}>Home</a>
+                    <Link href="/courses">
+                        <a className = {classes.link}>Courses</a>
                     </Link>
                     <Link href="/projects">
                         <a className = {classes.link}>Projects</a>

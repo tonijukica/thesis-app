@@ -4,6 +4,7 @@ import { Context } from './CourseList';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
+import Link from 'next/link';
 
 const DELETE_COURSE = gql`
 mutation deleteCourse($name: String!) {
@@ -16,6 +17,7 @@ mutation deleteCourse($name: String!) {
 `;
 type CourseBoxProps = {
     name: string,
+    courseId: number,
     studentProjects: number,
     deleteMode: boolean
 }
@@ -29,7 +31,7 @@ const useStyles = makeStyles(() => createStyles({
   }));
 
 
-const CourseBox: FunctionComponent<CourseBoxProps> = ({name, studentProjects, deleteMode}) => {
+const CourseBox: FunctionComponent<CourseBoxProps> = ({name, courseId, studentProjects, deleteMode}) => {
     const classes = useStyles();
     const [deleteCourse] = useMutation(DELETE_COURSE);
     const context: any = useContext(Context); 
@@ -43,12 +45,14 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({name, studentProjects, de
         dispatch({type: 'remove', course: {name, studentProjects}});
     }
     return(
-        <Grid container xs = {3} item className = {classes.box} justify = 'center'>
+       <Link href = {`/courses/${courseId}`}>
+          <Grid container xs = {3} item className = {classes.box} justify = 'center'>
             {deleteMode ? <DeleteIcon onClick = {handleDelete} /> : null }
             {name}
             <br/>
             Number of projects: {studentProjects}
         </Grid>
+       </Link>
     );
 }
 export default CourseBox;

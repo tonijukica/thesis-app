@@ -73,9 +73,15 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
                 name: courseName,
                 numProjects: projectNum
             }
-        });
-        dispatch({type: 'add', course: {name: courseName, studentProjects: Number(projectNum)}});
-        setDialog(false);
+        }).then(({data}) => {
+            const newCourse = {
+                name: courseName,
+                courseId: data.insert_courses.returning[0].id,
+                studentProjects: Number(projectNum)
+            }
+            dispatch({type: 'add', course: newCourse});
+            setDialog(false);
+        })
     }
     const handleDelete = () => {
         setDeleteCourse(!deleteMode);
@@ -83,7 +89,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
     useEffect(() => {
        if(data) {
         data.courses.forEach((course: any) => 
-            dispatch({type: 'add', course: {name: course.course_name, studentProjects: course.projects_aggregate.aggregate.count}})
+            dispatch({type: 'add', course: {name: course.course_name, courseId: course.id, studentProjects: course.projects_aggregate.aggregate.count}})
         );
        }
     }, [data]);
@@ -107,7 +113,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
             <Context.Provider value = {{courses, dispatch}}>
                 {courses.map((course) => {
                     return(
-                        <CourseBox key = {course.name} name = {course.name} studentProjects = {course.studentProjects} deleteMode = {deleteMode} />
+                        <CourseBox key = {course.courseId}  courseId= {course.courseId} name = {course.name} studentProjects = {course.studentProjects} deleteMode = {deleteMode} />
                     )
                 })}
             </Context.Provider>

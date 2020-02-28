@@ -1,11 +1,26 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState, useEffect } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment } from '@material-ui/core';
+import { useQuery } from '@apollo/react-hooks';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './ProjectDialog';
+import { gql } from 'apollo-boost';
 
-
+const GET_PROJECTS = gql`
+query getProjects($courseId: Int!) {
+    projects(where: {course_id: {_eq: $courseId}}) {
+      name
+      students {
+        name
+      }
+      github_url
+    }
+  }  
+`;
+type ProjectListProps = {
+    courseId: number
+}
 const useStyles = makeStyles(() => createStyles({
    container: {
        paddingBottom: '16px',
@@ -21,19 +36,19 @@ const useStyles = makeStyles(() => createStyles({
        borderBottom: '1px solid #e1e4e8 !important'
    }
   }));
-const dummyProjects = [
-    {
-        name: 'Diplomski',
-        studentName: 'Toni Jukica'
-    }
-]
-const ProjectList: FunctionComponent = ({}) => {
+
+const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const classes = useStyles();
     const [dialog, setDialog] = useState(false);
-    const [projects, setProjects] = useState(dummyProjects);
+    const { data } = useQuery(GET_PROJECTS, { variables: { courseId}});
+    const [projects, setProjects] = useState([]);
     const [projectName, setProjectName] = useState('');
-    const [studentName, setStudentName] = useState('');
+    const [students, setStudentName] = useState([]);
 
+    useEffect(() => {
+        if(data)
+            setProjects(data.projects)
+    }, [data]);
     const handleDialogOpen = () => {
         setDialog(true)
     }
@@ -47,7 +62,8 @@ const ProjectList: FunctionComponent = ({}) => {
         setStudentName(e.target.value);
     }
     const addProject = () => {
-        setProjects([ ...projects, { name: projectName, studentName}]);
+        console.log(projectName, students);
+        //setProjects([ ...projects, { name: projectName, studentName}]);
         setDialog(false);
     }
     return(
@@ -85,7 +101,7 @@ const ProjectList: FunctionComponent = ({}) => {
                 Project name
             </Grid>
             <Grid item xs = {3}>
-                Student name
+                Studens
             </Grid> 
             <Grid item xs = {3}>
                 Number of commits
@@ -94,9 +110,9 @@ const ProjectList: FunctionComponent = ({}) => {
                 Last commit
             </Grid> 
         </Grid>
-        {projects.map((project) => {
+        {projects.map((project: any) => {
             return(
-                <ProjectBox name = {project.name} studentName = {project.studentName} commitsNum = {0} lastCommit = '1212' />
+                <ProjectBox name = {project.name} students = {project.students} commitsNum = {0} lastCommit = '1212' />
             )
         })}
         </>

@@ -5,7 +5,7 @@ import ProjectList from '../components/projects/ProjectList';
 const IndexPage: NextPage = () => {
   return (
     <Layout>
-        <ProjectList>
+        <ProjectList courseId = {12}>
         </ProjectList>
     </Layout>
   )
