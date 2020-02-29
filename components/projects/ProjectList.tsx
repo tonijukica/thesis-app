@@ -113,7 +113,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
         </Grid>
         {projects.map((project: any) => {
             return(
-                <ProjectBox name = {project.name} projectId = {project.id} students = {project.students} commitsNum = {0} lastCommit = '1212' />
+                <ProjectBox key = {project.id} name = {project.name} projectId = {project.id} students = {project.students} commitsNum = {0} lastCommit = '1212' />
             )
         })}
         </>

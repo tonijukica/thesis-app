@@ -42,7 +42,7 @@ const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, students,
             <Grid  container  direction = 'column' item xs = {3}>
                 {students.map((student: any) => {
                     return(
-                        <Grid>
+                        <Grid key = {student.id}>
                             {student.name}
                         </Grid>
                     );
