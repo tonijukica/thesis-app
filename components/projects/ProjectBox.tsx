@@ -1,8 +1,10 @@
 import { FunctionComponent } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
+import Link from 'next/link';
 
 type StudentProps = {
     name: string,
+    projectId: number,
     students: [],
     commitsNum: number,
     lastCommit: string,
@@ -28,13 +30,15 @@ const useStyles = makeStyles(() => createStyles({
    }
   }));
 
-const ProjectBox: FunctionComponent<StudentProps> = ({name, students, commitsNum, lastCommit }) => {
+const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, students, commitsNum, lastCommit }) => {
     const classes = useStyles();
     return(
         <Grid container item className = {[classes.box, classes.good].join(' ')  } justify = 'center' alignItems = 'center' >
-            <Grid item xs = {3} >
-                {name}
-            </Grid>
+            <Link href = {`/projects/${projectId}`}>
+                <Grid item xs = {3} >
+                    {name}
+                </Grid>
+            </Link>
             <Grid  container  direction = 'column' item xs = {3}>
                 {students.map((student: any) => {
                     return(

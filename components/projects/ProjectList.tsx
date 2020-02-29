@@ -11,6 +11,7 @@ const GET_PROJECTS = gql`
 query getProjects($courseId: Int!) {
     projects(where: {course_id: {_eq: $courseId}}) {
       name
+      id
       students {
         name
       }
@@ -43,7 +44,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const { data } = useQuery(GET_PROJECTS, { variables: { courseId}});
     const [projects, setProjects] = useState([]);
     const [projectName, setProjectName] = useState('');
-    const [students, setStudentName] = useState([]);
+    const [students, setStudentName] = useState('');
 
     useEffect(() => {
         if(data)
@@ -112,7 +113,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
         </Grid>
         {projects.map((project: any) => {
             return(
-                <ProjectBox name = {project.name} students = {project.students} commitsNum = {0} lastCommit = '1212' />
+                <ProjectBox name = {project.name} projectId = {project.id} students = {project.students} commitsNum = {0} lastCommit = '1212' />
             )
         })}
         </>
