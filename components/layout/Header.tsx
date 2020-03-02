@@ -39,9 +39,6 @@ const Header: FunctionComponent = () => {
                     <Link href="/projects">
                         <a className = {classes.link}>Projects</a>
                     </Link>
-                    <Link href="/users">
-                        <a className = {classes.link}>Users List</a>
-                    </Link>
                 </nav>
             </Grid>
         </Grid>
