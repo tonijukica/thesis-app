@@ -1,6 +1,7 @@
 import { FunctionComponent, useState, Fragment } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Button, TextField } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import { Student } from '../../interfaces';
 
 type ProjectDialogProps = {
@@ -89,7 +90,7 @@ const ProjectDialog: FunctionComponent<ProjectDialogProps> = ({open, handleClose
                     variant = 'contained'
                     onClick = {addLocalStudent}
                 >
-                    Add
+                    <AddIcon />
                 </Button>
                 </>
             )}

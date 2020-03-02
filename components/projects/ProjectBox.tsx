@@ -1,13 +1,12 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, HTMLAttributes } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
 import Link from 'next/link';
 
-type StudentProps = {
+interface StudentProps extends HTMLAttributes<HTMLDivElement> {
     name: string,
     projectId: number,
     students: [],
-    commitsNum: number,
-    lastCommit: string,
+    deleteMode: boolean
 }
 
 const useStyles = makeStyles(() => createStyles({
@@ -27,13 +26,20 @@ const useStyles = makeStyles(() => createStyles({
    },
    warning: {
        backgroundColor: '#fffeb3'
+   },
+   deleteHover: {
+       '&:hover': {
+        backgroundColor: 'grey',
+        transform: 'scale(1.05)',
+        cursor: 'pointer'
+       }
    }
   }));
 
-const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, students, commitsNum, lastCommit }) => {
+const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, students, deleteMode}) => {
     const classes = useStyles();
     return(
-        <Grid key = {projectId} container item className = {[classes.box, classes.good].join(' ')  } justify = 'center' alignItems = 'center' >
+        <Grid key = {projectId} container item className = {deleteMode ? [classes.box, classes.deleteHover].join(' ') :[classes.box, classes.good].join(' ')  } justify = 'center' alignItems = 'center'>
             <Link href = {`/projects/${projectId}`}>
                 <Grid item xs = {3} >
                     {name}
@@ -47,10 +53,10 @@ const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, students,
                     ))}
             </Grid> 
             <Grid item xs = {3}>
-                {commitsNum}
+                
             </Grid> 
             <Grid item xs = {3}>
-                {lastCommit}
+                
             </Grid> 
         </Grid>
     );

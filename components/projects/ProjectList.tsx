@@ -43,6 +43,17 @@ mutation InsertProject($courseId: Int!, $projectName: String!, $githubUrl: Strin
     }
   }  
 `;
+const DELETE_PROJECT = gql`
+mutation deleteProject($projectId: Int!) {
+    delete_student(where: {project_id: {_eq: $projectId}}) {
+      affected_rows
+    }
+    delete_projects(where: {id: {_eq: $projectId}}) {
+      affected_rows
+    }
+  }
+  
+`;
 type ProjectListProps = {
     courseId: number
 }
@@ -65,6 +76,8 @@ const useStyles = makeStyles(() => createStyles({
 const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const classes = useStyles();
     const [dialog, setDialog] = useState(false);
+    const [deleteMode, setDeleteMode] = useState(false);
+    const [deleteProject] = useMutation(DELETE_PROJECT);
     const { data } = useQuery(GET_PROJECTS, { variables: { courseId}});
     const [insertProject] = useMutation(INSERT_PROJECT);
     const [projects, setProjects] = useState<Project []>([]);
@@ -82,6 +95,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const handleDialogClose = () => {
         setDialog(false)
     }
+    const handleDeleteMode = () => {
+        setDeleteMode(!deleteMode);
+    }
     const handleProjectNameChange = (e: any) => {
         setProjectName(e.target.value);
     }
@@ -91,8 +107,17 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const addStudent = (student: Student) => {
         setStudents([...students, student]);
     }
+    const handleDeleteProject = (projectId: number) => {
+        deleteProject({
+            variables: {
+                projectId
+            }
+        })
+        .then(() => {
+            setProjects(projects.filter(project => project.id !== projectId));
+        })
+    }
     const addProject = () => {
-        setStudents([]);
         insertProject({
             variables: {
                 courseId,
@@ -137,7 +162,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                 <Button variant = 'contained' color = 'primary' className = {classes.button}>
                     Bulk insert
                 </Button>
-                <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> } className = {classes.button}>
+                <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> } className = {classes.button} onClick = {handleDeleteMode}>
                     Delete
                 </Button>
             </Grid>
@@ -148,7 +173,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
             handleNameChange = {handleProjectNameChange} 
             handleUrlChange = {handleProjectUrlChange}
             addStudent = {addStudent} 
-            addProject = {addProject} 
+            addProject = {addProject}
         />
         <Grid container direction = 'row' justify = 'space-evenly' className = { classes.header }>
             <Grid item xs = {3}>
@@ -166,7 +191,15 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
         </Grid>
         {projects.map((project: any) => {
             return(
-                <ProjectBox key = {project.id} name = {project.name} projectId = {project.id} students = {project.students} commitsNum = {0} lastCommit = '1212' />
+                <div key = {project.id} onClick = {() => handleDeleteProject(project.id)}>
+                    <ProjectBox 
+                        key = {project.id} 
+                        name = {project.name} 
+                        projectId = {project.id} 
+                        students = {project.students}
+                        deleteMode = {deleteMode}
+                    />
+                </div>
             )
         })}
         </>
