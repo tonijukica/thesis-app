@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import ProjectCommits from './ProjectCommits';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import { Commit } from '../../interfaces';
+import { Commit, Student } from '../../interfaces';
 type ProjectProps = {
     projectId: number
 }
@@ -70,7 +70,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
                         Project name: {project.name}
                         </div>
                         <div>
-                            Students: {project.students.map((student: any) => {
+                            Students: {project.students.map((student: Student) => {
                                 return(student.name)
                             })}
                         </div>

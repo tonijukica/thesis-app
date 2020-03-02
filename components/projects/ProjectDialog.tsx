@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, Fragment } from 'react';
+import { FunctionComponent, useState, Fragment, ChangeEvent } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Button, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
@@ -31,10 +31,10 @@ const ProjectDialog: FunctionComponent<ProjectDialogProps> = ({open, handleClose
     const handleStudentAdd = () => {
         setStudentAdd(!studentAdd);
     }
-    const handleStudentNameChange = (e: any) => {
+    const handleStudentNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setStudentName(e.target.value);
     }
-    const handleStudentUsernameChange = (e: any) => {
+    const handleStudentUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setStudentUserame(e.target.value);
     }
     return(

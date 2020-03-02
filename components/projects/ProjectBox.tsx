@@ -1,11 +1,12 @@
 import { FunctionComponent, HTMLAttributes } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
+import { Student } from '../../interfaces';
 import Link from 'next/link';
 
 interface StudentProps extends HTMLAttributes<HTMLDivElement> {
     name: string,
     projectId: number,
-    students: [],
+    students: Student[],
     deleteMode: boolean
 }
 
@@ -46,7 +47,7 @@ const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, students,
                 </Grid>
             </Link>
             <Grid  container  direction = 'column' item xs = {3}>
-                {students.map((student: any) => (
+                {students.map((student: Student) => (
                         <Grid key = {student.id}>
                             {student.name}
                         </Grid>

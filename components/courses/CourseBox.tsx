@@ -26,7 +26,14 @@ const useStyles = makeStyles(() => createStyles({
    box: {
        border: '1px solid #d1d5da',
        borderRadius: '3px',
-       margin: '16px'
+       margin: '16px',
+       position: 'relative'
+   },
+   deleteIcon: {
+     position: 'absolute',
+     top: 0,
+     right: 0,
+     zIndex: 1000
    }
   }));
 
@@ -45,14 +52,16 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({name, courseId, studentPr
         dispatch({type: 'remove', course: {name, studentProjects}});
     }
     return(
-       <Link href = {`/courses/${courseId}`}>
-          <Grid container xs = {3} item className = {classes.box} justify = 'center'>
-            {deleteMode ? <DeleteIcon onClick = {handleDelete} /> : null }
-            {name}
-            <br/>
-            Number of projects: {studentProjects}
+        <Grid container xs = {3} item className = {classes.box} justify = 'center'>
+              {deleteMode ? <DeleteIcon className = {classes.deleteIcon} onClick = {handleDelete} /> : null }
+              <Link href = {`/courses/${courseId}`}>
+                <div>
+                  {name}
+                  <br/>
+                  Number of projects: {studentProjects}
+                </div>
+              </Link>
         </Grid>
-       </Link>
     );
 }
 export default CourseBox;

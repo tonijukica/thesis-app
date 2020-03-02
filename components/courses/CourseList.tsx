@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useReducer, useEffect } from 'react';
+import { FunctionComponent, useState, useReducer, useEffect, ChangeEvent } from 'react';
 import { Grid, Button, makeStyles, createStyles } from '@material-ui/core';
 import { Context, coursesReducer } from './helper';
 import  DeleteIcon from '@material-ui/icons/Delete';
@@ -61,10 +61,10 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const handleClose = () => {
         setDialog(false);
     }
-    const handleNameChange = (e: any) => {
+    const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setCourseName(e.target.value);
     }
-    const handleNumChange = (e: any) => {
+    const handleNumChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectNum(e.target.value);
     }
     const addCourse = () => {

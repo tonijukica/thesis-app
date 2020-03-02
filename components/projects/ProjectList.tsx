@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useEffect } from 'react';
+import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import  DeleteIcon from '@material-ui/icons/Delete';
@@ -98,10 +98,10 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const handleDeleteMode = () => {
         setDeleteMode(!deleteMode);
     }
-    const handleProjectNameChange = (e: any) => {
+    const handleProjectNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectName(e.target.value);
     }
-    const handleProjectUrlChange = (e: any) => {
+    const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectUrl(e.target.value);
     }
     const addStudent = (student: Student) => {
@@ -180,7 +180,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                 Project name
             </Grid>
             <Grid item xs = {3}>
-                Studens
+                Students
             </Grid> 
             <Grid item xs = {3}>
                 Number of commits
@@ -189,9 +189,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                 Last commit
             </Grid> 
         </Grid>
-        {projects.map((project: any) => {
+        {projects.map((project: Project) => {
             return(
-                <div key = {project.id} onClick = {() => handleDeleteProject(project.id)}>
+                <div key = {project.id} onClick = {() => deleteMode ? handleDeleteProject(project.id) : null}>
                     <ProjectBox 
                         key = {project.id} 
                         name = {project.name} 
