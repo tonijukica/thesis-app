@@ -2,19 +2,11 @@ import { FunctionComponent, useContext } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
 import { Context } from './CourseList';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
+import { DELETE_COURSE } from '../../gql/queries/courses';
 import Link from 'next/link';
 
-const DELETE_COURSE = gql`
-mutation deleteCourse($name: String!) {
-    delete_courses(where: {course_name: {_eq: $name}}) {
-      returning {
-        course_name
-      }
-    }
-  }
-`;
+
 type CourseBoxProps = {
     name: string,
     courseId: number,

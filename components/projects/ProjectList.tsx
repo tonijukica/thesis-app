@@ -5,55 +5,10 @@ import  DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './ProjectDialog';
-import { gql } from 'apollo-boost';
+import { GET_PROJECTS, INSERT_PROJECT, DELETE_PROJECT } from '../.././gql/queries/projects';
 import { Student, Project } from '../../interfaces'; 
 
-const GET_PROJECTS = gql`
-query getProjects($courseId: Int!) {
-    projects(where: {course_id: {_eq: $courseId}}) {
-      name
-      id
-      students {
-        id
-        name
-      }
-      github_url
-    }
-  }  
-`;
 
-const INSERT_PROJECT = gql`
-mutation InsertProject($courseId: Int!, $projectName: String!, $githubUrl: String!, $students: [student_insert_input!]!) {
-    insert_projects(objects: {
-      course_id: $courseId, 
-      name: $projectName, 
-      github_url: $githubUrl, 
-      students: {data: $students}
-    }) 
-    {
-        returning {
-            id
-            name
-            github_url
-            students {
-              id
-              name
-            }
-        }
-    }
-  }  
-`;
-const DELETE_PROJECT = gql`
-mutation deleteProject($projectId: Int!) {
-    delete_student(where: {project_id: {_eq: $projectId}}) {
-      affected_rows
-    }
-    delete_projects(where: {id: {_eq: $projectId}}) {
-      affected_rows
-    }
-  }
-  
-`;
 type ProjectListProps = {
     courseId: number
 }

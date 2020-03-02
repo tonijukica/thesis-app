@@ -3,25 +3,12 @@ import { Grid, makeStyles, createStyles } from '@material-ui/core';
 import classNames from 'classnames';
 import ProjectCommits from './ProjectCommits';
 import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
+import { GET_PROJECT } from '../../gql/queries/projects';
 import { Commit, Student } from '../../interfaces';
 type ProjectProps = {
     projectId: number
 }
 
-const GET_PROJECT = gql`
-query getProject($projectId: Int!) {
-    projects(where: {id: {_eq: $projectId}}) {
-      github_url
-      name
-      students {
-        name
-        github_username
-        id
-      }
-    }
-  }  
-`;
 const useStyles = makeStyles(() => createStyles({
     border: {
         border: '1px solid #e1e4e8 !important',

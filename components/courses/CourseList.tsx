@@ -4,33 +4,9 @@ import { Context, coursesReducer } from './helper';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
 import CourseDialog from './CourseDialog';
-import { gql } from 'apollo-boost';
 import { useQuery, useMutation } from '@apollo/react-hooks';
+import { GET_COURSES, INSERT_COURSE } from '../../gql/queries/courses'
 
-const GET_COURSES_QUERY = gql`
-{
-    courses {
-      course_name
-      id
-      projects_aggregate {
-        aggregate {
-          count
-        }
-      }
-    }
-}
-`;
-const INSERT_COURSE = gql `
-    mutation insertCourse($name: String!, $numProjects: String!) {
-        insert_courses(objects: {course_name: $name, year: $numProjects}) {
-        returning {
-            course_name
-            id
-            year
-        }
-        }
-    }
-`;
 
 type CourseProps = {
     title: string,
@@ -47,7 +23,7 @@ const useStyles = makeStyles(() => createStyles({
 
 const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const classes = useStyles();
-    const {data} = useQuery(GET_COURSES_QUERY);
+    const {data} = useQuery(GET_COURSES);
     const [insertCourse] = useMutation(INSERT_COURSE);
     const [dialog, setDialog] = useState(false);
     const [courses, dispatch] = useReducer(coursesReducer, []);
