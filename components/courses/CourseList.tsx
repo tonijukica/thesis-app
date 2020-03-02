@@ -1,39 +1,16 @@
-import { FunctionComponent, useState, useReducer } from 'react';
+import { FunctionComponent, useState, useReducer, useEffect, ChangeEvent } from 'react';
 import { Grid, Button, makeStyles, createStyles } from '@material-ui/core';
 import { Context, coursesReducer } from './helper';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
 import CourseDialog from './CourseDialog';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { GET_COURSES, INSERT_COURSE } from '../../gql/queries/courses'
+
 
 type CourseProps = {
     title: string,
 }
-const dummyCourses = [
-    {
-        name: 'HCI',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI1',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI2',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI3',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI4',
-        studentProjects: 20
-    },
-    {
-        name: 'HCI5',
-        studentProjects: 20
-    },
-]
 const useStyles = makeStyles(() => createStyles({
    container: {
        paddingBottom: '16px',
@@ -46,8 +23,10 @@ const useStyles = makeStyles(() => createStyles({
 
 const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const classes = useStyles();
+    const {data} = useQuery(GET_COURSES);
+    const [insertCourse] = useMutation(INSERT_COURSE);
     const [dialog, setDialog] = useState(false);
-    const [courses, dispatch] = useReducer(coursesReducer, dummyCourses);
+    const [courses, dispatch] = useReducer(coursesReducer, []);
     const [courseName, setCourseName] = useState('');
     const [projectNum, setProjectNum] = useState('');
     const [deleteMode, setDeleteCourse] = useState(false); 
@@ -58,19 +37,38 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const handleClose = () => {
         setDialog(false);
     }
-    const handleNameChange = (e: any) => {
+    const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setCourseName(e.target.value);
     }
-    const handleNumChange = (e: any) => {
+    const handleNumChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectNum(e.target.value);
     }
     const addCourse = () => {
-        dispatch({type: 'add', course: {name: courseName, studentProjects: Number(projectNum)}})
-        setDialog(false);
+        insertCourse({
+            variables: {
+                name: courseName,
+                numProjects: projectNum
+            }
+        }).then(({data}) => {
+            const newCourse = {
+                name: courseName,
+                courseId: data.insert_courses.returning[0].id,
+                studentProjects: Number(projectNum)
+            }
+            dispatch({type: 'add', course: newCourse});
+            setDialog(false);
+        })
     }
     const handleDelete = () => {
         setDeleteCourse(!deleteMode);
     }
+    useEffect(() => {
+       if(data) {
+        data.courses.forEach((course: any) => 
+            dispatch({type: 'add', course: {name: course.course_name, courseId: course.id, studentProjects: course.projects_aggregate.aggregate.count}})
+        );
+       }
+    }, [data]);
     return(
         <>
         <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start' className = {classes.container}>
@@ -91,7 +89,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
             <Context.Provider value = {{courses, dispatch}}>
                 {courses.map((course) => {
                     return(
-                        <CourseBox key = {course.name} name = {course.name} studentProjects = {course.studentProjects} deleteMode = {deleteMode} />
+                        <CourseBox key = {course.courseId}  courseId= {course.courseId} name = {course.name} studentProjects = {course.studentProjects} deleteMode = {deleteMode} />
                     )
                 })}
             </Context.Provider>

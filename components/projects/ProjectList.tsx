@@ -1,11 +1,17 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment } from '@material-ui/core';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './ProjectDialog';
+import { GET_PROJECTS, INSERT_PROJECT, DELETE_PROJECT } from '../.././gql/queries/projects';
+import { Student, Project } from '../../interfaces'; 
 
 
+type ProjectListProps = {
+    courseId: number
+}
 const useStyles = makeStyles(() => createStyles({
    container: {
        paddingBottom: '16px',
@@ -21,33 +27,70 @@ const useStyles = makeStyles(() => createStyles({
        borderBottom: '1px solid #e1e4e8 !important'
    }
   }));
-const dummyProjects = [
-    {
-        name: 'Diplomski',
-        studentName: 'Toni Jukica'
-    }
-]
-const ProjectList: FunctionComponent = ({}) => {
+
+const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const classes = useStyles();
     const [dialog, setDialog] = useState(false);
-    const [projects, setProjects] = useState(dummyProjects);
+    const [deleteMode, setDeleteMode] = useState(false);
+    const [deleteProject] = useMutation(DELETE_PROJECT);
+    const { data } = useQuery(GET_PROJECTS, { variables: { courseId}});
+    const [insertProject] = useMutation(INSERT_PROJECT);
+    const [projects, setProjects] = useState<Project []>([]);
     const [projectName, setProjectName] = useState('');
-    const [studentName, setStudentName] = useState('');
+    const [projectUrl, setProjectUrl] = useState('');
+    const [students, setStudents] = useState<Student []>([]);
 
+    useEffect(() => {
+        if(data)
+            setProjects(data.projects)
+    }, [data]);
     const handleDialogOpen = () => {
         setDialog(true)
     }
     const handleDialogClose = () => {
         setDialog(false)
     }
-    const handleProjectNameChange = (e: any) => {
+    const handleDeleteMode = () => {
+        setDeleteMode(!deleteMode);
+    }
+    const handleProjectNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectName(e.target.value);
     }
-    const handleStudentNameChange = (e: any) => {
-        setStudentName(e.target.value);
+    const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setProjectUrl(e.target.value);
+    }
+    const addStudent = (student: Student) => {
+        setStudents([...students, student]);
+    }
+    const handleDeleteProject = (projectId: number) => {
+        deleteProject({
+            variables: {
+                projectId
+            }
+        })
+        .then(() => {
+            setProjects(projects.filter(project => project.id !== projectId));
+        })
     }
     const addProject = () => {
-        setProjects([ ...projects, { name: projectName, studentName}]);
+        insertProject({
+            variables: {
+                courseId,
+                projectName,
+                githubUrl: projectUrl,
+                students
+        }})
+        .then(({data}) => {
+            const projectData = data.insert_projects.returning[0];
+            const newProject: Project = {
+                id: projectData.id,
+                name: projectData.name,
+                githubUrl: projectData.github_url,
+                students: projectData.students
+            };
+            setProjects([ ...projects, newProject]);
+            setStudents([]);
+        })
         setDialog(false);
     }
     return(
@@ -74,18 +117,25 @@ const ProjectList: FunctionComponent = ({}) => {
                 <Button variant = 'contained' color = 'primary' className = {classes.button}>
                     Bulk insert
                 </Button>
-                <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> } className = {classes.button}>
+                <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> } className = {classes.button} onClick = {handleDeleteMode}>
                     Delete
                 </Button>
             </Grid>
         </Grid>
-        <ProjectDialog open = {dialog} handleClose = {handleDialogClose} handleNameChange = {handleProjectNameChange} handleStudenNameChange = {handleStudentNameChange} addProject = {addProject} />
+        <ProjectDialog 
+            open = {dialog} 
+            handleClose = {handleDialogClose} 
+            handleNameChange = {handleProjectNameChange} 
+            handleUrlChange = {handleProjectUrlChange}
+            addStudent = {addStudent} 
+            addProject = {addProject}
+        />
         <Grid container direction = 'row' justify = 'space-evenly' className = { classes.header }>
             <Grid item xs = {3}>
                 Project name
             </Grid>
             <Grid item xs = {3}>
-                Student name
+                Students
             </Grid> 
             <Grid item xs = {3}>
                 Number of commits
@@ -94,9 +144,17 @@ const ProjectList: FunctionComponent = ({}) => {
                 Last commit
             </Grid> 
         </Grid>
-        {projects.map((project) => {
+        {projects.map((project: Project) => {
             return(
-                <ProjectBox name = {project.name} studentName = {project.studentName} commitsNum = {0} lastCommit = '1212' />
+                <div key = {project.id} onClick = {() => deleteMode ? handleDeleteProject(project.id) : null}>
+                    <ProjectBox 
+                        key = {project.id} 
+                        name = {project.name} 
+                        projectId = {project.id} 
+                        students = {project.students}
+                        deleteMode = {deleteMode}
+                    />
+                </div>
             )
         })}
         </>
