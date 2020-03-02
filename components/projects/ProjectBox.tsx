@@ -33,20 +33,18 @@ const useStyles = makeStyles(() => createStyles({
 const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, students, commitsNum, lastCommit }) => {
     const classes = useStyles();
     return(
-        <Grid container item className = {[classes.box, classes.good].join(' ')  } justify = 'center' alignItems = 'center' >
+        <Grid key = {projectId} container item className = {[classes.box, classes.good].join(' ')  } justify = 'center' alignItems = 'center' >
             <Link href = {`/projects/${projectId}`}>
                 <Grid item xs = {3} >
                     {name}
                 </Grid>
             </Link>
             <Grid  container  direction = 'column' item xs = {3}>
-                {students.map((student: any) => {
-                    return(
+                {students.map((student: any) => (
                         <Grid key = {student.id}>
                             {student.name}
                         </Grid>
-                    );
-                })}
+                    ))}
             </Grid> 
             <Grid item xs = {3}>
                 {commitsNum}

@@ -13,3 +13,16 @@ export type Commit = {
   commitMsg: string,
   date: string,
 }
+
+export type Student = {
+  id?: number
+  name: string,
+  github_username: string
+}
+
+export type Project = {
+  id: number,
+  name: string,
+  githubUrl: string,
+  students: Student[]
+}

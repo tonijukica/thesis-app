@@ -1,11 +1,12 @@
 import { FunctionComponent, useState, useEffect } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './ProjectDialog';
 import { gql } from 'apollo-boost';
+import { Student, Project } from '../../interfaces'; 
 
 const GET_PROJECTS = gql`
 query getProjects($courseId: Int!) {
@@ -13,9 +14,32 @@ query getProjects($courseId: Int!) {
       name
       id
       students {
+        id
         name
       }
       github_url
+    }
+  }  
+`;
+
+const INSERT_PROJECT = gql`
+mutation InsertProject($courseId: Int!, $projectName: String!, $githubUrl: String!, $students: [student_insert_input!]!) {
+    insert_projects(objects: {
+      course_id: $courseId, 
+      name: $projectName, 
+      github_url: $githubUrl, 
+      students: {data: $students}
+    }) 
+    {
+        returning {
+            id
+            name
+            github_url
+            students {
+              id
+              name
+            }
+        }
     }
   }  
 `;
@@ -42,9 +66,11 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const classes = useStyles();
     const [dialog, setDialog] = useState(false);
     const { data } = useQuery(GET_PROJECTS, { variables: { courseId}});
-    const [projects, setProjects] = useState([]);
+    const [insertProject] = useMutation(INSERT_PROJECT);
+    const [projects, setProjects] = useState<Project []>([]);
     const [projectName, setProjectName] = useState('');
-    const [students, setStudentName] = useState('');
+    const [projectUrl, setProjectUrl] = useState('');
+    const [students, setStudents] = useState<Student []>([]);
 
     useEffect(() => {
         if(data)
@@ -59,12 +85,32 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const handleProjectNameChange = (e: any) => {
         setProjectName(e.target.value);
     }
-    const handleStudentNameChange = (e: any) => {
-        setStudentName(e.target.value);
+    const handleProjectUrlChange = (e: any) => {
+        setProjectUrl(e.target.value);
+    }
+    const addStudent = (student: Student) => {
+        setStudents([...students, student]);
     }
     const addProject = () => {
-        console.log(projectName, students);
-        //setProjects([ ...projects, { name: projectName, studentName}]);
+        setStudents([]);
+        insertProject({
+            variables: {
+                courseId,
+                projectName,
+                githubUrl: projectUrl,
+                students
+        }})
+        .then(({data}) => {
+            const projectData = data.insert_projects.returning[0];
+            const newProject: Project = {
+                id: projectData.id,
+                name: projectData.name,
+                githubUrl: projectData.github_url,
+                students: projectData.students
+            };
+            setProjects([ ...projects, newProject]);
+            setStudents([]);
+        })
         setDialog(false);
     }
     return(
@@ -96,7 +142,14 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                 </Button>
             </Grid>
         </Grid>
-        <ProjectDialog open = {dialog} handleClose = {handleDialogClose} handleNameChange = {handleProjectNameChange} handleStudenNameChange = {handleStudentNameChange} addProject = {addProject} />
+        <ProjectDialog 
+            open = {dialog} 
+            handleClose = {handleDialogClose} 
+            handleNameChange = {handleProjectNameChange} 
+            handleUrlChange = {handleProjectUrlChange}
+            addStudent = {addStudent} 
+            addProject = {addProject} 
+        />
         <Grid container direction = 'row' justify = 'space-evenly' className = { classes.header }>
             <Grid item xs = {3}>
                 Project name
