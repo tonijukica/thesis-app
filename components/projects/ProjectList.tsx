@@ -85,7 +85,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
             const newProject: Project = {
                 id: projectData.id,
                 name: projectData.name,
-                githubUrl: projectData.github_url,
+                github_url: projectData.github_url,
                 students: projectData.students
             };
             setProjects([ ...projects, newProject]);
@@ -150,7 +150,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                     <ProjectBox 
                         key = {project.id} 
                         name = {project.name} 
-                        projectId = {project.id} 
+                        projectId = {project.id}
+                        githubUrl = {project.github_url}
                         students = {project.students}
                         deleteMode = {deleteMode}
                     />
