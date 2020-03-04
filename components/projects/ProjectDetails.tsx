@@ -4,11 +4,35 @@ import classNames from 'classnames';
 import ProjectCommits from './ProjectCommits';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_PROJECT } from '../../gql/queries/projects';
-import { Commit, Student } from '../../interfaces';
+import { Student } from '../../interfaces';
+import { gql } from 'apollo-boost';
 type ProjectProps = {
     projectId: number
 }
 
+const GET_COMMITS = gql`
+query getCommits($repoName: String!, $owner: String!) {
+    repository(name: $repoName, owner: $owner) {
+      object(expression: "master") {
+        ... on Commit {
+          history(first: 100) {
+            nodes {
+              id
+              message
+              commitUrl
+              committedDate
+              author {
+                user {
+                  login
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 const useStyles = makeStyles(() => createStyles({
     border: {
         border: '1px solid #e1e4e8 !important',
@@ -27,28 +51,35 @@ const useStyles = makeStyles(() => createStyles({
         textAlign: 'center'
     }
   }));
-
-const dummyCommits: Commit[] = [
-    {
-        user: 'Toni Jukica',
-        commitMsg: 'Init project',
-        date: '22.2.2020'
-    },
-    {
-        user: 'Toni Jukica',
-        commitMsg: 'Add component',
-        date: '22.2.2020'
-    }
-]
 const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
     const classes = useStyles();
     const { data } = useQuery(GET_PROJECT, {variables: { projectId }});
     const [project, setProject] = useState();
+    const [commits, setCommits] = useState();
+    const [owner, setOwner] = useState('');
+    const [repoName, setRepoName] = useState('');
+    const { data: githubData } = useQuery(GET_COMMITS, {
+        skip: !data,
+        variables: {
+            repoName,
+            owner
+        },
+        context: {
+            clientName: 'github'
+        }
+    });
     useEffect(() => {
         if(data)
             setProject(data.projects[0])
-    }, [data]);
-    if(project) { 
+        if(githubData)
+            setCommits(githubData.repository.object.history.nodes);
+        if(project){
+            const [user, repo] = getUserRepoName(project.github_url);
+            setOwner(user),
+            setRepoName(repo);
+        }
+    }, [data, githubData, project]);
+    if(project && commits) { 
         return(
             <>
                 <Grid container direction = 'row'  justify = 'center' className = {classNames(classes.details)} >
@@ -62,7 +93,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
                             })}
                         </div>
                         <div>
-                            GitHub repo:  <a href = {project.url}>G</a>
+                            GitHub repo:  <a href = {project.github_url}>G</a>
                         </div>
                     </Grid>
                     <Grid container item xs = {7} className = {classes.border} justify= 'center'>
@@ -82,7 +113,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
                             Date
                         </Grid>
                     </Grid>
-                    <ProjectCommits commits = {dummyCommits} />
+                    <ProjectCommits commits = {commits} />
                 </Grid>
             </>
         );
@@ -91,3 +122,8 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
         return(<p>LOADING</p>)
 }
 export default ProjectDetails;
+
+function getUserRepoName(url: string) {
+    const userRepo = url.slice(19);
+    return userRepo.split('/');
+}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 
-type StudentProps = {
+type ProjectBoxProps = {
     name: string,
     projectId: number,
     githubUrl: string,
@@ -57,7 +57,7 @@ const useStyles = makeStyles(() => createStyles({
    }
   }));
 
-const ProjectBox: FunctionComponent<StudentProps> = ({name, projectId, githubUrl, students, deleteMode}) => {
+const ProjectBox: FunctionComponent<ProjectBoxProps> = ({name, projectId, githubUrl, students, deleteMode}) => {
     const classes = useStyles();
     const [commitNum, setCommitNum] = useState('');
     const [lastCommitDate, setLastCommitDate] = useState('');
