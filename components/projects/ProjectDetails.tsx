@@ -1,5 +1,6 @@
 import { FunctionComponent, useState, useEffect } from 'react';
 import { Grid, makeStyles, createStyles } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
 import classNames from 'classnames';
 import ProjectCommits from './ProjectCommits';
 import { useQuery } from '@apollo/react-hooks';
@@ -53,11 +54,13 @@ const useStyles = makeStyles(() => createStyles({
   }));
 const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
     const classes = useStyles();
+    const rowsPerPage = 5;
     const { data } = useQuery(GET_PROJECT, {variables: { projectId }});
     const [project, setProject] = useState();
     const [commits, setCommits] = useState();
     const [owner, setOwner] = useState('');
     const [repoName, setRepoName] = useState('');
+    const [page, setPage] = useState(1);
     const { data: githubData } = useQuery(GET_COMMITS, {
         skip: !data,
         variables: {
@@ -78,7 +81,11 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
             setOwner(user),
             setRepoName(repo);
         }
-    }, [data, githubData, project]);
+    }, [data, githubData, project, page]);
+    const handlePageChange = (event: any, value: number) => {
+        if(event)
+            setPage(value);
+    }
     if(project && commits) { 
         return(
             <>
@@ -113,7 +120,8 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
                             Date
                         </Grid>
                     </Grid>
-                    <ProjectCommits commits = {commits} />
+                    <ProjectCommits commits = {commits.slice(page*rowsPerPage-rowsPerPage, page*rowsPerPage)} />
+                    <Pagination shape = 'rounded'  color = 'primary' page = {page} count = {Math.ceil(commits.length / rowsPerPage)} onChange = {handlePageChange} />
                 </Grid>
             </>
         );
