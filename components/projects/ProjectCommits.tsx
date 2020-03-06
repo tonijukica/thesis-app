@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react';
 import { Grid } from '@material-ui/core';
 import { Commit } from '../../interfaces';
+import { formatDate } from './helpers';
 type Props = {
   commits: Commit[]
 }
@@ -18,7 +19,7 @@ const ProjectCommits: FunctionComponent<Props> = ({ commits }) => {
                         <a href = {commit.commitUrl}>{commit.message}</a>
                     </Grid>
                     <Grid item xs = {4}>
-                        {commit.committedDate}
+                        {formatDate(commit.committedDate)}
                     </Grid>
                 </Grid>
             )

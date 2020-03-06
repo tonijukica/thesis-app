@@ -4,36 +4,14 @@ import { Pagination } from '@material-ui/lab';
 import classNames from 'classnames';
 import ProjectCommits from './ProjectCommits';
 import { useQuery } from '@apollo/react-hooks';
-import { GET_PROJECT } from '../../gql/queries/projects';
+import { GET_PROJECT, GET_COMMITS } from '../../gql/queries/projects';
 import { Student } from '../../interfaces';
-import { gql } from 'apollo-boost';
+import { getUserRepoName } from './helpers';
+
 type ProjectProps = {
     projectId: number
 }
 
-const GET_COMMITS = gql`
-query getCommits($repoName: String!, $owner: String!) {
-    repository(name: $repoName, owner: $owner) {
-      object(expression: "master") {
-        ... on Commit {
-          history(first: 100) {
-            nodes {
-              id
-              message
-              commitUrl
-              committedDate
-              author {
-                user {
-                  login
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 const useStyles = makeStyles(() => createStyles({
     border: {
         border: '1px solid #e1e4e8 !important',
@@ -90,7 +68,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
         return(
             <>
                 <Grid container direction = 'row'  justify = 'center' className = {classNames(classes.details)} >
-                    <Grid container direction = 'column' item xs = {3} justify = 'center' className = {classNames(classes.border, classes.projectInfo)} >
+                    <Grid container direction = 'column' item xs = {3} justify = 'center' className = {classNames(classes.border, classes.projectInfo)}>
                         <div>
                         Project name: {project.name}
                         </div>
@@ -107,7 +85,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
                         Deploy preview
                     </Grid>
                 </Grid>
-                <Grid container direction = 'row' justify = 'center' className = {classes.commitList} >
+                <Grid container direction = 'row' justify = 'center' className = {classes.commitList}>
                     <h2>Commits</h2>
                     <Grid item container direction = 'row' justify = 'center' className = {classes.commitList}>
                         <Grid item xs = {4}>
@@ -130,8 +108,3 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({projectId}) => {
         return(<p>LOADING</p>)
 }
 export default ProjectDetails;
-
-function getUserRepoName(url: string) {
-    const userRepo = url.slice(19);
-    return userRepo.split('/');
-}
