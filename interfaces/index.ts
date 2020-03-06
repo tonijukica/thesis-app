@@ -3,9 +3,15 @@ export type User = {
   name: string
 }
 export type Commit = {
-  user: string,
-  commitMsg: string,
-  date: string,
+  id: string,
+  message: string,
+  commitUrl: string,
+  committedDate: string,
+  author: {
+    user: {
+      login: string
+    }
+  }
 }
 
 export type Student = {
@@ -17,6 +23,6 @@ export type Student = {
 export type Project = {
   id: number,
   name: string,
-  githubUrl: string,
+  github_url: string,
   students: Student[]
 }

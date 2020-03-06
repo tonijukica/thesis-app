@@ -61,9 +61,53 @@ mutation deleteProject($projectId: Int!) {
   
 `;
 
+const GET_REPO_INFO = gql`
+query getRepoInfo($ownerName: String!, $repoName: String!)  {
+    repository(owner: $ownerName, name: $repoName) {
+      object(expression: "master") {
+        ... on Commit {
+          history(first: 1) {
+            totalCount
+            nodes {
+              message
+              authoredDate
+            }
+          }
+        }
+      }
+    }
+  }  
+`;
+
+const GET_COMMITS = gql`
+query getCommits($repoName: String!, $owner: String!) {
+    repository(name: $repoName, owner: $owner) {
+      object(expression: "master") {
+        ... on Commit {
+          history(first: 100) {
+            nodes {
+              id
+              message
+              commitUrl
+              committedDate
+              author {
+                user {
+                  login
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export {
     GET_PROJECTS,
     GET_PROJECT,
     INSERT_PROJECT,
-    DELETE_PROJECT
+    DELETE_PROJECT,
+    GET_REPO_INFO,
+    GET_COMMITS
 }
