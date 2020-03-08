@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
-import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment } from '@material-ui/core';
+import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
@@ -33,7 +33,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const [dialog, setDialog] = useState(false);
     const [deleteMode, setDeleteMode] = useState(false);
     const [deleteProject] = useMutation(DELETE_PROJECT);
-    const { data } = useQuery(GET_PROJECTS, { variables: { courseId}});
+    const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId}});
     const [insertProject] = useMutation(INSERT_PROJECT);
     const [projects, setProjects] = useState<Project []>([]);
     const [projectName, setProjectName] = useState('');
@@ -144,7 +144,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                 Last commit
             </Grid> 
         </Grid>
-        {projects.map((project: Project) => {
+        { loading &&  <LinearProgress/>}
+        { !loading && projects.map((project: Project) => {
             return(
                 <div key = {project.id} onClick = {() => deleteMode ? handleDeleteProject(project.id) : null}>
                     <ProjectBox 

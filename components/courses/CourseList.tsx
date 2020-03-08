@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useReducer, useEffect, ChangeEvent } from 'react';
-import { Grid, Button, makeStyles, createStyles } from '@material-ui/core';
+import { Grid, Button, makeStyles, createStyles, CircularProgress } from '@material-ui/core';
 import { Context, coursesReducer } from './helper';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
@@ -18,12 +18,15 @@ const useStyles = makeStyles(() => createStyles({
    },
    button: {
        marginRight: '8px'
+   },
+   loading: {
+       padding: '32px'
    }
   }));
 
 const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const classes = useStyles();
-    const {data} = useQuery(GET_COURSES);
+    const {data, loading} = useQuery(GET_COURSES);
     const [insertCourse] = useMutation(INSERT_COURSE);
     const [dialog, setDialog] = useState(false);
     const [courses, dispatch] = useReducer(coursesReducer, []);
@@ -87,6 +90,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
         </Grid>
         <Grid container direction = 'row' justify = 'center'>
             <Context.Provider value = {{courses, dispatch}}>
+                {loading && <CircularProgress size={120} className = {classes.loading} />}
                 {courses.map((course) => {
                     return(
                         <CourseBox key = {course.courseId}  courseId= {course.courseId} name = {course.name} studentProjects = {course.studentProjects} deleteMode = {deleteMode} />

@@ -1,5 +1,5 @@
 import { FunctionComponent, useContext } from 'react';
-import { Grid, makeStyles, createStyles } from '@material-ui/core';
+import { Grid, makeStyles, createStyles, Card, CardActionArea, CardContent } from '@material-ui/core';
 import { Context } from './CourseList';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useMutation } from '@apollo/react-hooks';
@@ -15,11 +15,17 @@ type CourseBoxProps = {
 }
 
 const useStyles = makeStyles(() => createStyles({
-   box: {
-       border: '1px solid #d1d5da',
-       borderRadius: '3px',
-       margin: '16px',
-       position: 'relative'
+   card: {
+     width: '75%',
+     textAlign: 'center',
+     marginBottom: '8px',
+     marginTop: '8px'
+   },
+   cardActionArea: {
+      paddingTop: '16px',
+      paddingBottom: '16px',
+      fontSize: '1em',
+      
    },
    deleteIcon: {
      position: 'absolute',
@@ -44,15 +50,21 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({name, courseId, studentPr
         dispatch({type: 'remove', course: {name, studentProjects}});
     }
     return(
-        <Grid container xs = {3} item className = {classes.box} justify = 'center'>
-              {deleteMode ? <DeleteIcon className = {classes.deleteIcon} onClick = {handleDelete} /> : null }
-              <Link href = {`/courses/${courseId}`}>
-                <div>
-                  {name}
-                  <br/>
-                  Number of projects: {studentProjects}
-                </div>
-              </Link>
+        <Grid container xs = {4} item justify = 'center'>
+              <Card className = {classes.card}>
+                  <CardActionArea className = {classes.cardActionArea}>
+                    {deleteMode ? <DeleteIcon className = {classes.deleteIcon} onClick = {handleDelete} /> : null }
+                    <CardContent>
+                      <Link href = {`/courses/${courseId}`}>
+                            <div>
+                              {name}
+                              <br/>
+                              Projects: {studentProjects}
+                            </div>
+                      </Link>
+                    </CardContent>
+                  </CardActionArea>
+              </Card>
         </Grid>
     );
 }

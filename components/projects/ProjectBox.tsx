@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react';
-import { Grid, makeStyles, createStyles } from '@material-ui/core';
+import { Grid, makeStyles, createStyles, Card, CardActionArea, CircularProgress } from '@material-ui/core';
 import { Student } from '../../interfaces';
 import Link from 'next/link';
 import { GET_REPO_INFO } from '../../gql/queries/projects';
@@ -39,7 +39,19 @@ const useStyles = makeStyles(() => createStyles({
         transform: 'scale(1.05)',
         cursor: 'pointer'
        }
-   }
+   },
+   card: {
+       width: '100%',
+       textAlign: 'center',
+       marginBottom: '8px',
+       marginTop: '8px'
+   },
+   cardActionArea: {
+      height: '64px',
+      paddingTop: '16px',
+      paddingBottom: '16px',
+      fontSize: '0.95em'
+    }
   }));
 
 const ProjectBox: FunctionComponent<ProjectBoxProps> = ({name, projectId, githubUrl, students, deleteMode}) => {
@@ -65,29 +77,36 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({name, projectId, github
     }, [data])
     if(data)
         return(
-            <Grid key = {projectId} container item className = {deleteMode ? [classes.box, classes.deleteHover].join(' ') :[classes.box, projectStanding(lastCommitDate, classes)].join(' ')} 
-            justify = 'center' alignItems = 'center'>
-                <Link href = {`/projects/${projectId}`}>
-                    <Grid item xs = {3} >
-                        {name}
-                    </Grid>
-                </Link>
-                <Grid  container  direction = 'column' item xs = {3}>
-                    {students.map((student: Student) => (
-                            <Grid key = {student.id}>
-                                {student.name}
-                            </Grid>
-                        ))}
-                </Grid> 
-                <Grid item xs = {3}>
-                    {commitNum}
-                </Grid> 
-                <Grid item xs = {3}>
-                    {formatDate(lastCommitDate)}
-                </Grid> 
-            </Grid>
+          <Card className = {deleteMode ? [classes.card, classes.deleteHover].join(' ') :[classes.card, projectStanding(lastCommitDate, classes)].join(' ')} key = {projectId}>
+              <Link href = {`/projects/${projectId}`}>
+                  <CardActionArea className = {classes.cardActionArea}>
+                          <Grid container direction = 'row' alignContent = 'center' alignItems='center' justify = 'space-evenly'>
+                                  <Grid item xs = {3}>
+                                      {name}
+                                  </Grid>
+                              <Grid  container  direction = 'column' item xs = {3}>
+                                  {students.map((student: Student) => (
+                                      <Grid key = {student.id}>
+                                              {student.name}
+                                          </Grid>
+                                      ))}
+                              </Grid> 
+                              <Grid item xs = {3}>
+                                  {commitNum}
+                              </Grid> 
+                              <Grid item xs = {3}>
+                                  {formatDate(lastCommitDate)}
+                              </Grid>
+                          </Grid>
+                  </CardActionArea>
+              </Link>
+          </Card>
         );
     else
-        return(<p>Loading</p>)
+        return(
+          <Grid className = {classes.box} container direction = 'row' alignContent = 'center' alignItems='center' justify = 'space-evenly'>
+            <CircularProgress />
+          </Grid>
+        )
 }
 export default ProjectBox;
