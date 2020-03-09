@@ -41,11 +41,21 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId}});
     const [insertProject] = useMutation(INSERT_PROJECT);
     const [students, setStudents] = useState<Student []>([]);
-
+    const fuseOptions = {
+        shouldSort: true,
+        minMatchCharLength: 3,
+        threshold: 0.3,
+        keys: ['name', 'students.name']
+    }
+    const fuse = new Fuse(projects, fuseOptions);
     useEffect(() => {
         if(data)
             setProjects(data.projects)
-    }, [data]);
+        if(searchParam.length > 0) {
+            const searchResults = fuse.search(searchParam);
+            setProjects(searchResults);
+        }
+    }, [data, searchParam]);
     const handleDialogOpen = () => {
         setDialog(true)
     }
@@ -98,15 +108,6 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
         })
         setDialog(false);
     }
-    const fuseOptions = {
-        shouldSort: true,
-        minMatchCharLength: 3,
-        threshold: 0.5,
-        keys: ['name', 'students.name']
-    }
-    const fuse = new Fuse(projects, fuseOptions);
-    const searchResults = fuse.search(searchParam);
-    console.log(searchResults);
     return(
         <>
         <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start' className = {classes.container}>
@@ -160,21 +161,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
             </Grid> 
         </Grid>
         { loading &&  <LinearProgress/>}
-        { !loading && searchResults.length > 0 && searchResults.map((project: Project) => {
-             return(
-                <div key = {project.id} onClick = {() => deleteMode ? handleDeleteProject(project.id) : null}>
-                    <ProjectBox 
-                        key = {project.id} 
-                        name = {project.name} 
-                        projectId = {project.id}
-                        githubUrl = {project.github_url}
-                        students = {project.students}
-                        deleteMode = {deleteMode}
-                    />
-                </div>
-            )
-        })}
-        { !loading && searchParam.length < 0 && projects.map((project: Project) => {
+        { !loading && projects.map((project: Project) => {
             return(
                 <div key = {project.id} onClick = {() => deleteMode ? handleDeleteProject(project.id) : null}>
                     <ProjectBox 
