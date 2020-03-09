@@ -7,6 +7,7 @@ import ProjectBox from './ProjectBox';
 import ProjectDialog from './ProjectDialog';
 import { GET_PROJECTS, INSERT_PROJECT, DELETE_PROJECT } from '../.././gql/queries/projects';
 import { Student, Project } from '../../interfaces'; 
+import Fuse from 'fuse.js';
 
 
 type ProjectListProps = {
@@ -32,12 +33,13 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const classes = useStyles();
     const [dialog, setDialog] = useState(false);
     const [deleteMode, setDeleteMode] = useState(false);
-    const [deleteProject] = useMutation(DELETE_PROJECT);
-    const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId}});
-    const [insertProject] = useMutation(INSERT_PROJECT);
+    const [searchParam, setSearchParam] = useState('');
     const [projects, setProjects] = useState<Project []>([]);
     const [projectName, setProjectName] = useState('');
     const [projectUrl, setProjectUrl] = useState('');
+    const [deleteProject] = useMutation(DELETE_PROJECT);
+    const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId}});
+    const [insertProject] = useMutation(INSERT_PROJECT);
     const [students, setStudents] = useState<Student []>([]);
 
     useEffect(() => {
@@ -58,6 +60,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     }
     const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectUrl(e.target.value);
+    }
+    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchParam(e.target.value);
     }
     const addStudent = (student: Student) => {
         setStudents([...students, student]);
@@ -93,6 +98,15 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
         })
         setDialog(false);
     }
+    const fuseOptions = {
+        shouldSort: true,
+        minMatchCharLength: 3,
+        threshold: 0.5,
+        keys: ['name', 'students.name']
+    }
+    const fuse = new Fuse(projects, fuseOptions);
+    const searchResults = fuse.search(searchParam);
+    console.log(searchResults);
     return(
         <>
         <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start' className = {classes.container}>
@@ -101,6 +115,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                     label = 'Search' 
                     variant = 'outlined' 
                     size = 'small'
+                    onChange = {handleSearch}
                     InputProps = {{ 
                         startAdornment: (
                             <InputAdornment position = 'start'>
@@ -145,7 +160,21 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
             </Grid> 
         </Grid>
         { loading &&  <LinearProgress/>}
-        { !loading && projects.map((project: Project) => {
+        { !loading && searchResults.length > 0 && searchResults.map((project: Project) => {
+             return(
+                <div key = {project.id} onClick = {() => deleteMode ? handleDeleteProject(project.id) : null}>
+                    <ProjectBox 
+                        key = {project.id} 
+                        name = {project.name} 
+                        projectId = {project.id}
+                        githubUrl = {project.github_url}
+                        students = {project.students}
+                        deleteMode = {deleteMode}
+                    />
+                </div>
+            )
+        })}
+        { !loading && searchParam.length < 0 && projects.map((project: Project) => {
             return(
                 <div key = {project.id} onClick = {() => deleteMode ? handleDeleteProject(project.id) : null}>
                     <ProjectBox 
