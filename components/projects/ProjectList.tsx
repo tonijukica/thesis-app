@@ -7,6 +7,7 @@ import ProjectBox from './ProjectBox';
 import ProjectDialog from './ProjectDialog';
 import { GET_PROJECTS, INSERT_PROJECT, DELETE_PROJECT } from '../.././gql/queries/projects';
 import { Student, Project } from '../../interfaces'; 
+import Fuse from 'fuse.js';
 
 
 type ProjectListProps = {
@@ -32,18 +33,29 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const classes = useStyles();
     const [dialog, setDialog] = useState(false);
     const [deleteMode, setDeleteMode] = useState(false);
-    const [deleteProject] = useMutation(DELETE_PROJECT);
-    const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId}});
-    const [insertProject] = useMutation(INSERT_PROJECT);
+    const [searchParam, setSearchParam] = useState('');
     const [projects, setProjects] = useState<Project []>([]);
     const [projectName, setProjectName] = useState('');
     const [projectUrl, setProjectUrl] = useState('');
+    const [deleteProject] = useMutation(DELETE_PROJECT);
+    const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId}});
+    const [insertProject] = useMutation(INSERT_PROJECT);
     const [students, setStudents] = useState<Student []>([]);
-
+    const fuseOptions = {
+        shouldSort: true,
+        minMatchCharLength: 3,
+        threshold: 0.3,
+        keys: ['name', 'students.name']
+    }
+    const fuse = new Fuse(projects, fuseOptions);
     useEffect(() => {
         if(data)
             setProjects(data.projects)
-    }, [data]);
+        if(searchParam.length > 0) {
+            const searchResults = fuse.search(searchParam);
+            setProjects(searchResults);
+        }
+    }, [data, searchParam]);
     const handleDialogOpen = () => {
         setDialog(true)
     }
@@ -58,6 +70,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     }
     const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProjectUrl(e.target.value);
+    }
+    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchParam(e.target.value);
     }
     const addStudent = (student: Student) => {
         setStudents([...students, student]);
@@ -101,6 +116,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
                     label = 'Search' 
                     variant = 'outlined' 
                     size = 'small'
+                    onChange = {handleSearch}
                     InputProps = {{ 
                         startAdornment: (
                             <InputAdornment position = 'start'>
