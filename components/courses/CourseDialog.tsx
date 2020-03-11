@@ -1,6 +1,7 @@
 import { FunctionComponent, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 import { Button, TextField } from '@material-ui/core'
+import { parseInput, prepareInputData } from './helper';
 
 type CourseDialogProps = {
     open: boolean,
@@ -10,7 +11,7 @@ type CourseDialogProps = {
 }
 
 const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose, handleNameChange, addCourse}) => {
-    const [fileInput, setFileInput] = useState('');
+    const [fileInput, setFileInput] = useState<any>([]);
     let fileReader: any;
     const handleFileInput = (file: any) => {
           fileReader = new FileReader;
@@ -19,7 +20,9 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose,
     };
     const handleFileRead = () => {
         const content: string = fileReader.result;
-        setFileInput(content);
+        const parsedInput = parseInput(content);
+        const prepedData = prepareInputData(parsedInput);
+        setFileInput(prepedData);
     };
     return(
         <>
@@ -36,7 +39,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose,
                 fullWidth
             />
             <input type = 'file' onChange = {(e) => handleFileInput(e.target.files)} />
-            {fileInput}
+            {console.log(fileInput)}
         </DialogContent>
         <DialogActions>
             <Button onClick = {handleClose} color = 'secondary'>
