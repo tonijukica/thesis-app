@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 import { Button, TextField } from '@material-ui/core'
 
@@ -6,11 +6,21 @@ type CourseDialogProps = {
     open: boolean,
     handleClose: any,
     handleNameChange: any,
-    handleNumChange: any,
     addCourse: any
 }
 
-const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose, handleNameChange, handleNumChange, addCourse}) => {
+const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose, handleNameChange, addCourse}) => {
+    const [fileInput, setFileInput] = useState('');
+    let fileReader: any;
+    const handleFileInput = (file: any) => {
+          fileReader = new FileReader;
+          fileReader.onloadend = handleFileRead;
+          fileReader.readAsText(file[0]);
+    };
+    const handleFileRead = () => {
+        const content: string = fileReader.result;
+        setFileInput(content);
+    };
     return(
         <>
         <Dialog open = {open} onClose = {handleClose}>
@@ -25,12 +35,8 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose,
                 onChange = {handleNameChange}
                 fullWidth
             />
-            <TextField
-                margin = 'dense'
-                label = 'Number of projects'
-                onChange = {handleNumChange}
-                fullWidth
-            />
+            <input type = 'file' onChange = {(e) => handleFileInput(e.target.files)} />
+            {fileInput}
         </DialogContent>
         <DialogActions>
             <Button onClick = {handleClose} color = 'secondary'>

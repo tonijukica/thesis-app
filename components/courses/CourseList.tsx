@@ -31,7 +31,6 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const [dialog, setDialog] = useState(false);
     const [courses, dispatch] = useReducer(coursesReducer, []);
     const [courseName, setCourseName] = useState('');
-    const [projectNum, setProjectNum] = useState('');
     const [deleteMode, setDeleteCourse] = useState(false); 
     
     const handleClickOpen = () => {
@@ -43,20 +42,16 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
     const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setCourseName(e.target.value);
     }
-    const handleNumChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setProjectNum(e.target.value);
-    }
     const addCourse = () => {
         insertCourse({
             variables: {
                 name: courseName,
-                numProjects: projectNum
             }
         }).then(({data}) => {
             const newCourse = {
                 name: courseName,
                 courseId: data.insert_courses.returning[0].id,
-                studentProjects: Number(projectNum)
+                studentProjects: 0
             }
             dispatch({type: 'add', course: newCourse});
             setDialog(false);
@@ -85,7 +80,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
                 <Button variant = 'contained' color = 'secondary' startIcon = { <DeleteIcon/> } className = {classes.button} onClick = {handleDelete}>
                     Delete
                 </Button>
-                <CourseDialog open = {dialog} handleClose = {handleClose} handleNameChange = {handleNameChange} handleNumChange = {handleNumChange} addCourse = {addCourse} />
+                <CourseDialog open = {dialog} handleClose = {handleClose} handleNameChange = {handleNameChange} addCourse = {addCourse} />
             </Grid>
         </Grid>
         <Grid container direction = 'row' justify = 'center'>
