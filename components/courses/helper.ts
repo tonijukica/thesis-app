@@ -38,7 +38,7 @@ function parseInput(input: string) {
     return result.data;
 }
 function prepareInputData(data: any) {
-    const inputData = data.map((rawProject: any) => {
+    return data.map((rawProject: any) => {
         const rawStudents = rawProject.Studenti.split(', ');
         const rawStudentUsernames = rawProject.Usernames.split(', ');
         const students: Student[] = []
@@ -52,11 +52,11 @@ function prepareInputData(data: any) {
         const project = {
             name: rawProject.Name,
             github_url: rawProject.GitHubURL,
-            students
+            students: {
+                data: students
+            }
         };
         return project;
     });
-    return inputData;
-
 }
 export  {coursesReducer, Context, parseInput, prepareInputData};
