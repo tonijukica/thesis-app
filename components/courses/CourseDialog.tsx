@@ -45,7 +45,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose,
                 onChange = {(e) => handleFileInput(e.target.files)}
                 style = {{ display: 'none'}} />
             <label htmlFor='fileInput'>
-                <Button variant='outlined' component='span' style={{marginTop: '16px'}}>
+                <Button variant='outlined' color='primary' component='span' style={{marginTop: '16px'}}>
                     Upload
                 </Button>
             </label>
