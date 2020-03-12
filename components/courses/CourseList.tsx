@@ -61,6 +61,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
                 }
                 dispatch({type: 'add', course: newCourse});
                 setDialog(false);
+                setBulkInsertData([]);
             })
         }
         else{

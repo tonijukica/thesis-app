@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core'
 import { Button, TextField } from '@material-ui/core'
 import { parseInput, prepareInputData } from './helper';
@@ -38,7 +38,17 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({open , handleClose,
                 onChange = {handleNameChange}
                 fullWidth
             />
-            <input type = 'file' onChange = {(e) => handleFileInput(e.target.files)} />
+            <input 
+                id='fileInput' 
+                type = 'file'
+                accept='.csv'
+                onChange = {(e) => handleFileInput(e.target.files)}
+                style = {{ display: 'none'}} />
+            <label htmlFor='fileInput'>
+                <Button variant='outlined' component='span' style={{marginTop: '16px'}}>
+                    Upload
+                </Button>
+            </label>
         </DialogContent>
         <DialogActions>
             <Button onClick = {handleClose} color = 'secondary'>
