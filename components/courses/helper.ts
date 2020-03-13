@@ -1,5 +1,4 @@
 import { createContext } from 'react';
-
 interface Course {
     name: string,
     courseId: number,

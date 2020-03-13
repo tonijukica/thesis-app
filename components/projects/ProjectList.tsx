@@ -38,7 +38,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({courseId}) => {
     const [projectName, setProjectName] = useState('');
     const [projectUrl, setProjectUrl] = useState('');
     const [deleteProject] = useMutation(DELETE_PROJECT);
-    const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId}});
+    const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId }});
     const [insertProject] = useMutation(INSERT_PROJECT);
     const [students, setStudents] = useState<Student []>([]);
     const fuseOptions = {

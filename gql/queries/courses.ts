@@ -34,8 +34,20 @@ mutation deleteCourse($name: String!) {
     }
   }
 `;
+
+const DELETE_COURSE_BY_ID = gql`
+mutation deleteCourse($courseId: Int!) {
+    delete_courses(where: {id: {_eq: $courseId}}) {
+      returning {
+        course_name
+      }
+    }
+  }
+`;
+
 export {
     GET_COURSES, 
     INSERT_COURSE,
     DELETE_COURSE,
+    DELETE_COURSE_BY_ID
 }
