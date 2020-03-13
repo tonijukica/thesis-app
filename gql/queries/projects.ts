@@ -14,6 +14,14 @@ query getProjects($courseId: Int!) {
   }  
 `;
 
+const GET_PROJECT_IDS = gql `
+query getProjectsIds($courseId: Int!) {
+  projects(where: {course_id: {_eq: $courseId}}) {
+    id
+  }
+}
+`;
+
 const GET_PROJECT = gql`
 query getProject($projectId: Int!) {
     projects(where: {id: {_eq: $projectId}}) {
@@ -58,7 +66,6 @@ mutation deleteProject($projectId: Int!) {
       affected_rows
     }
   }
-  
 `;
 
 const GET_REPO_INFO = gql`
@@ -105,6 +112,7 @@ query getCommits($repoName: String!, $owner: String!) {
 
 export {
     GET_PROJECTS,
+    GET_PROJECT_IDS,
     GET_PROJECT,
     INSERT_PROJECT,
     DELETE_PROJECT,
