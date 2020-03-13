@@ -53,7 +53,6 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({name, courseId, studentPr
                 projectId: project.id
               }
           });
-          console.log('deleted project', project.id)
         } 
     }
     deleteCourse({
