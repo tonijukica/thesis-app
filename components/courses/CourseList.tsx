@@ -45,40 +45,44 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
         setCourseName(e.target.value);
     }
     const addCourse = () => {
-        if(bulkInsertData){
-            insertCourseBulkProjects({
-                variables: {
-                    courseName,
-                    year: '2020',
-                    projects: bulkInsertData
+        return new Promise(function(resolve) {
+            if(bulkInsertData){
+                insertCourseBulkProjects({
+                    variables: {
+                        courseName,
+                        year: '2020',
+                        projects: bulkInsertData
+                        }
+                })
+                .then((data) => {
+                    const newCourse = {
+                        name: courseName,
+                        courseId: data.data.insert_courses.returning[0].id,
+                        studentProjects: bulkInsertData.length
                     }
-            })
-            .then((data) => {
-                const newCourse = {
-                    name: courseName,
-                    courseId: data.data.insert_courses.returning[0].id,
-                    studentProjects: bulkInsertData.length
-                }
-                dispatch({type: 'add', course: newCourse});
-                setDialog(false);
-                setBulkInsertData([]);
-            })
-        }
-        else{
-            insertCourse({
-                variables: {
-                    name: courseName,
-                }
-            }).then(({data}) => {
-                const newCourse = {
-                    name: courseName,
-                    courseId: data.insert_courses.returning[0].id,
-                    studentProjects: 0
-                }
-                dispatch({type: 'add', course: newCourse});
-                setDialog(false);
-            });
-        }
+                    dispatch({type: 'add', course: newCourse});
+                    setDialog(false);
+                    setBulkInsertData([]);
+                    resolve();
+                })
+            }
+            else{
+                insertCourse({
+                    variables: {
+                        name: courseName,
+                    }
+                }).then(({data}) => {
+                    const newCourse = {
+                        name: courseName,
+                        courseId: data.insert_courses.returning[0].id,
+                        studentProjects: 0
+                    }
+                    dispatch({type: 'add', course: newCourse});
+                    setDialog(false);
+                    resolve();
+                });
+            }
+        });
     }
     const handleDelete = () => {
         setDeleteCourse(!deleteMode);
