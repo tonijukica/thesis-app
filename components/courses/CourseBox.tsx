@@ -45,16 +45,17 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({name, courseId, studentPr
   const { data } = useQuery(GET_PROJECT_IDS, { variables: { courseId }});
   const [deleteProject] = useMutation(DELETE_PROJECT);
   const [deleteCourse] = useMutation(DELETE_COURSE_BY_ID);
-  function deleteCourseFull(courseId: number) {
+  async function deleteCourseFull(courseId: number) {
     if(data.projects.length>0) {
-        data.projects.forEach(async (project: any) => {
-            await deleteProject({
-                variables: {
-                  projectId: project.id
-                }
-            });
-          }) 
-        }
+        for(const project of data.projects) {
+          await deleteProject({
+              variables: {
+                projectId: project.id
+              }
+          });
+          console.log('deleted project', project.id)
+        } 
+    }
     deleteCourse({
         variables: {
           courseId
