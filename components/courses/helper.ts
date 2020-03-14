@@ -1,6 +1,4 @@
 import { createContext } from 'react';
-import Papa from 'papaparse';
-import { Student } from '../../interfaces';
 
 interface Course {
     name: string,
@@ -33,30 +31,7 @@ function coursesReducer(courses: Course[], action: ActionType) {
     }
 }
 
-function parseInput(input: string) {
-    const result = Papa.parse(input, {header: true, skipEmptyLines: true })
-    return result.data;
-}
-function prepareInputData(data: any) {
-    return data.map((rawProject: any) => {
-        const rawStudents = rawProject.Studenti.split(', ');
-        const rawStudentUsernames = rawProject.Usernames.split(', ');
-        const students: Student[] = []
-        for(let i=0; i < rawStudents.length; i++) {
-            const student: Student = {
-                name: rawStudents[i],
-                github_username: rawStudentUsernames[i]
-            }
-            students.push(student);
-        }
-        const project = {
-            name: rawProject.Name,
-            github_url: rawProject.GitHubURL,
-            students: {
-                data: students
-            }
-        };
-        return project;
-    });
-}
-export  {coursesReducer, Context, parseInput, prepareInputData};
+export  {
+    coursesReducer, 
+    Context
+};
