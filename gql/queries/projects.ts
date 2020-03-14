@@ -57,6 +57,21 @@ mutation InsertProject($courseId: Int!, $projectName: String!, $githubUrl: Strin
     }
   }  
 `;
+const INSERT_BULK_PROJECTS = gql`
+mutation insertBulkProjects($projects: [projects_insert_input!]!) {
+  insert_projects(objects: $projects) {
+    returning {
+      id
+      name
+      github_url
+      students {
+        id
+        name
+      }
+    }
+  }
+}
+`;
 const DELETE_PROJECT = gql`
 mutation deleteProject($projectId: Int!) {
     delete_student(where: {project_id: {_eq: $projectId}}) {
@@ -115,6 +130,7 @@ export {
     GET_PROJECT_IDS,
     GET_PROJECT,
     INSERT_PROJECT,
+    INSERT_BULK_PROJECTS,
     DELETE_PROJECT,
     GET_REPO_INFO,
     GET_COMMITS
