@@ -7,8 +7,8 @@ function parseInput(input: string) {
 }
 function prepareInputData(data: any) {
     return data.map((rawProject: any) => {
-        const rawStudents = rawProject.Studenti.split(', ');
-        const rawStudentUsernames = rawProject.Usernames.split(', ');
+        const rawStudents = rawProject[process.env.PROJECT_STUDENTS!].split(', ');
+        const rawStudentUsernames = rawProject[process.env.STUDENTS_USERNAMES!].split(', ');
         const students: Student[] = []
         for(let i=0; i < rawStudents.length; i++) {
             const student: Student = {
@@ -18,8 +18,8 @@ function prepareInputData(data: any) {
             students.push(student);
         }
         const project = {
-            name: rawProject.Name,
-            github_url: rawProject.GitHubURL,
+            name: rawProject[process.env.PROJECT_NAME!],
+            github_url: rawProject[process.env.PROJECT_URL!],
             students: {
                 data: students
             }
