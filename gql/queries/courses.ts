@@ -35,6 +35,16 @@ mutation deleteCourse($name: String!) {
   }
 `;
 
+const INESRT_COURSE_BULK_PROJECTS = gql`
+mutation insertCourseWithBulkProjects($courseName: String!, $year: String!, $projects: [projects_insert_input!]!) {
+  insert_courses(objects: {course_name: $courseName, year: $year, projects: {data: $projects}}) {
+    returning {
+      id
+    }
+  }
+}
+`;
+
 const DELETE_COURSE_BY_ID = gql`
 mutation deleteCourse($courseId: Int!) {
     delete_courses(where: {id: {_eq: $courseId}}) {
@@ -48,6 +58,7 @@ mutation deleteCourse($courseId: Int!) {
 export {
     GET_COURSES, 
     INSERT_COURSE,
+    INESRT_COURSE_BULK_PROJECTS,
     DELETE_COURSE,
     DELETE_COURSE_BY_ID
 }

@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+
 interface Course {
     name: string,
     courseId: number,
@@ -30,4 +31,7 @@ function coursesReducer(courses: Course[], action: ActionType) {
     }
 }
 
-export  {coursesReducer, Context};
+export  {
+    coursesReducer, 
+    Context
+};
