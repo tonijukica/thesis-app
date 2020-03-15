@@ -9,7 +9,7 @@ function prepareInputData(data: any) {
     return data.map((rawProject: any) => {
         const rawStudents = rawProject[process.env.PROJECT_STUDENTS!].split(', ');
         const rawStudentUsernames = rawProject[process.env.STUDENTS_USERNAMES!].split(', ');
-        const students: Student[] = []
+        const students: Student[] = [];
         for(let i=0; i < rawStudents.length; i++) {
             const student: Student = {
                 name: rawStudents[i],
