@@ -1,6 +1,6 @@
 import { FunctionComponent, useState, useEffect } from "react";
 import { Grid, makeStyles, createStyles, Paper } from "@material-ui/core";
-import { Chart, ArgumentAxis, ValueAxis, SplineSeries } from '@devexpress/dx-react-chart-material-ui';
+import { Chart, ArgumentAxis, ValueAxis, SplineSeries, BarSeries } from '@devexpress/dx-react-chart-material-ui';
 import { Pagination } from "@material-ui/lab";
 import classNames from "classnames";
 import ProjectCommits from "./ProjectCommits";
@@ -82,6 +82,19 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 			});
 		return history;
 	}
+	const userCommits = (commits: any) => {
+		const userCommits:any = [];
+		commits.forEach((commit: any) => {
+			const user = commit.author.user.login;
+			const userIndex = userCommits.findIndex((x: any) => x.user == user)
+			if(userCommits[userIndex] == null) {
+				userCommits.push({ user, count: 1})
+			}
+			else
+				userCommits[userIndex].count += 1;
+		})
+		return userCommits;
+	}
 	useEffect(() => {
 		if (data) setProject(data.projects[0]);
 		if (githubData) setCommits(githubData.repository.object.history.nodes);
@@ -130,6 +143,13 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 							Links:
 							<br/>
 							<a href={project.github_url}><img src={logo} style={{padding: '5px'}}/></a>
+						</Grid>
+						<Grid item>
+							<Chart data={userCommits(commits)} width = {200} height = {200}>
+							<ValueAxis />
+							<ArgumentAxis />
+							<BarSeries valueField = 'count' argumentField ='user' />
+							</Chart>
 						</Grid>
 					</Grid>
 					<Grid container item xs={9} className={classes.border} justify='center' style={{marginLeft: '16px'}}>
