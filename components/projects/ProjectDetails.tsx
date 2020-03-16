@@ -1,5 +1,6 @@
 import { FunctionComponent, useState, useEffect } from "react";
-import { Grid, makeStyles, createStyles } from "@material-ui/core";
+import { Grid, makeStyles, createStyles, Paper } from "@material-ui/core";
+import { Chart, ArgumentAxis, ValueAxis, SplineSeries } from '@devexpress/dx-react-chart-material-ui';
 import { Pagination } from "@material-ui/lab";
 import classNames from "classnames";
 import ProjectCommits from "./ProjectCommits";
@@ -55,6 +56,32 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 			clientName: "github"
 		}
 	});
+	const commitHistory = (commits: any) => {
+		const history: any = [];
+		commits.forEach((commit: any) => {
+			const date = new Date(commit.committedDate);
+			const indx = date.getDate() + '-' +(date.getMonth() + 1)
+			const index = history.findIndex((x: any) => x.date === indx);
+			if(history[index]== null) {
+					history.push({date: indx, count: 1});
+				}
+			else {
+				history[index].count += 1;
+			}
+		})
+		history.sort((a:any ,b: any) => {
+			var key1 = new Date(a.date);
+    	var key2 = new Date(b.date);
+			if (key1 < key2) {
+					return -1;
+			} else if (key1 == key2) {
+					return 0;
+			} else {
+					return 1;
+			}
+			});
+		return history;
+	}
 	useEffect(() => {
 		if (data) setProject(data.projects[0]);
 		if (githubData) setCommits(githubData.repository.object.history.nodes);
@@ -106,7 +133,13 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 						</Grid>
 					</Grid>
 					<Grid container item xs={9} className={classes.border} justify='center' style={{marginLeft: '16px'}}>
-						Deploy preview
+						<Paper>
+							<Chart data={commitHistory(commits)} width={900} height={500}>
+								<ValueAxis />
+								<ArgumentAxis />
+								<SplineSeries valueField = 'count' argumentField='date' />
+							</Chart>
+						</Paper>
 					</Grid>
 				</Grid>
 				<Grid container direction='row' justify='center' className={classes.commitList}>
