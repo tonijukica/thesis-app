@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react';
 import Link from 'next/link';
 import { Container, Grid, makeStyles, createStyles } from '@material-ui/core';
+import { useAuth0 } from '../../lib/auth0-spa';
 
 const useStyles = makeStyles(() => createStyles({
   header: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles(() => createStyles({
 
 const Header: FunctionComponent = () => {
   const classes = useStyles();
+  const { user, isAuthenticated, loginWithRedirect, logout, loading } = useAuth0();
   return(
     <Container maxWidth = {false} className = {classes.header}>
         <Grid container direction = 'row' justify = 'space-around' alignItems = 'flex-start' className = {classes.row}>
@@ -39,6 +41,16 @@ const Header: FunctionComponent = () => {
                     <Link href="/projects">
                         <a className = {classes.link}>Projects</a>
                     </Link>
+                    {!loading && !isAuthenticated && (
+                      <span onClick={() => loginWithRedirect({})}>Log in</span>
+                    )}
+                    { user &&
+                      <span className = {classes.link}>{user.nickname}</span>
+                    }
+                    {!loading && isAuthenticated && (
+                      <span onClick={() => logout()}>Log out</span>
+                    )}
+
                 </nav>
             </Grid>
         </Grid>
