@@ -121,6 +121,7 @@ query getCommits($repoName: String!, $owner: String!) {
           }
         }
       }
+      createdAt
     }
   }
 `;
