@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
+import { useRouter } from 'next/router';
 import { Container, Grid, makeStyles, createStyles, Button } from "@material-ui/core";
-import { useAuth0 } from "../../lib/auth0-spa";
+import { useAuth } from "use-auth0-hooks";
 
 const useStyles = makeStyles(() =>
 	createStyles({
@@ -26,7 +27,8 @@ const useStyles = makeStyles(() =>
 
 const Header: FunctionComponent = () => {
 	const classes = useStyles();
-	const { user, isAuthenticated, loginWithRedirect, logout, loading } = useAuth0();
+	const { pathname, query } = useRouter();
+	const { user, isAuthenticated, login, logout, isLoading } = useAuth();
 	return (
 		<Container maxWidth={false} className={classes.header}>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.row}>
@@ -35,12 +37,12 @@ const Header: FunctionComponent = () => {
 				</Grid>
 				<Grid item xs={12} sm={6}>
 					<nav style={{ textAlign: "end" }}>
-						{!loading && !isAuthenticated && (
-							<Button onClick={() => loginWithRedirect({})} color='primary'>
+						{!isLoading && !isAuthenticated && (
+							<Button onClick={() => login({ appState: { returnTo: { pathname, query}}})} color='primary'>
 								Log in
 							</Button>
 						)}
-						{!loading && isAuthenticated && (
+						{!isLoading && isAuthenticated && (
 							<>
 								<Link href='/courses'>
 									<a className={classes.link}>Courses</a>
@@ -49,7 +51,7 @@ const Header: FunctionComponent = () => {
 									<a className={classes.link}>Projects</a>
 								</Link>
 								<span className={classes.link}>{user.nickname}</span>
-								<Button onClick={() => logout()} color='secondary'>
+								<Button onClick={() => logout({ returnTo: process.env.BASE_URI})} color='secondary'>
 									Log out
 								</Button>
 							</>
