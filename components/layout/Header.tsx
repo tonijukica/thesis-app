@@ -47,9 +47,6 @@ const Header: FunctionComponent = () => {
 								<Link href='/courses'>
 									<a className={classes.link}>Courses</a>
 								</Link>
-								<Link href='/projects'>
-									<a className={classes.link}>Projects</a>
-								</Link>
 								<span className={classes.link}>{user.nickname}</span>
 								<Button onClick={() => logout({ returnTo: process.env.BASE_URI})} color='secondary'>
 									Log out

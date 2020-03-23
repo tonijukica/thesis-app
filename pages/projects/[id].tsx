@@ -1,9 +1,10 @@
-import { FunctionComponent } from 'react';
+
 import { useRouter } from 'next/router'
 import Layout from '../../components/layout/Layout';
 import ProjectDetails from '../../components/projects/ProjectDetails';
+import { withLoginRequired } from 'use-auth0-hooks';
 
-const Project: FunctionComponent = () => {
+const Project: any = () => {
     const router = useRouter();
     const { id } = router.query;
     return(
@@ -13,4 +14,4 @@ const Project: FunctionComponent = () => {
     )
 }
 
-export default Project
+export default withLoginRequired(Project)

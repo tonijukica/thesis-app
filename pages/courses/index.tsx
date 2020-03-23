@@ -4,6 +4,7 @@ import { Courses } from '../../components/courses/CourseList';
 
 import { withLoginRequired } from 'use-auth0-hooks';
 
+
 const IndexPage: any = () =>{
     return (
       <Layout>
@@ -13,6 +14,4 @@ const IndexPage: any = () =>{
     );
 }
 
-export default withLoginRequired(
- IndexPage!
-);
+export default withLoginRequired(IndexPage);
