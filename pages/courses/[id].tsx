@@ -1,9 +1,9 @@
-import { FC } from 'react';
 import { useRouter } from 'next/router'
 import Layout from '../../components/layout/Layout';
 import ProjectList from '../../components/projects/ProjectList';
+import { withLoginRequired } from 'use-auth0-hooks';
 
-const Projects: FC = () => {
+const Projects: any = () => {
     const router = useRouter();
     const { id } = router.query; 
     return(
@@ -13,4 +13,4 @@ const Projects: FC = () => {
     )
 }
 
-export default Projects
+export default withLoginRequired(Projects)
