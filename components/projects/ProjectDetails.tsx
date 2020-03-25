@@ -8,8 +8,8 @@ import { useQuery } from "@apollo/react-hooks";
 import { GET_PROJECT, GET_COMMITS } from "../../gql/queries/projects";
 import { Commit, Student, Project } from "../../interfaces";
 import { getUserRepoName, formatDate } from "./helpers";
-import * as logo from "../../assets/img/github_logo.png";
-
+import * as githubLogo from "../../assets/img/github_logo.png";
+import * as netlifyLogo from '../../assets/img/netlify_logo.png'
 type ProjectProps = {
 	projectId: number;
 };
@@ -70,8 +70,8 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 			}
 		});
 		history.sort((a: any, b: any) => {
-			var key1 = new Date(a.date);
-			var key2 = new Date(b.date);
+			const key1 = new Date(a.date);
+			const key2 = new Date(b.date);
 			if (key1 < key2) {
 				return -1;
 			} else if (key1 == key2) {
@@ -149,10 +149,12 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 							Links:
 							<br />
 							<a href={project.github_url}>
-								<img src={logo} style={{ padding: "5px" }} />
+								<img src={githubLogo} style={{ padding: "5px" }} />
 							</a>
+							{	project.prod_url &&	<a href={project.prod_url}>
+								<img src={netlifyLogo} style={{ padding: "5px" }} />
+							</a>}
 						</Grid>
-
 						<Grid container item justify='center' className={classes.infoBox}>
 							<Chart data={userCommits(commits)} width={150} height={175}>
 								<ValueAxis />

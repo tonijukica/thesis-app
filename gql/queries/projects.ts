@@ -26,6 +26,7 @@ const GET_PROJECT = gql`
 query getProject($projectId: Int!) {
     projects(where: {id: {_eq: $projectId}}) {
       github_url
+      prod_url
       name
       students {
         name

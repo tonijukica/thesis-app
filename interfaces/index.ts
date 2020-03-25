@@ -24,5 +24,6 @@ export type Project = {
   id: number,
   name: string,
   github_url: string,
+  prod_url?: string,
   students: Student[]
 }
