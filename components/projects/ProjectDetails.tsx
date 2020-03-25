@@ -133,10 +133,10 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 							<br />
 							{project.students.map((student: Student) => {
 								return (
-									<>
+									<div key={student.id}>
 										{student.name}
 										<br />
-									</>
+									</div>
 								);
 							})}
 						</Grid>
@@ -203,7 +203,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 			</>
 		);
 	} else return (
-		<Grid container direction = 'row' justify = 'center'>
+		<Grid container direction = 'row' justify = 'center' alignItems = 'center'>
 			<CircularProgress size={120} />
 		</Grid>
 	)
