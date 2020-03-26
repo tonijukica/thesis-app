@@ -10,7 +10,7 @@
       "dom",
       "es2017"
     ],
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
@@ -25,7 +25,6 @@
     "node_modules"
   ],
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "./server.ts"
   ]
 }
