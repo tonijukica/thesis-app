@@ -22,6 +22,13 @@ const GET_PROJECTS_PROD = gql`
     }
   }
 `;
+const INSERT_PROD_PREVIEW = gql`
+mutation insertProdPreview($projectId: Int!, $image: String!) {
+  insert_production_preview(objects: {project_id: $projectId, image: $image}) {
+    affected_rows
+  }
+}
+`;
 
 const GET_PROJECT_IDS = gql`
 query getProjectsIds($courseId: Int!) {
@@ -142,8 +149,9 @@ export {
     GET_PROJECT_IDS,
     GET_PROJECT,
     INSERT_PROJECT,
+    INSERT_PROD_PREVIEW,
     INSERT_BULK_PROJECTS,
     DELETE_PROJECT,
     GET_REPO_INFO,
-    GET_COMMITS
+    GET_COMMITS,
 }
