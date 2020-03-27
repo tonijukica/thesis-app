@@ -14,7 +14,16 @@ query getProjects($courseId: Int!) {
   }  
 `;
 
-const GET_PROJECT_IDS = gql `
+const GET_PROJECTS_PROD = gql`
+  {
+    projects{
+      id
+      prod_url
+    }
+  }
+`;
+
+const GET_PROJECT_IDS = gql`
 query getProjectsIds($courseId: Int!) {
   projects(where: {course_id: {_eq: $courseId}}) {
     id
@@ -129,6 +138,7 @@ query getCommits($repoName: String!, $owner: String!) {
 
 export {
     GET_PROJECTS,
+    GET_PROJECTS_PROD,
     GET_PROJECT_IDS,
     GET_PROJECT,
     INSERT_PROJECT,
