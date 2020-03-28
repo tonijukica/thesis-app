@@ -22,6 +22,7 @@ export type Student = {
 
 export type ProductionPreview = {
   id: number,
+  created_at: string,
   image: string,
 }
 

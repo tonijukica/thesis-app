@@ -50,6 +50,7 @@ query getProject($projectId: Int!) {
         id
       }
       production_previews {
+        id
         created_at
         image
       }

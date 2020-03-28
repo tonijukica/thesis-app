@@ -203,16 +203,18 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 						onChange={handlePageChange}
 					/>
 				</Grid>
-					<div>
-						{project.production_previews!.map(preview => {
-							console.log(preview)
-							return(
-								<>
-								<img src={`data:image/png;base64,${preview.image}`} />
-								</>
-							)
-						})}
-					</div>
+				<Grid container direction = 'row' justify = 'center' alignContent = 'center'>
+						<Grid item>
+							<h2>Production preview</h2>
+						</Grid>
+						<Grid item>
+							{project.production_previews!.map(preview => {
+								return(
+										<img height='576' width='1024' src={`data:image/png;base64,${preview.image}`} />
+								)
+							})}
+						</Grid>
+				</Grid>
 			</>
 		);
 	} else return (
