@@ -27,15 +27,16 @@ async function takePreview() {
   Promise.all(projects.map(async (project: any) => {
     const { id, prod_url } = project;
     if(prod_url){
-      const image = await capture.base64(prod_url, {
+      const imageBuffer = await capture.buffer(prod_url, {
         width: 1920,
         height: 1080
       });
+      const image = imageBuffer.toString('base64');
       return client.mutate({
         mutation: INSERT_PROD_PREVIEW,
         variables: {
           projectId: id,
-          image: image.toString()
+          image
         }
       })
       .then(() => console.log(`Project ${id} @ ${Date.now()}`));

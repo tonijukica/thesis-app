@@ -49,6 +49,10 @@ query getProject($projectId: Int!) {
         github_username
         id
       }
+      production_previews {
+        created_at
+        image
+      }
     }
   }  
 `;

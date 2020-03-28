@@ -103,6 +103,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 			const [user, repo] = getUserRepoName(project.github_url);
 			setOwner(user), setRepoName(repo);
 		}
+		console.log(data);
 	}, [data, githubData, project, page]);
 	const handlePageChange = (event: any, value: number) => {
 		if (event) setPage(value);
@@ -202,6 +203,16 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 						onChange={handlePageChange}
 					/>
 				</Grid>
+					<div>
+						{project.production_previews!.map(preview => {
+							console.log(preview)
+							return(
+								<>
+								<img src={`data:image/png;base64,${preview.image}`} />
+								</>
+							)
+						})}
+					</div>
 			</>
 		);
 	} else return (
