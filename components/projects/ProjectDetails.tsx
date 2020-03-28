@@ -2,6 +2,7 @@ import { FunctionComponent, useState, useEffect } from "react";
 import { Grid, makeStyles, createStyles, Paper, CircularProgress } from "@material-ui/core";
 import { Chart, ArgumentAxis, ValueAxis, SplineSeries, BarSeries } from "@devexpress/dx-react-chart-material-ui";
 import { Pagination } from "@material-ui/lab";
+import Carousel from '../common/carousel';
 import classNames from "classnames";
 import ProjectCommits from "./ProjectCommits";
 import { useQuery } from "@apollo/react-hooks";
@@ -207,12 +208,14 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 						<Grid item>
 							<h2>Production preview</h2>
 						</Grid>
-						<Grid item>
-							{project.production_previews!.map(preview => {
-								return(
-										<img height='576' width='1024' src={`data:image/png;base64,${preview.image}`} />
-								)
-							})}
+						<Grid container item>
+							<Carousel>
+								{project.production_previews!.map(preview => {
+									return(
+											<img height='576' width='1024' src={`data:image/png;base64,${preview.image}`} />
+									)
+								})}
+							</Carousel>
 						</Grid>
 				</Grid>
 			</>
