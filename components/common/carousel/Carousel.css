@@ -52,6 +52,6 @@
 .Carousel .Button.Prev {
   left: 0;
 }
-.Carousel .Button:hover {
-  opacity: 0.6 !important;
+.Carousel .Button {
+  opacity: 0.1 !important;
 }

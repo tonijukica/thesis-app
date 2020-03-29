@@ -2,7 +2,7 @@ import { FunctionComponent, useState, useEffect } from "react";
 import { Grid, makeStyles, createStyles, Paper, CircularProgress } from "@material-ui/core";
 import { Chart, ArgumentAxis, ValueAxis, SplineSeries, BarSeries } from "@devexpress/dx-react-chart-material-ui";
 import { Pagination } from "@material-ui/lab";
-import Carousel from '../common/carousel';
+import Carousel from '../common/carousel/Carousel';
 import classNames from "classnames";
 import ProjectCommits from "./ProjectCommits";
 import { useQuery } from "@apollo/react-hooks";
@@ -11,6 +11,7 @@ import { Commit, Student, Project } from "../../interfaces";
 import { getUserRepoName, formatDate } from "./helpers";
 import * as githubLogo from "../../assets/img/github_logo.png";
 import * as netlifyLogo from '../../assets/img/netlify_logo.png'
+
 type ProjectProps = {
 	projectId: number;
 };
@@ -158,7 +159,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 							</a>}
 						</Grid>
 						<Grid container item justify='center' className={classes.infoBox}>
-							<Chart data={userCommits(commits)} width={150} height={175}>
+							<Chart data={userCommits(commits)} width={200} height={250} >
 								<ValueAxis />
 								<ArgumentAxis />
 								<BarSeries valueField='count' argumentField='user' />
@@ -167,7 +168,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 					</Grid>
 					<Grid container direction='column' item xs={9}  justify='center' style={{ marginLeft: "16px" }}>
 					<Grid item style={{textAlign: 'center', paddingBottom: '16px'}}>
-								<strong>Commits graph</strong>
+								<h2>Commits graph</h2>
 								<br/>
 					</Grid>
 					<br/>
@@ -182,6 +183,26 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 						</Grid>
 					</Grid>
 				</Grid>
+				{project.production_previews!.length>0 &&
+					<Grid container direction = 'row' justify = 'center' alignContent = 'center'>
+							<Grid item>
+								<h2>Production preview</h2>
+							</Grid>
+							<Grid container justify = 'center' alignContent = 'center' item>
+								<Carousel>
+									{project.production_previews!.map(preview => {
+										return(
+											<div style={{textAlign: 'center'}}>
+												{formatDate(preview.created_at)}
+												<br/>
+												<img height='576' width='1024' src={`data:image/png;base64,${preview.image}`} />
+											</div>
+										)
+									})}
+								</Carousel>
+							</Grid>
+					</Grid>
+				}
 				<Grid container direction='row' justify='center' className={classes.commitList}>
 					<h2>Commits</h2>
 					<Grid item container direction='row' justify='center' className={classes.commitList}>
@@ -197,26 +218,12 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 					</Grid>
 					<ProjectCommits commits={commits.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage)} />
 					<Pagination
-						shape='rounded'
+						shape='circle'
 						color='primary'
 						page={page}
 						count={Math.ceil(commits.length / rowsPerPage)}
 						onChange={handlePageChange}
 					/>
-				</Grid>
-				<Grid container direction = 'row' justify = 'center' alignContent = 'center'>
-						<Grid item>
-							<h2>Production preview</h2>
-						</Grid>
-						<Grid container item>
-							<Carousel>
-								{project.production_previews!.map(preview => {
-									return(
-											<img height='576' width='1024' src={`data:image/png;base64,${preview.image}`} />
-									)
-								})}
-							</Carousel>
-						</Grid>
 				</Grid>
 			</>
 		);

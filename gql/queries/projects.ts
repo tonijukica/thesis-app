@@ -49,7 +49,7 @@ query getProject($projectId: Int!) {
         github_username
         id
       }
-      production_previews {
+      production_previews(order_by: {created_at: desc}) {
         id
         created_at
         image
