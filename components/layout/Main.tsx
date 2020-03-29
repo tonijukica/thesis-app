@@ -5,8 +5,7 @@ const useStyles = makeStyles(() => createStyles({
     container: {
         paddingBottom: '16px',
         paddingTop: '16px',
-        height: '1000px',
-        maxHeight: '1200px'
+        minHeight: '1000px',
     }   
   }));
 

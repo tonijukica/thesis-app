@@ -1,7 +1,7 @@
 import App from 'next/app';
 import Router from 'next/router';
 import { Auth0Provider } from 'use-auth0-hooks';
-
+import '../components/common/carousel/Carousel.css'
 const onRedirectCallback = (appState: any) => {
   if (appState && appState.returnTo) {
     Router.push({

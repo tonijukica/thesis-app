@@ -14,7 +14,23 @@ query getProjects($courseId: Int!) {
   }  
 `;
 
-const GET_PROJECT_IDS = gql `
+const GET_PROJECTS_PROD = gql`
+  {
+    projects{
+      id
+      prod_url
+    }
+  }
+`;
+const INSERT_PROD_PREVIEW = gql`
+mutation insertProdPreview($projectId: Int!, $image: String!) {
+  insert_production_preview(objects: {project_id: $projectId, image: $image}) {
+    affected_rows
+  }
+}
+`;
+
+const GET_PROJECT_IDS = gql`
 query getProjectsIds($courseId: Int!) {
   projects(where: {course_id: {_eq: $courseId}}) {
     id
@@ -32,6 +48,11 @@ query getProject($projectId: Int!) {
         name
         github_username
         id
+      }
+      production_previews(order_by: {created_at: desc}) {
+        id
+        created_at
+        image
       }
     }
   }  
@@ -129,11 +150,13 @@ query getCommits($repoName: String!, $owner: String!) {
 
 export {
     GET_PROJECTS,
+    GET_PROJECTS_PROD,
     GET_PROJECT_IDS,
     GET_PROJECT,
     INSERT_PROJECT,
+    INSERT_PROD_PREVIEW,
     INSERT_BULK_PROJECTS,
     DELETE_PROJECT,
     GET_REPO_INFO,
-    GET_COMMITS
+    GET_COMMITS,
 }

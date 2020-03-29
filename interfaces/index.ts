@@ -20,10 +20,17 @@ export type Student = {
   github_username: string
 }
 
+export type ProductionPreview = {
+  id: number,
+  created_at: string,
+  image: string,
+}
+
 export type Project = {
   id: number,
   name: string,
   github_url: string,
   prod_url?: string,
-  students: Student[]
+  students: Student[],
+  production_previews?: ProductionPreview[]
 }
