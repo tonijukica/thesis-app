@@ -1,11 +1,12 @@
 import { FunctionComponent, useState, useReducer, useEffect, ChangeEvent } from 'react';
-import { Grid, Button, makeStyles, createStyles, CircularProgress } from '@material-ui/core';
+import { Grid, Button, makeStyles, createStyles } from '@material-ui/core';
 import { Context, coursesReducer } from './helper';
 import  DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
 import CourseDialog from './CourseDialog';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GET_COURSES, INSERT_COURSE, INESRT_COURSE_BULK_PROJECTS } from '../../gql/queries/courses';
+import { Loader } from '../common/CircuralLoader';
 
 
 type CourseProps = {
@@ -115,7 +116,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
         </Grid>
         <Grid container direction = 'row' justify = 'center'>
             <Context.Provider value = {{courses, dispatch}}>
-                {loading && <CircularProgress size={120} className = {classes.loading} />}
+                {loading && <Loader />}
                 {courses.map((course) => {
                     return(
                         <CourseBox key = {course.courseId}  courseId= {course.courseId} name = {course.name} studentProjects = {course.studentProjects} deleteMode = {deleteMode} />

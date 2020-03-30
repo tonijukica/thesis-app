@@ -4,7 +4,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 
-const Carousel: FC = ({children}) => {
+export const Carousel: FC = ({children}) => {
   const [active, setActive] = useState(0);
   const length = Children.toArray(children).length;
   const pressIndicator = (index: number) => {
@@ -85,4 +85,3 @@ const Indicators = (props: any) => {
       </div>
   )  
 }
-export default Carousel;

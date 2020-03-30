@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react';
 import { Grid } from '@material-ui/core';
-import { Commit } from '../../interfaces';
-import { formatDate } from './helpers';
+import { Commit } from '../../../interfaces';
+import { formatDate } from '../helpers';
 type Props = {
   commits: Commit[]
 }
