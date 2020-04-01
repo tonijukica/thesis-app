@@ -5,7 +5,8 @@ import next from "next";
 import cron from "node-cron";
 import takePreview from "./helpers";
 import { createConnection } from 'typeorm';
-
+import { ApolloServer } from 'apollo-server-express';
+import { getSchema } from './resolvers';
 
 
 dotenv.config();
@@ -18,12 +19,19 @@ app
   .then(async() => {
     await createConnection();
     const server = express();
+    const schema = await getSchema();
+    const apolloServer = new ApolloServer({
+      schema
+    });
+
     cron.schedule("* 4 * * 1,5", () => {
       console.log("_________________________");
       console.log("Taking production previews");
       takePreview();
     });
     
+    apolloServer.applyMiddleware({app: server});
+
     server.get("*", (req, res) => {
       return handle(req, res);
     });

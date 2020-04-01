@@ -1,23 +1,30 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { ObjectType, Field, ID } from 'type-graphql';
 import { Course } from './Course';
 import { Student } from './Student';
 import { ProductionPreview } from './ProductionPreview';
 
+@ObjectType()
 @Entity()
 export class Project extends BaseEntity {
   
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Field()
   @Column()
   name!: string;
 
+  @Field()
   @Column()
   github_url!: string;
 
+  @Field()
   @Column()
   prod_url!: string;
 
+  @Field()
   @CreateDateColumn()
   created_at!: Date;
 
