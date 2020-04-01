@@ -2,7 +2,7 @@
   "name": "thesis-app",
   "version": "1.0.0",
   "scripts": {
-    "dev": "ts-node --project tsconfig.server.json server.ts",
+    "dev": "ts-node-dev --project tsconfig.server.json --respawn  server.ts",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc"
@@ -39,8 +39,11 @@
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.0",
     "papaparse": "^5.1.1",
+    "pg": "^8.0.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.24",
     "use-auth0-hooks": "^0.7.0"
   },
   "devDependencies": {
@@ -49,6 +52,7 @@
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.4",
     "ts-node": "^8.8.1",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "3.7.3"
   },
   "license": "MIT"

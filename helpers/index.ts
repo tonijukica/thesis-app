@@ -1,4 +1,3 @@
-import * as dotenv from "dotenv";
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-boost';
 import { HttpLink } from 'apollo-link-http';
@@ -6,7 +5,6 @@ import fetch from 'isomorphic-unfetch';
 import capture from 'capture-website';
 import { GET_PROJECTS_PROD, INSERT_PROD_PREVIEW } from '../gql/queries/projects';
 
-dotenv.config();
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL;
 
