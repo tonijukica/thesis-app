@@ -22,6 +22,7 @@ export class Course extends BaseEntity {
   @CreateDateColumn()
   created_at!: Date;
 
+  @Field(() => [Project])
   @OneToMany(() => Project, project => project.course)
   projects!: Promise<Project[]>;
 }

@@ -12,7 +12,7 @@ export class Student extends BaseEntity {
 
   @Field()
   @Column()
-  course_name!: string;
+  name!: string;
 
   @Field()
   @Column({ nullable: true })

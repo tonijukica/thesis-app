@@ -32,9 +32,11 @@ export class Project extends BaseEntity {
   @JoinColumn()
   course!: Promise<Course>;
 
+  @Field(() => [Student])
   @OneToMany(() => Student, student => student.project)
   students!: Promise<Student[]>;
 
+  @Field(() => [ProductionPreview])
   @OneToMany(() => ProductionPreview, productionPreview => productionPreview.project)
   production_preview!: Promise<ProductionPreview[]>;
 
