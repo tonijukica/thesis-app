@@ -11,7 +11,7 @@ export class ProjectInput {
   github_url!: string;
 
   @Field()
-  prod_url!: string;
+  prod_url?: string;
 
   @Field(() => [StudentInput],{ nullable: true })
   data?: StudentInput[]

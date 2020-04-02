@@ -8,15 +8,20 @@ import { ProjectInput } from '../inputs';
 export class CourseResolver {
 
   @Query(() => [Course])
-  async courses(): Promise<Course[]> {
-    return Course.find();
+  async courses(
+    @Arg('id', {nullable: true}) id: number
+  ): Promise<Course[]> {
+    if(id)
+      return await Course.find({ id });
+    else
+      return Course.find();
   }
 
   @Mutation(() => Course)
   async insert_course(
     @Arg('name') name: string,
     @Arg('year') year: string,
-    @Arg('projects', ()=> [ProjectInput], { nullable: true}) projects: ProjectInput[]
+    @Arg('projects', () => [ProjectInput], { nullable: true}) projects: ProjectInput[]
   ): Promise<Course> {
     const course = await Course.create({
       course_name: name,
@@ -42,5 +47,13 @@ export class CourseResolver {
       await course.save();
       return course
     }
+  }
+
+  @Mutation(() => String)
+  async delete_course(
+    @Arg('id') id: number
+  ) {
+    await Course.delete(id);
+    return `Course with ID ${id} deleted`;
   }
 }

@@ -22,7 +22,7 @@ export class Student extends BaseEntity {
   @CreateDateColumn()
   created_at!: Date;
 
-  @ManyToOne(() => Project, project => project.students)
+  @ManyToOne(() => Project, project => project.students, { onDelete: "CASCADE" })
   @JoinColumn()
   project!: Promise<Project>;
 }

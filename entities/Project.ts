@@ -28,7 +28,7 @@ export class Project extends BaseEntity {
   @CreateDateColumn()
   created_at!: Date;
 
-  @ManyToOne(() => Course, course => course.projects)
+  @ManyToOne(() => Course, course => course.projects, { onDelete: "CASCADE" })
   @JoinColumn()
   course!: Promise<Course>;
 
