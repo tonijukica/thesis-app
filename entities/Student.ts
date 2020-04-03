@@ -14,7 +14,7 @@ export class Student extends BaseEntity {
   @Column()
   name!: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   github_username!: string;
 

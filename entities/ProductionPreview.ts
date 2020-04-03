@@ -18,7 +18,7 @@ export class ProductionPreview extends BaseEntity {
   @CreateDateColumn()
   created_at!: Date;
 
-  @ManyToOne(() => Project, project => project.production_preview, { onDelete: "CASCADE" })
+  @ManyToOne(() => Project, project => project.production_previews, { onDelete: "CASCADE" })
   @JoinColumn()
   project!: Promise<Project>;
 }

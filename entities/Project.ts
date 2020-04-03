@@ -20,8 +20,8 @@ export class Project extends BaseEntity {
   @Column()
   github_url!: string;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   prod_url!: string;
 
   @Field()
@@ -38,6 +38,6 @@ export class Project extends BaseEntity {
 
   @Field(() => [ProductionPreview])
   @OneToMany(() => ProductionPreview, productionPreview => productionPreview.project)
-  production_preview!: Promise<ProductionPreview[]>;
+  production_previews!: Promise<ProductionPreview[]>;
 
 }

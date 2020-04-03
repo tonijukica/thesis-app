@@ -10,7 +10,7 @@ export class ProductionPreviewResolver {
     @Arg('project_id') id: number
   ) {
     const project = await Project.findOne({ id });
-    return project?.production_preview;
+    return project?.production_previews;
   }
 
   @Mutation(() => ProductionPreview)
@@ -22,7 +22,7 @@ export class ProductionPreviewResolver {
     const productionPreview = await ProductionPreview.create({
       image
     }).save();
-    (await project!.production_preview).push(productionPreview);
+    (await project!.production_previews).push(productionPreview);
     await project!.save();
     return productionPreview;
   }

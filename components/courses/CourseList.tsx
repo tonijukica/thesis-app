@@ -57,7 +57,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
                 .then((data) => {
                     const newCourse = {
                         name: courseName,
-                        courseId: data.data.insert_courses.returning[0].id,
+                        courseId: data.data.insert_course.id,
                         studentProjects: bulkInsertData.length
                     }
                     dispatch({type: 'add', course: newCourse});
@@ -70,17 +70,19 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
                 insertCourse({
                     variables: {
                         name: courseName,
+                        year: '2020'
                     }
                 }).then(({data}) => {
                     const newCourse = {
                         name: courseName,
-                        courseId: data.insert_courses.returning[0].id,
+                        courseId: data.insert_course.id,
                         studentProjects: 0
                     }
                     dispatch({type: 'add', course: newCourse});
                     setDialog(false);
                     resolve();
-                });
+                })
+                .catch(e => console.log(e));
             }
         });
     }
@@ -93,7 +95,7 @@ const Courses: FunctionComponent<CourseProps> = ({title}) => {
     useEffect(() => {
        if(data) {
         data.courses.forEach((course: any) => 
-            dispatch({type: 'add', course: {name: course.course_name, courseId: course.id, studentProjects: course.projects_aggregate.aggregate.count}})
+            dispatch({type: 'add', course: {name: course.course_name, courseId: course.id, studentProjects: course.projects_count}})
         );
        }
     }, [data]);

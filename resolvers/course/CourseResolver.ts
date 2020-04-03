@@ -11,10 +11,20 @@ export class CourseResolver {
   async courses(
     @Arg('id', {nullable: true}) id: number
   ): Promise<Course[]> {
-    if(id)
-      return await Course.find({ id });
-    else
-      return Course.find();
+    if(id){
+      const courses = await Course.find({ id });
+      return Promise.all(courses.map(async(course) => {
+        course.projects_count = (await course.projects).length
+        return course
+      }))
+    }
+    else{
+      const courses = await Course.find();
+      return Promise.all(courses.map(async(course) => {
+        course.projects_count = (await course.projects).length
+        return course
+      }));
+    }
   }
 
   @Mutation(() => Course)
@@ -31,12 +41,12 @@ export class CourseResolver {
       return await course.save();
     else {
       const newProjects = await Promise.all(projects.map(async(projectEl) => {
-        const { data } = projectEl;
+        const {  student_data } = projectEl;
         const project = await Project.create(projectEl);
-        if(!data)
+        if(! student_data)
           return await project.save();
         else {
-          const newStudents = await Promise.all(data.map(async(student) => {
+          const newStudents = await Promise.all( student_data.map(async(student) => {
             return await Student.create(student).save();
           }));
           project.students = Promise.resolve(newStudents);

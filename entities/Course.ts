@@ -25,4 +25,7 @@ export class Course extends BaseEntity {
   @Field(() => [Project])
   @OneToMany(() => Project, project => project.course)
   projects!: Promise<Project[]>;
+
+  @Field()
+  projects_count!: number
 }

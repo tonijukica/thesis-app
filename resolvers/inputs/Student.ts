@@ -6,7 +6,7 @@ export class StudentInput {
   @Field()
   name!: string;
 
-  @Field()
-  github_username!: string;
+  @Field({ nullable: true })
+  github_username?: string;
 
 }

@@ -10,10 +10,9 @@ export class ProjectInput {
   @Field()
   github_url!: string;
 
-  @Field()
+  @Field({ nullable: true })
   prod_url?: string;
 
   @Field(() => [StudentInput],{ nullable: true })
-  data?: StudentInput[]
-
+  student_data?: StudentInput[]
 }
