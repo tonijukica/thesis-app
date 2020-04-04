@@ -1,19 +1,5 @@
 import { gql } from 'apollo-boost';
 
-// const GET_PROJECTS = gql`
-// query getProjects($courseId: Int!) {
-//     projects(where: {course_id: {_eq: $courseId}}) {
-//       name
-//       id
-//       students {
-//         id
-//         name
-//       }
-//       github_url
-//     }
-//   }  
-// `;
-
 const GET_PROJECTS = gql`
 query getProjects($courseId: Float!){
   courses(id: $courseId){
@@ -29,14 +15,6 @@ query getProjects($courseId: Float!){
   }
 }`
 
-// const GET_PROJECTS_PROD = gql`
-//   {
-//     projects{
-//       id
-//       prod_url
-//     }
-//   }
-// `;
 
 const GET_PROJECTS_PROD = gql`
 query {
@@ -44,15 +22,8 @@ query {
     id
     prod_url
   }
-}`
+}`;
 
-// const INSERT_PROD_PREVIEW = gql`
-// mutation insertProdPreview($projectId: Int!, $image: String!) {
-//   insert_production_preview(objects: {project_id: $projectId, image: $image}) {
-//     affected_rows
-//   }
-// }
-// `;
 
 const INSERT_PROD_PREVIEW = gql`
 mutation insertProdPreview($projectId: Float!, $image: String!) {
@@ -61,40 +32,15 @@ mutation insertProdPreview($projectId: Float!, $image: String!) {
   }
 }`;
 
+
 const GET_PROJECT_IDS = gql`
 query getProjectsIds($courseId: Int!) {
   projects(where: {course_id: {_eq: $courseId}}) {
     id
   }
-}
-`;
-// query getProjects($courseId: Float!){
-//   courses(id: $courseId){
-//     projects{
-//       name
-//   }
-// }
+}`;
 
 
-// const GET_PROJECT = gql`
-// query getProject($projectId: Int!) {
-//     projects(where: {id: {_eq: $projectId}}) {
-//       github_url
-//       prod_url
-//       name
-//       students {
-//         name
-//         github_username
-//         id
-//       }
-//       production_previews(order_by: {created_at: desc}) {
-//         id
-//         created_at
-//         image
-//       }
-//     }
-//   }  
-// `;
 const GET_PROJECT = gql`
 query getProject($projectId: Float!) {
   projects(id: $projectId) {
@@ -112,29 +58,9 @@ query getProject($projectId: Float!) {
       image
     }
   }
-}` 
+}`;
 
-// const INSERT_PROJECT = gql`
-// mutation InsertProject($courseId: Int!, $projectName: String!, $githubUrl: String!, $students: [student_insert_input!]!) {
-//     insert_projects(objects: {
-//       course_id: $courseId, 
-//       name: $projectName, 
-//       github_url: $githubUrl, 
-//       students: {data: $students}
-//     }) 
-//     {
-//         returning {
-//             id
-//             name
-//             github_url
-//             students {
-//               id
-//               name
-//             }
-//         }
-//     }
-//   }  
-// `;
+
 const INSERT_PROJECT = gql`
 mutation InsertProject(
   $courseId: Float!
@@ -156,23 +82,8 @@ mutation InsertProject(
       name
     }
   }
-}`
+}`;
 
-// const INSERT_BULK_PROJECTS = gql`
-// mutation insertBulkProjects($projects: [projects_insert_input!]!) {
-//   insert_projects(objects: $projects) {
-//     returning {
-//       id
-//       name
-//       github_url
-//       students {
-//         id
-//         name
-//       }
-//     }
-//   }
-// }
-// `;
 
 const INSERT_BULK_PROJECTS = gql`
 mutation insertBulkProjects(
@@ -190,21 +101,12 @@ mutation insertBulkProjects(
   }
 }`;
 
-// const DELETE_PROJECT = gql`
-// mutation deleteProject($projectId: Int!) {
-//     delete_student(where: {project_id: {_eq: $projectId}}) {
-//       affected_rows
-//     }
-//     delete_projects(where: {id: {_eq: $projectId}}) {
-//       affected_rows
-//     }
-//   }
-// `;
 
 const DELETE_PROJECT = gql`
 mutation deleteProject($projectId: Float!) {
   delete_project(id: $projectId) 
 }`;
+
 
 const GET_REPO_INFO = gql`
 query getRepoInfo($ownerName: String!, $repoName: String!)  {
