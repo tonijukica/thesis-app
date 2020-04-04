@@ -25,7 +25,7 @@ function coursesReducer(courses: Course[], action: ActionType) {
             return newCourses;
         }
         case 'remove': { 
-            const newCourses = courses.filter(el => el.name !== action.course.name)
+            const newCourses = courses.filter(el => el.courseId !== action.course.courseId)
             return newCourses;
         }
     }

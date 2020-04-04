@@ -20,9 +20,8 @@ function prepareInputData(data: any) {
 		const project = {
 			name: rawProject[process.env.PROJECT_NAME!],
 			github_url: rawProject[process.env.PROJECT_URL!],
-			students: {
-				data: students
-			}
+			student_data: students
+
 		};
 		return project;
 	});
@@ -36,16 +35,15 @@ function prepareLegacyInputData(data: any) {
 			name,
 			github_url: el['GitHub Repo'],
 			prod_url: el['Production link'],
-			students: {
-				data: project.map((el: any) => {
+			student_data: project.map((el: any) => {
           const key = 'Prezime i ime'
           const studentName = el[key];
           return {
 						name: studentName
 					}
         })
-			}
 		}
+
 		const exists = projects.find((el: any) => el.name === validProject.name);
 		if(!exists)
 			projects.push(validProject);
