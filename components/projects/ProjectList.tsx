@@ -1,14 +1,14 @@
-import { FunctionComponent, useState, useEffect, ChangeEvent } from "react";
-import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress } from "@material-ui/core";
-import { useQuery, useMutation } from "@apollo/react-hooks";
-import DeleteIcon from "@material-ui/icons/Delete";
-import SearchIcon from "@material-ui/icons/Search";
-import ProjectBox from "./ProjectBox";
-import ProjectDialog from "./dialogs/AddProjectDialog";
-import BulkProjectDialog from "./dialogs/AddBulkProjectDialog";
-import { GET_PROJECTS, INSERT_PROJECT, INSERT_BULK_PROJECTS, DELETE_PROJECT } from "../.././gql/queries/projects";
-import { Student, Project } from "../../interfaces";
-import Fuse from "fuse.js";
+import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
+import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress } from '@material-ui/core';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import DeleteIcon from '@material-ui/icons/Delete';
+import SearchIcon from '@material-ui/icons/Search';
+import ProjectBox from './ProjectBox';
+import ProjectDialog from './dialogs/AddProjectDialog';
+import BulkProjectDialog from './dialogs/AddBulkProjectDialog';
+import { GET_PROJECTS, INSERT_PROJECT, INSERT_BULK_PROJECTS, DELETE_PROJECT } from '../.././gql/queries/projects';
+import { Student, Project } from '../../interfaces';
+import Fuse from 'fuse.js';
 
 type ProjectListProps = {
 	courseId: number;
@@ -16,18 +16,18 @@ type ProjectListProps = {
 const useStyles = makeStyles(() =>
 	createStyles({
 		container: {
-			paddingBottom: "16px",
-			borderBottom: "1px solid #e1e4e8 !important"
+			paddingBottom: '16px',
+			borderBottom: '1px solid #e1e4e8 !important',
 		},
 		button: {
-			marginRight: "8px"
+			marginRight: '8px',
 		},
 		header: {
-			paddingTop: "16px",
-			textAlign: "center",
-			paddingBottom: "16px",
-			borderBottom: "1px solid #e1e4e8 !important"
-		}
+			paddingTop: '16px',
+			textAlign: 'center',
+			paddingBottom: '16px',
+			borderBottom: '1px solid #e1e4e8 !important',
+		},
 	})
 );
 
@@ -36,30 +36,34 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const [dialogAdd, setDialogAdd] = useState(false);
 	const [dialogBulk, setDialogBulk] = useState(false);
 	const [deleteMode, setDeleteMode] = useState(false);
-	const [searchParam, setSearchParam] = useState("");
+	const [searchParam, setSearchParam] = useState('');
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [bulkProjects, setBulkProjects] = useState<[]>([]);
-	const [projectName, setProjectName] = useState("");
-	const [projectUrl, setProjectUrl] = useState("");
+	const [projectName, setProjectName] = useState('');
+	const [projectUrl, setProjectUrl] = useState('');
 	const [deleteProject] = useMutation(DELETE_PROJECT);
 	const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
 	const [insertProject] = useMutation(INSERT_PROJECT);
 	const [insertProjects] = useMutation(INSERT_BULK_PROJECTS);
 	const [students, setStudents] = useState<Student[]>([]);
+
 	const fuseOptions = {
 		shouldSort: true,
 		minMatchCharLength: 3,
 		threshold: 0.3,
-		keys: ["name", "students.name"]
+		keys: ['name', 'students.name'],
 	};
 	const fuse = new Fuse(projects, fuseOptions);
+
 	useEffect(() => {
-		if (data) setProjects(data.courses[0].projects);
-		if (searchParam.length > 0) {
+		if(data) 
+			setProjects(data.courses[0].projects);
+		if(searchParam.length > 0){
 			const searchResults = fuse.search(searchParam);
 			setProjects(searchResults);
 		}
 	}, [data, searchParam]);
+
 	const handleDialogAddOpen = () => {
 		setDialogAdd(true);
 	};
@@ -90,10 +94,10 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const handleDeleteProject = (projectId: number) => {
 		deleteProject({
 			variables: {
-				projectId: Number(projectId)
-			}
+				projectId: Number(projectId),
+			},
 		}).then(() => {
-			setProjects(projects.filter(project => project.id !== projectId));
+			setProjects(projects.filter((project) => project.id !== projectId));
 		});
 	};
 	const addProject = () => {
@@ -102,15 +106,15 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				courseId,
 				projectName,
 				githubUrl: projectUrl,
-				students
-			}
+				students,
+			},
 		}).then(({ data }) => {
 			const projectData = data.insert_project;
 			const newProject: Project = {
 				id: projectData.id,
 				name: projectData.name,
 				github_url: projectData.github_url,
-				students: projectData.students
+				students: projectData.students,
 			};
 			setProjects([...projects, newProject]);
 			setStudents([]);
@@ -118,17 +122,17 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 		setDialogAdd(false);
 	};
 	const addProjects = () => {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			const newProjects = bulkProjects.map((project: any) => {
 				return {
-					...project
+					...project,
 				};
 			});
 			insertProjects({
 				variables: {
 					projects: newProjects,
-					courseId
-				}
+					courseId,
+				},
 			}).then(({ data }) => {
 				setProjects([...projects, ...data.insert_projects]);
 				setDialogBulk(false);
@@ -136,6 +140,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 			});
 		});
 	};
+	
 	return (
 		<>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.container}>
@@ -150,7 +155,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 								<InputAdornment position='start'>
 									<SearchIcon />
 								</InputAdornment>
-							)
+							),
 						}}
 					/>
 				</Grid>
@@ -173,6 +178,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				</Grid>
 			</Grid>
 			<ProjectDialog
+				name={projectName}
+				url={projectUrl}
 				open={dialogAdd}
 				handleClose={handleDialogAddClose}
 				handleNameChange={handleProjectNameChange}
@@ -214,7 +221,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 								githubUrl={project.github_url}
 								students={project.students}
 								deleteMode={deleteMode}
-								handleDelete = {handleDeleteProject}
+								handleDelete={handleDeleteProject}
 							/>
 						</div>
 					);

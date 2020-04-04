@@ -5,20 +5,19 @@ import { Project } from './Project';
 @ObjectType()
 @Entity()
 export class ProductionPreview extends BaseEntity {
+	@Field(() => ID)
+	@PrimaryGeneratedColumn()
+	id!: number;
 
-  @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
+	@Field()
+	@Column()
+	image!: string;
 
-  @Field()
-  @Column()
-  image!: string;
+	@Field()
+	@CreateDateColumn()
+	created_at!: Date;
 
-  @Field()
-  @CreateDateColumn()
-  created_at!: Date;
-
-  @ManyToOne(() => Project, project => project.production_previews, { onDelete: "CASCADE" })
-  @JoinColumn()
-  project!: Promise<Project>;
+	@ManyToOne(() => Project, (project) => project.production_previews, { onDelete: 'CASCADE' })
+	@JoinColumn()
+	project!: Promise<Project>;
 }
