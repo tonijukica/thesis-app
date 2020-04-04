@@ -4,11 +4,12 @@ import { StudentResolver } from './student/StudentResolver';
 import { ProductionPreviewResolver } from './production_preview/ProductionPreviewResolver';
 import { buildSchema } from 'type-graphql';
 
-export const getSchema = () => buildSchema({
-    resolvers: [
+export const getSchema = () =>
+	buildSchema({
+		resolvers: [
       CourseResolver,
-      ProjectResolver,
-      StudentResolver,
+      ProjectResolver, 
+      StudentResolver, 
       ProductionPreviewResolver
     ]
-  });
+	});

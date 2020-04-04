@@ -1,236 +1,64 @@
-import { FunctionComponent, useState, useEffect } from "react";
-import { Grid, makeStyles, createStyles, Paper, CircularProgress } from "@material-ui/core";
-import { Chart, ArgumentAxis, ValueAxis, SplineSeries, BarSeries } from "@devexpress/dx-react-chart-material-ui";
-import { Pagination } from "@material-ui/lab";
-import Carousel from '../common/carousel/Carousel';
-import classNames from "classnames";
-import ProjectCommits from "./ProjectCommits";
-import { useQuery } from "@apollo/react-hooks";
-import { GET_PROJECT, GET_COMMITS } from "../../gql/queries/projects";
-import { Commit, Student, Project } from "../../interfaces";
-import { getUserRepoName, formatDate } from "./helpers";
-import * as githubLogo from "../../assets/img/github_logo.png";
-import * as netlifyLogo from '../../assets/img/netlify_logo.png'
+import { FunctionComponent, useState, useEffect } from 'react';
+import { Grid } from '@material-ui/core';
+import classNames from 'classnames';
+import { useStyles } from './common/styles';
+import { useQuery } from '@apollo/react-hooks';
+import { GET_PROJECT, GET_COMMITS } from '../../gql/queries/projects';
+import { Commit, Project } from '../../interfaces';
+import { getUserRepoName } from './helpers';
+import { Sidebar } from './common/Sidebar';
+import { CommitGraph } from './common/CommitGraph';
+import { Preview } from './common/ProductionPreview';
+import { CommitList } from './common/CommitList';
+import { Loader } from '../common/CircuralLoader';
 
 type ProjectProps = {
 	projectId: number;
 };
 
-const useStyles = makeStyles(() =>
-	createStyles({
-		border: {
-			border: "1px solid #e1e4e8 !important",
-			padding: "16px",
-			textAlign: "center"
-		},
-		details: {
-			height: "600px"
-		},
-		projectInfo: {
-			textAlign: "center"
-		},
-		commitList: {
-			borderBottom: "1px solid #e1e4e8 !important",
-			padding: "8px",
-			textAlign: "center"
-		},
-		infoBox: {
-			paddingTop: "8px"
-		}
-	})
-);
 const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 	const classes = useStyles();
-	const rowsPerPage = 5;
 	const { data } = useQuery(GET_PROJECT, { variables: { projectId } });
 	const [project, setProject] = useState<Project | null>(null);
 	const [commits, setCommits] = useState<Commit[] | null>(null);
-	const [owner, setOwner] = useState("");
-	const [creationDate, setCreationDate] = useState("");
-	const [repoName, setRepoName] = useState("");
-	const [page, setPage] = useState(1);
+	const [owner, setOwner] = useState('');
+	const [creationDate, setCreationDate] = useState('');
+	const [repoName, setRepoName] = useState('');
+
 	const { data: githubData } = useQuery(GET_COMMITS, {
 		skip: !data,
 		variables: {
 			repoName,
-			owner
+			owner,
 		},
 		context: {
-			clientName: "github"
-		}
+			clientName: 'github',
+		},
 	});
-	const commitHistory = (commits: any) => {
-		const history: any = [];
-		commits.forEach((commit: any) => {
-			const date = new Date(commit.committedDate);
-			const indx = date.getDate() + "-" + (date.getMonth() + 1);
-			const index = history.findIndex((x: any) => x.date === indx);
-			if (history[index] == null) {
-				history.push({ date: indx, count: 1 });
-			} else {
-				history[index].count += 1;
-			}
-		});
-		history.sort((a: any, b: any) => {
-			const key1 = new Date(a.date);
-			const key2 = new Date(b.date);
-			if (key1 < key2) {
-				return -1;
-			} else if (key1 == key2) {
-				return 0;
-			} else {
-				return 1;
-			}
-		});
-		return history;
-	};
-	const userCommits = (commits: any) => {
-		const userCommits: any = [];
-		commits.forEach((commit: any) => {
-			const user = commit.author.user.login;
-			const userIndex = userCommits.findIndex((x: any) => x.user == user);
-			if (userCommits[userIndex] == null) {
-				userCommits.push({ user, count: 1 });
-			} else userCommits[userIndex].count += 1;
-		});
-		return userCommits;
-	};
+
 	useEffect(() => {
-		if (data) setProject(data.projects[0]);
-		if (githubData) {
+		if(data) 
+			setProject(data.projects[0]);
+		if(githubData){
 			setCommits(githubData.repository.object.history.nodes);
 			setCreationDate(githubData.repository.createdAt);
 		}
-		if (project) {
+		if(project){
 			const [user, repo] = getUserRepoName(project.github_url);
 			setOwner(user), setRepoName(repo);
 		}
-		console.log(data);
-	}, [data, githubData, project, page]);
-	const handlePageChange = (event: any, value: number) => {
-		if (event) setPage(value);
-	};
-	if (project && commits) {
+	}, [data, githubData, project]);
+	if(project && commits){
 		return (
 			<>
 				<Grid container direction='row' justify='center' className={classNames(classes.details)}>
-					<Grid
-						container
-						direction='column'
-						item
-						xs={2}
-						justify='flex-start'
-						className={classNames(classes.border, classes.projectInfo)}
-						style={{ marginRight: "16px" }}
-					>
-						<Grid item>
-							<h2>Project information</h2>
-						</Grid>
-						<Grid item className={classes.infoBox}>
-							<strong>Project name:</strong>
-							<br />
-							{project.name}
-						</Grid>
-						<Grid item className={classes.infoBox}>
-							<strong>Students:</strong>
-							<br />
-							{project.students.map((student: Student) => {
-								return (
-									<div key={student.id}>
-										{student.name}
-										<br />
-									</div>
-								);
-							})}
-						</Grid>
-						<Grid item className={classes.infoBox}>
-							<strong>Created at:</strong>
-							<br />
-							{formatDate(creationDate)}
-						</Grid>
-						<Grid item className={classes.infoBox}>
-							Links:
-							<br />
-							<a href={project.github_url}>
-								<img src={githubLogo} style={{ padding: "5px" }} />
-							</a>
-							{	project.prod_url &&	<a href={project.prod_url}>
-								<img src={netlifyLogo} style={{ padding: "5px" }} />
-							</a>}
-						</Grid>
-						<Grid container item justify='center' className={classes.infoBox}>
-							<Chart data={userCommits(commits)} width={200} height={250} >
-								<ValueAxis />
-								<ArgumentAxis />
-								<BarSeries valueField='count' argumentField='user' />
-							</Chart>
-						</Grid>
-					</Grid>
-					<Grid container direction='column' item xs={9}  justify='center' style={{ marginLeft: "16px" }}>
-					<Grid item style={{textAlign: 'center', paddingBottom: '16px'}}>
-								<h2>Commits graph</h2>
-								<br/>
-					</Grid>
-					<br/>
-						<Grid container justify = 'center' item>
-							<Paper>
-								<Chart data={commitHistory(commits)} width={900} height={500}>
-									<ValueAxis />
-									<ArgumentAxis />
-									<SplineSeries valueField='count' argumentField='date' />
-								</Chart>
-							</Paper>
-						</Grid>
-					</Grid>
+					<Sidebar project={project} creationDate={creationDate} commits={commits} />
+					<CommitGraph commits={commits} />
 				</Grid>
-				{project.production_previews!.length>0 &&
-					<Grid container direction = 'row' justify = 'center' alignContent = 'center'>
-							<Grid item>
-								<h2>Production preview</h2>
-							</Grid>
-							<Grid container justify = 'center' alignContent = 'center' item>
-								<Carousel>
-									{project.production_previews!.map(preview => {
-										return(
-											<div style={{textAlign: 'center'}}>
-												{formatDate(preview.created_at)}
-												<br/>
-												<img height='576' width='1024' src={`data:image/png;base64,${preview.image}`} />
-											</div>
-										)
-									})}
-								</Carousel>
-							</Grid>
-					</Grid>
-				}
-				<Grid container direction='row' justify='center' className={classes.commitList}>
-					<h2>Commits</h2>
-					<Grid item container direction='row' justify='center' className={classes.commitList}>
-						<Grid item xs={4}>
-							User
-						</Grid>
-						<Grid item xs={4}>
-							Commit message
-						</Grid>
-						<Grid item xs={4}>
-							Date
-						</Grid>
-					</Grid>
-					<ProjectCommits commits={commits.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage)} />
-					<Pagination
-						shape='circle'
-						color='primary'
-						page={page}
-						count={Math.ceil(commits.length / rowsPerPage)}
-						onChange={handlePageChange}
-					/>
-				</Grid>
+				{project.production_previews!.length > 0 && <Preview previews={project.production_previews!} />}
+				<CommitList commits={commits} />
 			</>
 		);
-	} else return (
-		<Grid container direction = 'row' justify = 'center' alignItems = 'center'>
-			<CircularProgress size={120} />
-		</Grid>
-	)
+	} else return <Loader />;
 };
 export default ProjectDetails;

@@ -1,31 +1,32 @@
-import Papa from "papaparse";
-import { Student } from "../../interfaces";
+import Papa from 'papaparse';
+import { Student } from '../../interfaces';
 
 function parseInput(input: string) {
 	const result = Papa.parse(input, { header: true, skipEmptyLines: true });
 	return result.data;
 }
+
 function prepareInputData(data: any) {
 	return data.map((rawProject: any) => {
-		const rawStudents = rawProject[process.env.PROJECT_STUDENTS!].split(", ");
-		const rawStudentUsernames = rawProject[process.env.STUDENTS_USERNAMES!].split(", ");
+		const rawStudents = rawProject[process.env.PROJECT_STUDENTS!].split(', ');
+		const rawStudentUsernames = rawProject[process.env.STUDENTS_USERNAMES!].split(', ');
 		const students: Student[] = [];
 		for (let i = 0; i < rawStudents.length; i++) {
 			const student: Student = {
 				name: rawStudents[i],
-				github_username: rawStudentUsernames[i]
+				github_username: rawStudentUsernames[i],
 			};
 			students.push(student);
 		}
 		const project = {
 			name: rawProject[process.env.PROJECT_NAME!],
 			github_url: rawProject[process.env.PROJECT_URL!],
-			student_data: students
-
+			student_data: students,
 		};
 		return project;
 	});
 }
+
 function prepareLegacyInputData(data: any) {
 	let projects: any = [];
 	data.map((el: any) => {
@@ -36,16 +37,16 @@ function prepareLegacyInputData(data: any) {
 			github_url: el['GitHub Repo'],
 			prod_url: el['Production link'],
 			student_data: project.map((el: any) => {
-          const key = 'Prezime i ime'
-          const studentName = el[key];
-          return {
-						name: studentName
-					}
-        })
-		}
+				const key = 'Prezime i ime';
+				const studentName = el[key];
+				return {
+					name: studentName,
+				};
+			}),
+		};
 
 		const exists = projects.find((el: any) => el.name === validProject.name);
-		if(!exists)
+		if(!exists) 
 			projects.push(validProject);
 	});
 	return projects;
@@ -66,10 +67,10 @@ async function getFileContent(fileName: Blob) {
 	const legacyMode = process.env.LEGACY;
 	const legacy = legacyMode === 'true' ? true : false;
 	let fileData;
-	if(legacy)
+	if(legacy) 
 		fileData = prepareLegacyInputData(parseInput(rawFileData));
 	else
- 		fileData = prepareInputData(parseInput(rawFileData));
+		fileData = prepareInputData(parseInput(rawFileData));
 	return fileData;
 }
 

@@ -1,9 +1,10 @@
-import { FunctionComponent, useState } from "react";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
-import { Button, TextField, LinearProgress } from "@material-ui/core";
-import { getFileContent } from "../common/fileUpload";
+import { FunctionComponent, useState } from 'react';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import { Button, TextField, LinearProgress } from '@material-ui/core';
+import { getFileContent } from '../common/fileUpload';
 
 type CourseDialogProps = {
+	name: string;
 	open: boolean;
 	handleClose: any;
 	handleNameChange: any;
@@ -11,10 +12,18 @@ type CourseDialogProps = {
 	addCourse: any;
 };
 
-const CourseDialog: FunctionComponent<CourseDialogProps> = ({ open, handleClose, handleNameChange, dataInput, addCourse }) => {
-	const [fileName, setfileName] = useState("");
-	const [parsedData, setParsedData] = useState("");
+const CourseDialog: FunctionComponent<CourseDialogProps> = ({
+	name,
+	open,
+	handleClose,
+	handleNameChange,
+	dataInput,
+	addCourse,
+}) => {
+	const [fileName, setfileName] = useState('');
+	const [parsedData, setParsedData] = useState('');
 	const [loading, setLoading] = useState(false);
+
 	const handleFileInput = async (file: any) => {
 		setLoading(true);
 		const fileData = await getFileContent(file[0]);
@@ -26,10 +35,11 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({ open, handleClose,
 		setLoading(true);
 		addCourse().then(() => {
 			setLoading(false);
-			setParsedData("");
-			setfileName("");
+			setParsedData('');
+			setfileName('');
 		});
 	};
+
 	return (
 		<>
 			<Dialog open={open} onClose={handleClose}>
@@ -41,11 +51,11 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({ open, handleClose,
 						id='fileInput'
 						type='file'
 						accept='.csv'
-						onChange={e => handleFileInput(e.target.files)}
-						style={{ display: "none" }}
+						onChange={(e) => handleFileInput(e.target.files)}
+						style={{ display: 'none' }}
 					/>
 					<label htmlFor='fileInput'>
-						<Button variant='outlined' color='primary' component='span' style={{ marginTop: "16px" }}>
+						<Button variant='outlined' color='primary' component='span' style={{ marginTop: '16px' }}>
 							Upload
 						</Button>
 					</label>
@@ -60,7 +70,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({ open, handleClose,
 					<Button onClick={handleClose} color='secondary'>
 						Cancel
 					</Button>
-					<Button onClick={handleAddCourse} color='primary'>
+					<Button onClick={handleAddCourse} color='primary' disabled={!!loading || !!!name}>
 						Save
 					</Button>
 				</DialogActions>

@@ -1,7 +1,7 @@
-import * as React from "react";
-import createAuth0Client from "@auth0/auth0-spa-js";
-import { useRouter } from "next/router";
-import { NextPage } from "next";
+import * as React from 'react';
+import createAuth0Client from '@auth0/auth0-spa-js';
+import { useRouter } from 'next/router';
+import { NextPage } from 'next';
 
 const DEFAULT_REDIRECT_CALLBACK = () => window.history.replaceState({}, document.title, window.location.pathname);
 
@@ -35,7 +35,7 @@ export const Auth0Provider: React.FunctionComponent<Auth0ProviderProps> = ({
 	onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
 	domain,
 	clientId,
-	redirectUri
+	redirectUri,
 }) => {
 	const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 	const [user, setUser] = React.useState<any>(null);
@@ -48,11 +48,11 @@ export const Auth0Provider: React.FunctionComponent<Auth0ProviderProps> = ({
 			const auth0FromHook = await createAuth0Client({
 				domain,
 				client_id: clientId,
-				redirect_uri: redirectUri
+				redirect_uri: redirectUri,
 			});
 			setAuth0(auth0FromHook);
 
-			if (window.location.search.includes("code=")) {
+			if(window.location.search.includes('code=')){
 				const { appState } = await auth0FromHook.handleRedirectCallback();
 				onRedirectCallback(appState);
 			}
@@ -61,7 +61,7 @@ export const Auth0Provider: React.FunctionComponent<Auth0ProviderProps> = ({
 
 			setIsAuthenticated(isAuthenticated);
 
-			if (isAuthenticated) {
+			if(isAuthenticated){
 				const user = await auth0FromHook.getUser();
 				setUser(user);
 			}
@@ -108,7 +108,7 @@ export const Auth0Provider: React.FunctionComponent<Auth0ProviderProps> = ({
 				loginWithRedirect: (...p: any) => auth0Client.loginWithRedirect(...p),
 				getTokenSilently: (...p: any) => auth0Client.getTokenSilently(...p),
 				getTokenWithPopup: (...p: any) => auth0Client.getTokenWithPopup(...p),
-				logout: (...p: any) => auth0Client.logout(...p)
+				logout: (...p: any) => auth0Client.logout(...p),
 			}}
 		>
 			{children}
@@ -122,19 +122,19 @@ export const requireUser = (page: NextPage): React.FunctionComponent<NextPage> =
 		const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
 
 		React.useEffect(() => {
-			if (loading || isAuthenticated) {
+			if(loading || isAuthenticated){
 				return;
 			}
 
 			const fn = async () => {
 				await loginWithRedirect({
-					appState: { targetUrl: router.asPath }
+					appState: { targetUrl: router.asPath },
 				});
 			};
 			fn();
 		}, [loading, isAuthenticated, loginWithRedirect, router.pathname]);
 
-		if (loading || !isAuthenticated) {
+		if(loading || !isAuthenticated){
 			return null;
 		}
 
