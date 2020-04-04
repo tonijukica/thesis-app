@@ -1,7 +1,7 @@
 import { FunctionComponent, useState, useEffect } from 'react';
 import { Grid, makeStyles, createStyles, Card, CardActionArea, CircularProgress } from '@material-ui/core';
 import { Student } from '../../interfaces';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { GET_REPO_INFO } from '../../gql/queries/projects';
 import { useQuery } from '@apollo/react-hooks';
 import { getUserRepoName, formatDate, projectStanding, dataExtract } from './helpers';
@@ -11,7 +11,8 @@ type ProjectBoxProps = {
     projectId: number,
     githubUrl: string,
     students: Student[],
-    deleteMode: boolean
+    deleteMode: boolean,
+    handleDelete: any
 }
 
 
@@ -54,8 +55,9 @@ const useStyles = makeStyles(() => createStyles({
     }
   }));
 
-const ProjectBox: FunctionComponent<ProjectBoxProps> = ({name, projectId, githubUrl, students, deleteMode}) => {
+const ProjectBox: FunctionComponent<ProjectBoxProps> = ({name, projectId, githubUrl, students, deleteMode, handleDelete}) => {
     const classes = useStyles();
+    const router = useRouter();
     const [commitNum, setCommitNum] = useState('');
     const [lastCommitDate, setLastCommitDate] = useState('');
     const [user, repoName] = getUserRepoName(githubUrl);
@@ -74,11 +76,17 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({name, projectId, github
             setCommitNum(num);
             setLastCommitDate(date);
         }
-    }, [data])
+    }, [data]);
+
+    const handleRedirect = (e: any) => {
+        e.preventDefault();
+        router.push(`/projects/${projectId}`);
+    }
     if(data)
         return(
-          <Card className = {deleteMode ? [classes.card, classes.deleteHover].join(' ') :[classes.card, projectStanding(lastCommitDate, classes)].join(' ')} key = {projectId}>
-              <Link href = {`/projects/${projectId}`}>
+          <Card className = {deleteMode ? [classes.card, classes.deleteHover].join(' ') :[classes.card, projectStanding(lastCommitDate, classes)].join(' ')} 
+          onClick = {deleteMode ? handleDelete : handleRedirect}
+          key = {projectId}>
                   <CardActionArea className = {classes.cardActionArea}>
                           <Grid container direction = 'row' alignContent = 'center' alignItems='center' justify = 'space-evenly'>
                                   <Grid item xs = {3}>
@@ -99,7 +107,6 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({name, projectId, github
                               </Grid>
                           </Grid>
                   </CardActionArea>
-              </Link>
           </Card>
         );
     else

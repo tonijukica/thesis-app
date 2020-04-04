@@ -6,6 +6,7 @@ import fetch from 'isomorphic-unfetch';
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
 const link = new HttpLink({
   fetch, 
   uri: GRAPHQL_URL

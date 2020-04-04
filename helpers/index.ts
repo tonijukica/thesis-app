@@ -5,7 +5,6 @@ import { HttpLink } from 'apollo-link-http';
 import fetch from 'isomorphic-unfetch';
 import capture from 'capture-website';
 import { GET_PROJECTS_PROD, INSERT_PROD_PREVIEW } from '../gql/queries/projects';
-
 dotenv.config();
 
 const GRAPHQL_URL = process.env.GRAPHQL_URL;
@@ -35,7 +34,7 @@ async function takePreview() {
       return client.mutate({
         mutation: INSERT_PROD_PREVIEW,
         variables: {
-          projectId: id,
+          projectId: Number(id),
           image
         }
       })

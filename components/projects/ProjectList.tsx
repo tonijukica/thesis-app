@@ -54,7 +54,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	};
 	const fuse = new Fuse(projects, fuseOptions);
 	useEffect(() => {
-		if (data) setProjects(data.projects);
+		if (data) setProjects(data.courses[0].projects);
 		if (searchParam.length > 0) {
 			const searchResults = fuse.search(searchParam);
 			setProjects(searchResults);
@@ -90,7 +90,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const handleDeleteProject = (projectId: number) => {
 		deleteProject({
 			variables: {
-				projectId
+				projectId: Number(projectId)
 			}
 		}).then(() => {
 			setProjects(projects.filter(project => project.id !== projectId));
@@ -105,7 +105,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				students
 			}
 		}).then(({ data }) => {
-			const projectData = data.insert_projects.returning[0];
+			const projectData = data.insert_project;
 			const newProject: Project = {
 				id: projectData.id,
 				name: projectData.name,
@@ -121,16 +121,16 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 		return new Promise(resolve => {
 			const newProjects = bulkProjects.map((project: any) => {
 				return {
-					...project,
-					course_id: courseId
+					...project
 				};
 			});
 			insertProjects({
 				variables: {
-					projects: newProjects
+					projects: newProjects,
+					courseId
 				}
 			}).then(({ data }) => {
-				setProjects([...projects, ...data.insert_projects.returning]);
+				setProjects([...projects, ...data.insert_projects]);
 				setDialogBulk(false);
 				resolve();
 			});
@@ -214,6 +214,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 								githubUrl={project.github_url}
 								students={project.students}
 								deleteMode={deleteMode}
+								handleDelete = {handleDeleteProject}
 							/>
 						</div>
 					);
