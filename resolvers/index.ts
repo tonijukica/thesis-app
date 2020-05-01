@@ -1,3 +1,4 @@
+import { AuthResolver } from './auth/AuthResolver';
 import { CourseResolver } from './course/CourseResolver';
 import { ProjectResolver } from './project/ProjectResolver';
 import { StudentResolver } from './student/StudentResolver';
@@ -7,9 +8,10 @@ import { buildSchema } from 'type-graphql';
 export const getSchema = () =>
 	buildSchema({
 		resolvers: [
+      AuthResolver,
       CourseResolver,
-      ProjectResolver, 
-      StudentResolver, 
+      ProjectResolver,
+      StudentResolver,
       ProductionPreviewResolver
     ]
 	});

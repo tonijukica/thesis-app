@@ -25,6 +25,7 @@
     "apollo-link": "^1.2.13",
     "apollo-link-http": "^1.5.16",
     "apollo-server-express": "^2.11.0",
+    "base64url": "^3.0.1",
     "capture-website": "^0.8.1",
     "classnames": "^2.2.6",
     "dotenv": "^8.2.0",
