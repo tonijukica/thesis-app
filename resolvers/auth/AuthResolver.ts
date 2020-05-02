@@ -47,6 +47,7 @@ export class AuthResolver{
       const userAuthenticators = await user.authenticators;
       const serverAssertion = genereteAssertion(userAuthenticators);
       return {
+        status: 'ok',
         assertion: serverAssertion
       };
     }

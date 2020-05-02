@@ -3,7 +3,7 @@ import { ObjectType, Field } from 'type-graphql';
 @ObjectType()
 export class user{
   @Field({ nullable: true })
-  id?: number
+  id?: string
 
   @Field({ nullable: true })
   name?: string

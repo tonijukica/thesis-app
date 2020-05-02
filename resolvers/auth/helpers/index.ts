@@ -18,7 +18,7 @@ function generateCredential(id: number, username: string) {
       name: 'Thesis App'
     },
     user: {
-      id,
+      id: base64url(Buffer.from(id.toString())),
       name: username,
       displayName: username
     },
