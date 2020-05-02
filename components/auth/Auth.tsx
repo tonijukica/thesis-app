@@ -3,8 +3,8 @@ import { Container, Collapse, Paper, Avatar, TextField, Button, Typography, make
 import { Alert } from '@material-ui/lab'
 import LockIcon from '@material-ui/icons/LockOutlined';
 import { useMutation } from '@apollo/react-hooks';
-import { REGISTER, LOGIN } from '../../gql/queries/auth';
-import { formatCredReq, formatAssertReq } from './helpers/index';
+import { REGISTER, LOGIN, RESPONSE } from '../../gql/queries/auth';
+import { formatCredReq, formatAssertReq, publicKeyCredentialToJSON } from './helpers/index';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -30,6 +30,7 @@ const Auth: FC = () => {
   const [errMsg, setErrMsg] = useState('');
   const [register] = useMutation(REGISTER);
   const [login] = useMutation(LOGIN);
+  const [serverReponse] = useMutation(RESPONSE);
 
   const handleRegister = async() => {
     register({
@@ -44,8 +45,26 @@ const Auth: FC = () => {
       const publicKey = formatCredReq(credential);
       return navigator.credentials.create({publicKey});
     })
-    .then(response => {
-      console.log(response);
+    .then(res => {
+      console.log(res);
+      const { id, rawId, response, type } = publicKeyCredentialToJSON(res);
+      return serverReponse({
+        variables: {
+          input: {
+            id,
+            rawId,
+            response: {
+              attestationObject: response.attestationObject,
+              clientDataJSON: response.clientDataJSON
+            },
+            type
+          }
+        }
+      });
+    })
+    .then(({data}) => {
+      console.log(data);
+      console.log('you in bitch');
     })
     .catch(err => {
       console.log(err);
@@ -63,13 +82,29 @@ const Auth: FC = () => {
       const { status, message, assertion } = data.login;
       if(status !== 'ok')
         throw new Error(message);
-      console.log(assertion);
       const publicKey = formatAssertReq(assertion);
-      console.log(publicKey);
       return navigator.credentials.get({publicKey});
     })
-    .then(response => {
-      console.log(response);
+    .then(res => {
+      const {id, rawId, response, type } = publicKeyCredentialToJSON(res);
+      return serverReponse({
+        variables: {
+          input: {
+            id,
+            rawId,
+            response: {
+              authenticatorData: response.authenticatorData,
+              clientDataJSON: response.clientDataJSON,
+              signature: response.signature
+            },
+            type
+          }
+        }
+      });
+    })
+    .then(({data}) => {
+      console.log(data);
+      console.log('you logged in bitch');
     })
     .catch(err => {
       console.log(err);

@@ -1,9 +1,13 @@
 import base64url from 'base64url';
 import { Credential } from '../../../types/credential';
 import crypto from 'crypto';
+import cbor from 'cbor';
 import { Authenticator } from '../../../entities/Authenticator';
 import { Assertion } from '../../../types/assertion';
 import { allowCredentials } from '../../../types/allowCredentials';
+import { Response } from '../../../types/response';
+import verifyPackedAttestation from './verifyPackedAttestation';
+import { hash, verifySignature } from './common';
 
 function randomBase64urlBuffer(len: number){
   len = len || 32;
@@ -52,7 +56,118 @@ function genereteAssertion(authenticators: Authenticator[]){
   return assertion;
 }
 
+async function verifyAttestationResponse(webauthnResponse: Response){
+  const attestationBuffer = base64url.toBuffer(webauthnResponse.attestationObject!);
+  const attestationStruct = cbor.decodeAllSync(attestationBuffer)[0];
+  const { clientDataJSON } = webauthnResponse;
+  let verification: any;
+
+  if(attestationStruct.fmt === 'packed')
+    verification = await verifyPackedAttestation(attestationStruct, clientDataJSON!);
+
+  if (verification!.verified) {
+		const response = {
+			verified: verification!.verified,
+			authrInfo: verification!.authrInfo
+		};
+		return response;
+	}
+	else
+		return {
+			verified: false,
+		};
+}
+
+function findAuthenticator(credID: string, authenticators: Authenticator[]){
+  for (const authr of authenticators) {
+		if (authr.credID === credID) return authr;
+	}
+	throw new Error(`Unknown authenticator with credID ${credID}!`);
+}
+
+function parseAssertAuthenticatorData(buffer: Buffer) {
+	const rpIdHash = buffer.slice(0, 32);
+	buffer = buffer.slice(32);
+
+	const flagsBuf = buffer.slice(0, 1);
+	buffer = buffer.slice(1);
+
+	const flagsInt = flagsBuf[0];
+	const flags = {
+		up: !!(flagsInt & 0x01),
+		uv: !!(flagsInt & 0x04),
+		at: !!(flagsInt & 0x40),
+		ed: !!(flagsInt & 0x80),
+		flagsInt,
+	};
+
+	const counterBuf = buffer.slice(0, 4);
+	buffer = buffer.slice(4);
+
+	const counter = counterBuf.readUInt32BE(0);
+
+	return { rpIdHash, flagsBuf, flags, counter, counterBuf };
+}
+
+function ASN1toPEM(pkBuffer: Buffer) {
+	if (!Buffer.isBuffer(pkBuffer)) throw new Error('ASN1toPEM: input must be a Buffer');
+	let type;
+	if (pkBuffer.length == 65 && pkBuffer[0] == 0x04) {
+    const prefix: Buffer = Buffer.from('3059301306072a8648ce3d020106082a8648ce3d030107034200', 'hex');
+		pkBuffer = Buffer.concat([prefix, pkBuffer]);
+		type = 'PUBLIC KEY';
+	} else type = 'CERTIFICATE';
+	const base64Certificate = pkBuffer.toString('base64');
+	let PEMKey = '';
+
+	for (let i = 0; i < Math.ceil(base64Certificate.length / 64); i++) {
+		const start = 64 * i;
+		PEMKey += base64Certificate.substr(start, 64) + '\n';
+	}
+
+	PEMKey = `-----BEGIN ${type}-----\n` + PEMKey + `-----END ${type}-----\n`;
+
+	return PEMKey;
+}
+
+async function verifyAssertionResponse(webauthnResponse: Response, id: string, authenticators: Authenticator[]){
+  const authr = findAuthenticator(id, authenticators);
+  const authenticatorData = base64url.toBuffer(webauthnResponse.authenticatorData!);
+  let response: any = { verified: false};
+
+  if(authr.fmt === 'packed'){
+    const authenticatorDataStruct = parseAssertAuthenticatorData(authenticatorData);
+
+    if (!authenticatorDataStruct.flags.up)
+      throw new Error('User was NOT presented durring authentication!');
+
+    const clientDataHash = hash('sha256', base64url.toBuffer(webauthnResponse.clientDataJSON!));
+    const signatureBase = Buffer.concat([
+      authenticatorDataStruct.rpIdHash,
+      authenticatorDataStruct.flagsBuf,
+      authenticatorDataStruct.counterBuf,
+      clientDataHash
+    ]);
+
+    const publicKey: string = ASN1toPEM(base64url.toBuffer(authr.publicKey));
+    const signature = base64url.toBuffer(webauthnResponse.signature!);
+
+    const verify = await verifySignature(signature, signatureBase, publicKey);
+
+    if(verify){
+      response.verified = verify;
+      if(response.counter <= authr.counter)
+        throw new Error('Authr counter did not increase!');
+      authr.counter = authenticatorDataStruct.counter;
+      authr.save();
+    }
+    return response;
+  }
+}
+
 export {
   generateCredential,
-  genereteAssertion
+  genereteAssertion,
+  verifyAttestationResponse,
+  verifyAssertionResponse
 }

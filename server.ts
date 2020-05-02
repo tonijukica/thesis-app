@@ -1,6 +1,8 @@
 import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import express from 'express';
+import cookieSession from 'cookie-session';
+import cookieParser from 'cookie-parser';
 import next from 'next';
 import cron from 'node-cron';
 import takePreview from './helpers';
@@ -29,9 +31,15 @@ app
 
 		const schema = await getSchema();
 		const apolloServer = new ApolloServer({
-			schema,
+      schema,
+      context: ({ req }: any) => ({req})
 		});
-
+    server.use(cookieSession({
+      name: 'session',
+      keys: ['hexkey'],
+      maxAge: 24*60*60*1000
+    }));
+    server.use(cookieParser());
 		apolloServer.applyMiddleware({ app: server });
 
 		server.get('*', (req, res) => {
@@ -39,7 +47,7 @@ app
 		});
 
 		server.listen(3000, (err) => {
-			if(err) 
+			if(err)
 				throw err;
 			console.log('> Ready on http://localhost:3000');
 		});

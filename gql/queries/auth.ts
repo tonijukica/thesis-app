@@ -44,8 +44,18 @@ mutation($username: String!){
   }
 }
 `;
+const RESPONSE = gql`
+mutation($input: ResponseInput!){
+  response(input: $input){
+    status
+    message
+  }
+}
+`;
+
 
 export {
   REGISTER,
-  LOGIN
+  LOGIN,
+  RESPONSE
 }
