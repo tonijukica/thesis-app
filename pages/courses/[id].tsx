@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import Layout from '../../components/layout/Layout';
 import ProjectList from '../../components/projects/ProjectList';
-import { withLoginRequired } from 'use-auth0-hooks';
+import withLoginRequired from '../../auth/util/withLoginRequired'
 
 const Projects: any = () => {
 	const router = useRouter();

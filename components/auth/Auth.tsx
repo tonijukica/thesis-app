@@ -1,10 +1,9 @@
-import { useState, FC } from 'react';
+import { useState, useEffect, FC } from 'react';
 import { Container, Collapse, Paper, Avatar, TextField, Button, Typography, makeStyles } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import LockIcon from '@material-ui/icons/LockOutlined';
-import { useMutation } from '@apollo/react-hooks';
-import { REGISTER, LOGIN, RESPONSE } from '../../gql/queries/auth';
-import { formatCredReq, formatAssertReq, publicKeyCredentialToJSON } from './helpers/index';
+import { useAuth } from '../../auth/hooks/useAuth';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -25,47 +24,19 @@ const useStyles = makeStyles((theme) => ({
 
 const Auth: FC = () => {
   const classes = useStyles();
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [error, setError] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const [register] = useMutation(REGISTER);
-  const [login] = useMutation(LOGIN);
-  const [serverReponse] = useMutation(RESPONSE);
+  const { login, register, isLoading, isAuthenticated } = useAuth();
+
+  useEffect(() =>{
+    if(!isLoading && isAuthenticated)
+      router.push('/courses');
+  }, [isAuthenticated]);
 
   const handleRegister = async() => {
-    register({
-      variables: {
-        username
-      }
-    })
-    .then(({data}) => {
-      const { status, message, credential } = data.register;
-      if(status !== 'ok')
-        throw new Error(message);
-      const publicKey = formatCredReq(credential);
-      return navigator.credentials.create({publicKey});
-    })
-    .then(res => {
-      console.log(res);
-      const { id, rawId, response, type } = publicKeyCredentialToJSON(res);
-      return serverReponse({
-        variables: {
-          input: {
-            id,
-            rawId,
-            response: {
-              attestationObject: response.attestationObject,
-              clientDataJSON: response.clientDataJSON
-            },
-            type
-          }
-        }
-      });
-    })
-    .then(({data}) => {
-      console.log(data);
-      console.log('you in bitch');
-    })
+    register(username)
     .catch(err => {
       console.log(err);
       setErrMsg(err.message)
@@ -74,37 +45,11 @@ const Auth: FC = () => {
   };
 
   const handleLogin = async() => {
-    login({
-      variables: {
-        username
-      }
-    }).then(({data}) => {
-      const { status, message, assertion } = data.login;
-      if(status !== 'ok')
-        throw new Error(message);
-      const publicKey = formatAssertReq(assertion);
-      return navigator.credentials.get({publicKey});
-    })
-    .then(res => {
-      const {id, rawId, response, type } = publicKeyCredentialToJSON(res);
-      return serverReponse({
-        variables: {
-          input: {
-            id,
-            rawId,
-            response: {
-              authenticatorData: response.authenticatorData,
-              clientDataJSON: response.clientDataJSON,
-              signature: response.signature
-            },
-            type
-          }
-        }
-      });
-    })
-    .then(({data}) => {
-      console.log(data);
-      console.log('you logged in bitch');
+    login(username)
+    .then(() => {
+      router.push('/courses')
+      .then(() => router.reload());
+
     })
     .catch(err => {
       console.log(err);

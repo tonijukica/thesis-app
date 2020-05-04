@@ -55,6 +55,9 @@ export class AuthResolver{
     else{
       const userAuthenticators = await user.authenticators;
       const serverAssertion = genereteAssertion(userAuthenticators);
+      ctx.req.session!.challenge = serverAssertion.challenge;
+      ctx.req.session!.username = username;
+
       return {
         status: 'ok',
         assertion: serverAssertion
@@ -99,8 +102,6 @@ export class AuthResolver{
       const authenticators = await user?.authenticators;
       if(authenticators)
         result = await verifyAssertionResponse(response, id, authenticators);
-
-
     }
     else
       return {
