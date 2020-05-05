@@ -66,7 +66,7 @@ export class AuthResolver{
   }
 
   @Mutation(() => ResponseResponse)
-  async response(
+  async registerResponse(
     @Arg('input') { id, rawId, response, type }: ResponseInput,
     @Ctx() ctx: IContext
   ): Promise<ResponseResponse | undefined>{
@@ -83,9 +83,8 @@ export class AuthResolver{
         status: 'failed',
         message: 'Challenges dont match'
       }
-    let result: any;
     if(response.attestationObject !== undefined){
-      result = await verifyAttestationResponse(response);
+      const result: any = await verifyAttestationResponse(response);
       if(result.verified){
         const { fmt, publicKey, counter, credID } = result.authrInfo;
         const authr = await Authenticator.create({
@@ -96,26 +95,94 @@ export class AuthResolver{
         }).save();
         (await user!.authenticators).push(authr);
         await user?.save();
+        ctx.req.session!.challenge = null;
+        ctx.req.session!.username = null;
+        return {
+          status: 'ok'
+        }
       }
+      else
+        return {
+          status: 'failed',
+          message: 'Can not authenticate signature!'
+        };
     }
-    else if(response.authenticatorData !== undefined){
+    else
+      return {
+        status: 'failed',
+        message: 'Missing attestation!'
+      }
+  }
+
+  @Mutation(() => ResponseResponse)
+  async loginResponse(
+    @Arg('input') { id, rawId, response, type }: ResponseInput,
+    @Ctx() ctx: IContext
+  ): Promise<ResponseResponse | undefined>{
+    if(!id || !rawId || !response || !type || type !== 'public-key')
+      return {
+        status: 'failed',
+        message: 'Missing fields or type is not public-key'
+      }
+    const { username } = ctx.req.session!;
+    const user = await User.findOne({ username });
+    const clientData = JSON.parse(base64url.decode(response.clientDataJSON!));
+    if(clientData.challenge !== ctx.req.session!.challenge)
+      return {
+        status: 'failed',
+        message: 'Challenges dont match'
+      }
+    if(response.authenticatorData !== undefined){
       const authenticators = await user?.authenticators;
-      if(authenticators)
-        result = await verifyAssertionResponse(response, id, authenticators);
+      if(authenticators){
+        const result: any = await verifyAssertionResponse(response, id, authenticators);
+
+        if(result.verified){
+          ctx.req.session!.challenge = null;
+          ctx.req.session!.authenticated = true;
+          return { status: 'ok' };
+        }
+        else
+          return {
+            status: 'failed',
+            message: 'Can not authenticate signature!'
+          };
+      }
+      else
+        return {
+          status: 'failed',
+          message: 'User does not have any authenticators'
+        }
     }
     else
       return {
         status: 'failed',
         message: 'Can not determine response type!'
       }
-    if(result.verified) {
-      return { status: 'ok' };
-    } else {
-      return {
-        status: 'failed',
-        message: 'Can not authenticate signature!'
-      };
+  }
+
+  @Mutation(() => ResponseResponse)
+  async logout(
+    @Ctx() ctx: IContext
+  ): Promise<ResponseResponse | undefined>{
+    ctx.req.session!=null;
+    return {
+      status: 'ok'
+    }
+  }
+
+  @Mutation(() => ResponseResponse)
+  async registerFail(
+    @Ctx() ctx: IContext
+  ): Promise<ResponseResponse | undefined>{
+    const username = ctx.req.session!.username;
+    await User.delete({username});
+    console.log(User.findOne({username}));
+    return {
+      status: 'ok'
     }
   }
 }
+
+
 

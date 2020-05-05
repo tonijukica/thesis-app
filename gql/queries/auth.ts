@@ -44,9 +44,36 @@ mutation($username: String!){
   }
 }
 `;
-const RESPONSE = gql`
+const REGISTER_RESPONSE = gql`
 mutation($input: ResponseInput!){
-  response(input: $input){
+  registerResponse(input: $input){
+    status
+    message
+  }
+}
+`;
+
+const LOGIN_RESPONSE = gql`
+mutation($input: ResponseInput!){
+  loginResponse(input: $input){
+    status
+    message
+  }
+}
+`;
+
+const LOGOUT = gql`
+mutation{
+  logout{
+    status
+    message
+  }
+}
+`;
+
+const REGISTER_FAIL = gql`
+mutation{
+  registerFail{
     status
     message
   }
@@ -57,5 +84,8 @@ mutation($input: ResponseInput!){
 export {
   REGISTER,
   LOGIN,
-  RESPONSE
+  REGISTER_RESPONSE,
+  LOGIN_RESPONSE,
+  REGISTER_FAIL,
+  LOGOUT
 }

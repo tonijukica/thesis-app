@@ -1,15 +1,17 @@
 import AuthContext from './authContext';
 import UserProvider from './userProvider';
 import { useMutation } from '@apollo/react-hooks';
-import { REGISTER, LOGIN, RESPONSE } from '../../gql/queries/auth';
+import { REGISTER, LOGIN, REGISTER_RESPONSE, LOGIN_RESPONSE, LOGOUT, REGISTER_FAIL } from '../../gql/queries/auth';
 import { formatCredReq, formatAssertReq, publicKeyCredentialToJSON } from '../helpers';
 
 
 export function AuthProvider({ children }: any,props: any): JSX.Element{
-  const data = { user: null };
   const [registerRequest] = useMutation(REGISTER);
   const [loginRequest] = useMutation(LOGIN);
-  const [serverReponse] = useMutation(RESPONSE);
+  const [registerResponse] = useMutation(REGISTER_RESPONSE);
+  const [loginResponse] = useMutation(LOGIN_RESPONSE);
+  const [logoutRequest] = useMutation(LOGOUT);
+  const [registerFail] = useMutation(REGISTER_FAIL);
 
   const login = (username: string) => {
     return loginRequest({
@@ -25,7 +27,7 @@ export function AuthProvider({ children }: any,props: any): JSX.Element{
     })
     .then(res => {
       const {id, rawId, response, type } = publicKeyCredentialToJSON(res);
-      return serverReponse({
+      return loginResponse({
         variables: {
           input: {
             id,
@@ -41,7 +43,7 @@ export function AuthProvider({ children }: any,props: any): JSX.Element{
       });
     })
     .then(({data}) => {
-      const { status, message } = data.response;
+      const { status, message } = data.loginResponse;
       if(status === 'ok')
         localStorage.setItem('user', JSON.stringify({
           user: username,
@@ -63,11 +65,15 @@ export function AuthProvider({ children }: any,props: any): JSX.Element{
       if(status !== 'ok')
         throw new Error(message);
       const publicKey = formatCredReq(credential);
-      return navigator.credentials.create({publicKey});
+      return navigator.credentials.create({publicKey})
+        .catch(() => {
+          registerFail();
+          throw new Error('Registration failed');
+        });
     })
     .then(res => {
       const { id, rawId, response, type } = publicKeyCredentialToJSON(res);
-      return serverReponse({
+      return registerResponse({
         variables: {
           input: {
             id,
@@ -81,20 +87,21 @@ export function AuthProvider({ children }: any,props: any): JSX.Element{
         }
       });
     })
-    .then(({data}) => {
-      const { status, message } = data.response;
-      if(status !== 'ok')
+    .then(async ({data}) => {
+      const { status, message } = data.registerResponse;
+      if(status !== 'ok'){
+        await registerFail();
         throw new Error(message);
+      }
     });
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    logoutRequest().then(() => localStorage.removeItem('user'));
   };
 
   return(
     <AuthContext.Provider value={{
-      data,
      login,
      register,
      logout

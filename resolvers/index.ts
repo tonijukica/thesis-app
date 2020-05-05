@@ -3,6 +3,7 @@ import { CourseResolver } from './course/CourseResolver';
 import { ProjectResolver } from './project/ProjectResolver';
 import { StudentResolver } from './student/StudentResolver';
 import { ProductionPreviewResolver } from './production_preview/ProductionPreviewResolver';
+import { authChecker } from './auth/helpers';
 import { buildSchema } from 'type-graphql';
 
 export const getSchema = () =>
@@ -13,5 +14,6 @@ export const getSchema = () =>
       ProjectResolver,
       StudentResolver,
       ProductionPreviewResolver
-    ]
+    ],
+    authChecker
 	});

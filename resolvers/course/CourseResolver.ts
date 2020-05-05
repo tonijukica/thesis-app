@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, Authorized } from 'type-graphql';
 import { Course } from '../../entities/Course';
 import { Project } from '../../entities/Project';
 import { Student } from '../../entities/Student';
@@ -6,6 +6,7 @@ import { ProjectInput } from '../inputs';
 
 @Resolver()
 export class CourseResolver {
+  @Authorized()
 	@Query(() => [Course])
 	async courses(@Arg('id', { nullable: true }) id: number): Promise<Course[]> {
 		if(id){
@@ -27,6 +28,7 @@ export class CourseResolver {
 		}
 	}
 
+  @Authorized()
 	@Mutation(() => Course)
 	async insert_course(
 		@Arg('name') name: string,
@@ -37,7 +39,7 @@ export class CourseResolver {
 			course_name: name,
 			year,
 		});
-		if(!projects) 
+		if(!projects)
 			return await course.save();
 		else {
 			const newProjects = await Promise.all(
@@ -60,8 +62,9 @@ export class CourseResolver {
 			await course.save();
 			return course;
 		}
-	}
+  }
 
+  @Authorized()
 	@Mutation(() => String)
 	async delete_course(@Arg('id') id: number) {
 		await Course.delete(id);

@@ -1,9 +1,10 @@
-import { Resolver, Query, Arg, Mutation } from 'type-graphql';
+import { Resolver, Query, Arg, Mutation, Authorized } from 'type-graphql';
 import { Project } from '../../entities/Project';
 import { ProductionPreview } from '../../entities/ProductionPreview';
 
 @Resolver()
 export class ProductionPreviewResolver {
+  @Authorized()
 	@Query(() => [ProductionPreview])
 	async productionPreviews(@Arg('project_id') id: number): Promise<ProductionPreview[]> {
 		const project = await Project.findOne({ id });
@@ -21,6 +22,7 @@ export class ProductionPreviewResolver {
 		return productionPreview;
 	}
 
+  @Authorized()
 	@Mutation(() => String)
 	async delete_production_previw(@Arg('id') id: number) {
 		await ProductionPreview.delete(id);

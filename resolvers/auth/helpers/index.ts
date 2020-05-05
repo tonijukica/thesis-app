@@ -8,6 +8,9 @@ import { allowCredentials } from '../../../types/allowCredentials';
 import { Response } from '../../../types/response';
 import verifyPackedAttestation from './verifyPackedAttestation';
 import { hash, verifySignature } from './common';
+import { AuthChecker } from 'type-graphql'
+import { IContext } from '../../../types/IContext';
+
 
 function randomBase64urlBuffer(len: number){
   len = len || 32;
@@ -165,7 +168,17 @@ async function verifyAssertionResponse(webauthnResponse: Response, id: string, a
   }
 }
 
+const authChecker: AuthChecker<IContext> = (
+  { context }
+) => {
+  if(context.req.session!.authenticated)
+   return true;
+  else
+    return false;
+};
+
 export {
+  authChecker,
   generateCredential,
   genereteAssertion,
   verifyAttestationResponse,

@@ -26,8 +26,12 @@ const Auth: FC = () => {
   const classes = useStyles();
   const router = useRouter();
   const [username, setUsername] = useState('');
-  const [error, setError] = useState(false);
-  const [errMsg, setErrMsg] = useState('');
+  const [state, setState] = useState({
+    err: false,
+    errMsg: '',
+    success: false,
+    successMsg: ''
+  });
   const { login, register, isLoading, isAuthenticated } = useAuth();
 
   useEffect(() =>{
@@ -37,32 +41,54 @@ const Auth: FC = () => {
 
   const handleRegister = async() => {
     register(username)
+    .then(() => setState({
+      ...state,
+      success: true,
+      successMsg: 'Registration successful, you can log in now.'
+    }))
     .catch(err => {
       console.log(err);
-      setErrMsg(err.message)
-      setError(true);
+      setState({
+        ...state,
+        err: true,
+        errMsg: err.message
+      })
     })
   };
 
   const handleLogin = async() => {
     login(username)
     .then(() => {
-      router.push('/courses')
+      router.push('/')
       .then(() => router.reload());
 
     })
     .catch(err => {
       console.log(err);
-      setErrMsg(err.message);
-      setError(true);
-    })
+      setState({
+        ...state,
+        err: true,
+        errMsg: err.message
+      });
+    });
   }
+  const handleAlertClose = () => setState({
+    err: false,
+    errMsg: '',
+    success: false,
+    successMsg: ''
+  });
 
   return(
-    <Container maxWidth='sm'>
-        <Collapse in={error}>
-          <Alert severity="error" onClose={() => {setError(false)}}>
-            {errMsg}
+    <Container maxWidth='sm' style={{marginTop: '64px'}}>
+        <Collapse in={state.err}>
+          <Alert severity="error" onClose={handleAlertClose}>
+            {state.errMsg}
+          </Alert>
+        </Collapse>
+        <Collapse in={state.success}>
+          <Alert severity="success" onClose={handleAlertClose}>
+            {state.successMsg}
           </Alert>
         </Collapse>
       <Paper variant='elevation' elevation={3} className={classes.paper}>
