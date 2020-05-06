@@ -1,7 +1,7 @@
 import Layout from '../../components/layout/Layout';
 import { Courses } from '../../components/courses/CourseList';
+import withLoginRequired from '../../auth/util/withLoginRequired'
 
-import { withLoginRequired } from 'use-auth0-hooks';
 
 const IndexPage: any = () => {
 	return (
