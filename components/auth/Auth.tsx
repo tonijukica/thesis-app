@@ -42,7 +42,8 @@ const Auth: FC = () => {
   const handleRegister = async() => {
     register(username)
     .then(() => setState({
-      ...state,
+      err: false,
+      errMsg: '',
       success: true,
       successMsg: 'Registration successful, you can log in now.'
     }))

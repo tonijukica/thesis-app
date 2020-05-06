@@ -1,5 +1,5 @@
 import { FunctionComponent, useContext } from 'react';
-import { Grid, makeStyles, createStyles, Card, CardActionArea, CardContent } from '@material-ui/core';
+import { Grid, makeStyles, createStyles, Card, CardActionArea, CardContent, CardHeader } from '@material-ui/core';
 import { Context } from './CourseList';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useMutation } from '@apollo/react-hooks';
@@ -16,14 +16,20 @@ type CourseBoxProps = {
 const useStyles = makeStyles(() =>
 	createStyles({
 		card: {
-			width: '75%',
+			width: '60%',
 			textAlign: 'center',
-			marginBottom: '8px',
-			marginTop: '8px',
-		},
+			marginBottom: '16px',
+			marginTop: '16px',
+    },
+    cardHeader: {
+      color: 'white',
+      backgroundColor: '#24292e',
+      fontSize: '2rem'
+    },
+    cardName: {
+      fontSize: '1.5rem',
+    },
 		cardActionArea: {
-			paddingTop: '16px',
-			paddingBottom: '16px',
 			fontSize: '1em',
 		},
 		deleteIcon: {
@@ -59,12 +65,13 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentP
 		<Grid container xs={4} item justify='center'>
 			<Card className={classes.card} onClick={deleteMode ? handleDelete : handleRedirect}>
 				<CardActionArea className={classes.cardActionArea}>
-					{deleteMode ? <DeleteIcon className={classes.deleteIcon} onClick={handleDelete} /> : null}
+					{deleteMode ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} onClick={handleDelete} /> : null}
+          <CardHeader title={name.toLocaleUpperCase()} className={classes.cardHeader}/>
 					<CardContent>
 						<div>
-							{name}
-							<br />
-							Projects: {studentProjects}
+              <span className={classes.cardName}>{studentProjects}</span>
+              <br/>
+							Projects
 						</div>
 					</CardContent>
 				</CardActionArea>

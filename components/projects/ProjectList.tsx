@@ -3,6 +3,7 @@ import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, Line
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
+import { Pagination } from '@material-ui/lab';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './dialogs/AddProjectDialog';
 import BulkProjectDialog from './dialogs/AddBulkProjectDialog';
@@ -27,7 +28,7 @@ const useStyles = makeStyles(() =>
 			textAlign: 'center',
 			paddingBottom: '16px',
 			borderBottom: '1px solid #e1e4e8 !important',
-		},
+    }
 	})
 );
 
@@ -45,7 +46,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
 	const [insertProject] = useMutation(INSERT_PROJECT);
 	const [insertProjects] = useMutation(INSERT_BULK_PROJECTS);
-	const [students, setStudents] = useState<Student[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const rowsPerPage = 10;
+  const [page, setPage] = useState(1);
 
 	const fuseOptions = {
 		shouldSort: true,
@@ -56,7 +59,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const fuse = new Fuse(projects, fuseOptions);
 
 	useEffect(() => {
-		if(data) 
+		if(data)
 			setProjects(data.courses[0].projects);
 		if(searchParam.length > 0){
 			const searchResults = fuse.search(searchParam);
@@ -86,6 +89,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 		setProjectUrl(e.target.value);
 	};
 	const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setPage(1);
 		setSearchParam(e.target.value);
 	};
 	const addStudent = (student: Student) => {
@@ -139,8 +143,13 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				resolve();
 			});
 		});
-	};
-	
+  };
+
+  const handlePageChange = (event: any, value: number) => {
+		if(event)
+			setPage(value);
+  };
+
 	return (
 		<>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.container}>
@@ -196,36 +205,47 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 
 			<Grid container direction='row' justify='space-evenly' className={classes.header}>
 				<Grid item xs={3}>
-					Project name
+					<strong>Project name</strong>
 				</Grid>
 				<Grid item xs={3}>
-					Students
+					<strong>Students</strong>
 				</Grid>
 				<Grid item xs={3}>
-					Number of commits
+					<strong>Number of commits</strong>
 				</Grid>
 				<Grid item xs={3}>
-					Last commit
+					<strong>Last commit</strong>
 				</Grid>
 			</Grid>
 			{loading && <LinearProgress />}
 			{!loading &&
 				projects &&
-				projects.map((project: Project) => {
-					return (
-						<div key={project.id} onClick={() => (deleteMode ? handleDeleteProject(project.id) : null)}>
-							<ProjectBox
-								key={project.id}
-								name={project.name}
-								projectId={project.id}
-								githubUrl={project.github_url}
-								students={project.students}
-								deleteMode={deleteMode}
-								handleDelete={handleDeleteProject}
-							/>
-						</div>
-					);
-				})}
+        <Grid container direction='row' justify='center'>
+          {
+            projects.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage).map((project: Project) => {
+              return (
+                <Grid container direction='column' key={project.id} onClick={() => (deleteMode ? handleDeleteProject(project.id) : null)}>
+                  <ProjectBox
+                    key={project.id}
+                    name={project.name}
+                    projectId={project.id}
+                    githubUrl={project.github_url}
+                    students={project.students}
+                    deleteMode={deleteMode}
+                    handleDelete={handleDeleteProject}
+                  />
+                </Grid>
+            )})
+          }
+          <Pagination
+            shape='round'
+            color='primary'
+            page={page}
+            count={Math.ceil(projects.length / rowsPerPage)}
+            onChange={handlePageChange}
+          />
+        </Grid>
+      }
 		</>
 	);
 };

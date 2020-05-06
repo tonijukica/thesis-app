@@ -45,10 +45,10 @@ const useStyles = makeStyles(() =>
 			width: '100%',
 			textAlign: 'center',
 			marginBottom: '8px',
-			marginTop: '8px',
+      marginTop: '8px',
 		},
 		cardActionArea: {
-			height: '64px',
+			height: '80px',
 			paddingTop: '16px',
 			paddingBottom: '16px',
 			fontSize: '0.95em',
@@ -85,34 +85,36 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({ name, projectId, githu
 	};
 	if(data)
 		return (
-			<Card
-				className={
-					deleteMode
-						? [classes.card, classes.deleteHover].join(' ')
-						: [classes.card, projectStanding(lastCommitDate, classes)].join(' ')
-				}
-				onClick={deleteMode ? handleDelete : handleRedirect}
-				key={projectId}
-			>
-				<CardActionArea className={classes.cardActionArea}>
-					<Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
-						<Grid item xs={3}>
-							{name}
-						</Grid>
-						<Grid container direction='column' item xs={3}>
-							{students.map((student: Student) => (
-								<Grid key={student.id}>{student.name}</Grid>
-							))}
-						</Grid>
-						<Grid item xs={3}>
-							{commitNum}
-						</Grid>
-						<Grid item xs={3}>
-							{formatDate(lastCommitDate)}
-						</Grid>
-					</Grid>
-				</CardActionArea>
-			</Card>
+			<Grid item xs={12}>
+        <Card
+          className={
+            deleteMode
+              ? [classes.card, classes.deleteHover].join(' ')
+              : [classes.card, projectStanding(lastCommitDate, classes)].join(' ')
+          }
+          onClick={deleteMode ? handleDelete : handleRedirect}
+          key={projectId}
+        >
+          <CardActionArea className={classes.cardActionArea}>
+            <Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
+              <Grid item xs={3}>
+                {name}
+              </Grid>
+              <Grid container direction='column' item xs={3}>
+                {students.map((student: Student) => (
+                  <Grid key={student.id}>{student.name}</Grid>
+                ))}
+              </Grid>
+              <Grid item xs={3}>
+                {commitNum}
+              </Grid>
+              <Grid item xs={3}>
+                {formatDate(lastCommitDate)}
+              </Grid>
+            </Grid>
+          </CardActionArea>
+        </Card>
+      </Grid>
 		);
 	else
 		return (
