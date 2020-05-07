@@ -36,23 +36,30 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 		},
 	});
 
+  const updateProject = (state: Project | null) => {
+    setProject(state);
+  };
 	useEffect(() => {
-		if(data) 
+		if(data){
 			setProject(data.projects[0]);
+      const [user, repo] = getUserRepoName(data.projects[0]!.github_url);
+      setOwner(user);
+      setRepoName(repo);
+    }
 		if(githubData){
 			setCommits(githubData.repository.object.history.nodes);
 			setCreationDate(githubData.repository.createdAt);
 		}
-		if(project){
-			const [user, repo] = getUserRepoName(project.github_url);
-			setOwner(user), setRepoName(repo);
-		}
-	}, [data, githubData, project]);
+	}, [data, githubData]);
 	if(project && commits){
 		return (
 			<>
 				<Grid container direction='row' justify='center' className={classNames(classes.details)}>
-					<Sidebar project={project} creationDate={creationDate} commits={commits} />
+          <Sidebar
+            project={project}
+            updateProject={updateProject}
+            creationDate={creationDate}
+            commits={commits} />
 					<CommitGraph commits={commits} />
 				</Grid>
 				{project.production_previews!.length > 0 && <Preview previews={project.production_previews!} />}

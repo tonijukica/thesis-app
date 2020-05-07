@@ -85,5 +85,35 @@ export class ProjectResolver {
 	async delete_project(@Arg('id') id: number) {
 		await Project.delete(id);
 		return `Project with ID ${id} was deleted`;
-	}
+  }
+
+  @Authorized()
+  @Mutation(() => Project)
+  async update_project(
+    @Arg('id') id: number,
+    @Arg('name') name: string,
+    @Arg('github_url') githubUrl: string,
+    @Arg('prod_url', { nullable: true }) prodUrl: string,
+    @Arg('students', () => [StudentInput], { nullable: true }) students: StudentInput[]
+  ): Promise<Project | string>{
+    try{
+      let project = await Project.findOneOrFail({id})
+      project.name = name;
+      project.github_url = githubUrl;
+      project.prod_url = prodUrl;
+      (await project.students).map((student: Student) => {
+        student.remove();
+      });
+			const newStudents = await Promise.all(
+				students.map(async (student) => {
+					return await Student.create(student).save();
+				})
+      );
+      project.students = Promise.resolve(newStudents);
+      return project.save();
+    }
+    catch(err){
+      return Promise.reject('No project found');
+    }
+  }
 }

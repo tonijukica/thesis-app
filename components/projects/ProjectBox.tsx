@@ -48,7 +48,7 @@ const useStyles = makeStyles(() =>
       marginTop: '8px',
 		},
 		cardActionArea: {
-			height: '80px',
+			minHeight: '80px',
 			paddingTop: '16px',
 			paddingBottom: '16px',
 			fontSize: '0.95em',

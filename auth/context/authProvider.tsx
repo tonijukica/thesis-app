@@ -97,7 +97,8 @@ export function AuthProvider({ children }: any,props: any): JSX.Element{
   };
 
   const logout = () => {
-    logoutRequest().then(() => localStorage.removeItem('user'));
+    localStorage.removeItem('user');
+    return logoutRequest();
   };
 
   return(

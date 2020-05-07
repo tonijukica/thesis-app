@@ -11,8 +11,18 @@ export const useStyles = makeStyles(() =>
 			height: '600px',
 		},
 		projectInfo: {
-			textAlign: 'center',
-		},
+      textAlign: 'center',
+      position: 'relative'
+    },
+    editIcon: {
+      padding: '4px',
+      color: 'grey',
+      cursor: 'pointer',
+      position: 'absolute',
+			top: 0,
+			right: 0,
+			zIndex: 1000
+    },
 		commitList: {
 			borderBottom: '1px solid #e1e4e8 !important',
 			padding: '8px',

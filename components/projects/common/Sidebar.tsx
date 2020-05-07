@@ -1,21 +1,35 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import classNames from 'classnames';
 import { Grid } from '@material-ui/core';
+import { EditProjectDialog } from '../dialogs/EditProject';
 import { useStyles } from './styles';
 import { Project, Student } from '../../../interfaces';
 import { formatDate, userCommits } from '../helpers';
 import { Chart, ArgumentAxis, ValueAxis, BarSeries } from '@devexpress/dx-react-chart-material-ui';
+import { Edit } from '@material-ui/icons'
 import * as githubLogo from '../../../assets/img/github_logo.png';
 import * as netlifyLogo from '../../../assets/img/netlify_logo.png';
 
 type SidebarProps = {
 	project: Project;
 	creationDate: string;
-	commits: any[];
+  commits: any[];
+  updateProject: any
+  ;
 };
 
-export const Sidebar: FC<SidebarProps> = ({ project, creationDate, commits }) => {
-	const classes = useStyles();
+export const Sidebar: FC<SidebarProps> = ({ project, updateProject, creationDate, commits }) => {
+  const classes = useStyles();
+  const [dialog, setDialog] = useState(false);
+  const handleEditDialog = () => {
+    setDialog(true);
+  }
+  const handleDialogClose = () => {
+    setDialog(false);
+  }
+  const handleSave = () => {
+    setDialog(false);
+  }
 	return (
 		<>
 			<Grid
@@ -27,6 +41,14 @@ export const Sidebar: FC<SidebarProps> = ({ project, creationDate, commits }) =>
 				className={classNames(classes.border, classes.projectInfo)}
 				style={{ marginRight: '16px' }}
 			>
+        <EditProjectDialog
+          project={project}
+          updateProject={updateProject}
+          open={dialog}
+          handleClose={handleDialogClose}
+          handleSave={handleSave}
+        />
+        <Edit className={classes.editIcon} onClick={handleEditDialog}/>
 				<Grid item>
 					<h2>Project information</h2>
 				</Grid>
