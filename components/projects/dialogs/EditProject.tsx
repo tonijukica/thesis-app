@@ -1,5 +1,5 @@
 import { FC, useState, ChangeEvent } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, Grid, Card, LinearProgress } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, Grid, Card, LinearProgress, Theme } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core';
 import { UPDATE_PROJECT } from '../../../gql/queries/projects';
 import { useMutation } from '@apollo/react-hooks';
@@ -14,7 +14,7 @@ type EditDialogProps = {
   handleSave: any
 }
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		students: {
       paddingTop: '16px'
@@ -34,6 +34,10 @@ const useStyles = makeStyles(() =>
     },
     saveBtn: {
       marginTop: '8px'
+    },
+    dialogTitle: {
+      backgroundColor: theme.palette.primary.main,
+      color: 'white'
     }
 	})
 );
@@ -138,7 +142,9 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
   }
   return(
     <Dialog open={open} fullWidth>
-      <DialogTitle>Edit project</DialogTitle>
+      <DialogTitle className={classes.dialogTitle}>
+        Edit project
+      </DialogTitle>
       <DialogContent>
         <DialogContentText>
           <strong>Edit following project information:</strong>
@@ -169,8 +175,8 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
         </DialogContentText>
         <Grid container direction='row'>
           {state.students.map((student: Student) => (
-            <Grid item xs={3}>
-              <Card key={student.name} className={classes.studentBox}>
+            <Grid item xs={3} key={student.name}>
+              <Card className={classes.studentBox}>
                 <Clear
                   className={classes.deleteIcon}
                   onClick={() =>
@@ -205,7 +211,7 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
 					)}
       </DialogContent>
       <DialogActions>
-        <Button color='secondary' onClick={close}>
+        <Button color='secondary' onClick={close} style={{color: 'red'}}>
           Cancel
         </Button>
         <Button color='primary' onClick={saveEdit}>

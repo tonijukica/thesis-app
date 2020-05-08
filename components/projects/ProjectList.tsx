@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
-import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress } from '@material-ui/core';
+import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress, Theme } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
@@ -14,7 +14,7 @@ import Fuse from 'fuse.js';
 type ProjectListProps = {
 	courseId: number;
 };
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		container: {
 			paddingBottom: '16px',
@@ -22,7 +22,15 @@ const useStyles = makeStyles(() =>
 		},
 		button: {
 			marginRight: '8px',
-		},
+    },
+    delBtn: {
+      marginRight: '8px',
+      backgroundColor: theme.palette.error.main,
+      color: 'white',
+      '&:hover': {
+        backgroundColor: theme.palette.error.dark
+      }
+    },
 		header: {
 			paddingTop: '16px',
 			textAlign: 'center',
@@ -169,17 +177,17 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 					/>
 				</Grid>
 				<Grid container item xs={4} justify='flex-end' alignItems='flex-end'>
-					<Button variant='contained' color='primary' className={classes.button} onClick={handleDialogAddOpen}>
+					<Button variant='contained' color='secondary' className={classes.button} onClick={handleDialogAddOpen}>
 						New
 					</Button>
-					<Button variant='contained' color='primary' className={classes.button} onClick={handleDialogBulkOpen}>
+					<Button variant='contained' color='secondary' className={classes.button} onClick={handleDialogBulkOpen}>
 						Bulk insert
 					</Button>
 					<Button
 						variant='contained'
 						color='secondary'
 						startIcon={<DeleteIcon />}
-						className={classes.button}
+						className={classes.delBtn}
 						onClick={handleDeleteMode}
 					>
 						Delete
@@ -237,13 +245,15 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
                 </Grid>
             )})
           }
-          <Pagination
-            shape='round'
-            color='primary'
-            page={page}
-            count={Math.ceil(projects.length / rowsPerPage)}
-            onChange={handlePageChange}
-          />
+          <Grid container style={{marginTop: '16px'}} justify='center'>
+            <Pagination
+              shape='round'
+              color='secondary'
+              page={page}
+              count={Math.ceil(projects.length / rowsPerPage)}
+              onChange={handlePageChange}
+            />
+          </Grid>
         </Grid>
       }
 		</>

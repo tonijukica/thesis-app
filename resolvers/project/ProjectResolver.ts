@@ -4,12 +4,22 @@ import { StudentInput } from '../inputs';
 import { Course } from '../../entities/Course';
 import { Student } from '../../entities/Student';
 import { ProjectInput } from '../inputs/Project';
+import { projectsProd } from '../../types/projectsProd';
 
 @Resolver()
 export class ProjectResolver {
   @Authorized()
 	@Query(() => [Project])
 	async projects(@Arg('id', { nullable: true }) id: number): Promise<Project[]> {
+		if(id)
+			return await Project.find({ id });
+		else
+			return await Project.find();
+  }
+
+
+	@Query(() => [projectsProd])
+	async projects_prod(@Arg('id', { nullable: true }) id: number): Promise<projectsProd[]> {
 		if(id)
 			return await Project.find({ id });
 		else

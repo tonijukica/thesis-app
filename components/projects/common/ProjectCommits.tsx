@@ -12,7 +12,12 @@ const ProjectCommits: FunctionComponent<Props> = ({ commits }) => {
 		<>
 			{commits.map((commit) => {
 				return (
-					<Grid container item justify='center' key={commit.id}>
+          <Grid
+            container
+            item
+            justify='center'
+            style={{padding: '4px'}}
+            key={commit.id}>
 						<Grid item xs={4}>
 							{commit.author.user.login}
 						</Grid>

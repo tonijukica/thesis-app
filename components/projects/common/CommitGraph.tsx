@@ -1,29 +1,42 @@
 import { FC } from 'react';
 import { Grid, Paper } from '@material-ui/core';
-import { Chart, ArgumentAxis, ValueAxis, SplineSeries } from '@devexpress/dx-react-chart-material-ui';
+import { makeStyles, createStyles } from '@material-ui/core';
+import { Chart, ArgumentAxis, ValueAxis, SplineSeries, Tooltip } from '@devexpress/dx-react-chart-material-ui';
+import { EventTracker } from '@devexpress/dx-react-chart';
 import { commitHistory } from '../helpers';
 
 type Props = {
 	commits: any[];
 };
 
+const useStyles = makeStyles(() =>
+	createStyles({
+    paper: {
+      paddingTop: '16px',
+      paddingLeft: '16px',
+      paddingRight: '16px',
+      textAlign: 'center'
+    }
+	})
+);
+
 export const CommitGraph: FC<Props> = ({ commits }) => {
+  const classes = useStyles();
 	return (
 		<Grid container direction='column' item xs={9} justify='center' style={{ marginLeft: '16px' }}>
-			<Grid item style={{ textAlign: 'center', paddingBottom: '16px' }}>
-				<h2>Commits graph</h2>
-				<br />
-			</Grid>
-			<br />
-			<Grid container justify='center' item>
-				<Paper>
-					<Chart data={commitHistory(commits)} width={900} height={500}>
-						<ValueAxis />
-						<ArgumentAxis />
-						<SplineSeries valueField='count' argumentField='date' />
-					</Chart>
-				</Paper>
-			</Grid>
+			<Paper className={classes.paper}>
+        <h2>Commits graph</h2>
+        <br />
+        <Grid container justify='center' item>
+            <Chart data={commitHistory(commits)} width={900} height={500}>
+              <ValueAxis />
+              <ArgumentAxis />
+              <EventTracker/>
+              <Tooltip/>
+              <SplineSeries color='#19857b' valueField='count' argumentField='date' />
+            </Chart>
+        </Grid>
+			</Paper>
 		</Grid>
 	);
 };

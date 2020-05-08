@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
   },
   submit: {
     margin: theme.spacing(1, 0, 1),
@@ -111,7 +111,7 @@ const Auth: FC = () => {
         <Button
           fullWidth
           variant='contained'
-          color='primary'
+          color='secondary'
           className={classes.submit}
           disabled={!username}
           onClick={handleLogin}
@@ -121,7 +121,7 @@ const Auth: FC = () => {
         <Button
           fullWidth
           variant='contained'
-          color='primary'
+          color='secondary'
           className={classes.submit}
           disabled={!username}
           onClick={handleRegister}

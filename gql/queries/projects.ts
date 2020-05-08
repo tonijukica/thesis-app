@@ -18,7 +18,7 @@ const GET_PROJECTS = gql`
 
 const GET_PROJECTS_PROD = gql`
 	query {
-		projects {
+		projects_prod{
 			id
 			prod_url
 		}

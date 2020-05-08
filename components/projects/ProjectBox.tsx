@@ -48,10 +48,10 @@ const useStyles = makeStyles(() =>
       marginTop: '8px',
 		},
 		cardActionArea: {
-			minHeight: '80px',
 			paddingTop: '16px',
 			paddingBottom: '16px',
-			fontSize: '0.95em',
+      fontSize: '0.95em',
+      minHeight: '64px'
 		},
 	})
 );
@@ -85,7 +85,6 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({ name, projectId, githu
 	};
 	if(data)
 		return (
-			<Grid item xs={12}>
         <Card
           className={
             deleteMode
@@ -114,7 +113,6 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({ name, projectId, githu
             </Grid>
           </CardActionArea>
         </Card>
-      </Grid>
 		);
 	else
 		return (

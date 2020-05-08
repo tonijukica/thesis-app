@@ -1,5 +1,5 @@
 import { FunctionComponent, useContext } from 'react';
-import { Grid, makeStyles, createStyles, Card, CardActionArea, CardContent, CardHeader } from '@material-ui/core';
+import { Grid, makeStyles, createStyles, Card, CardActionArea, CardContent, CardHeader, Theme } from '@material-ui/core';
 import { Context } from './CourseList';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useMutation } from '@apollo/react-hooks';
@@ -13,7 +13,7 @@ type CourseBoxProps = {
 	deleteMode: boolean;
 };
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		card: {
 			width: '60%',
@@ -23,7 +23,7 @@ const useStyles = makeStyles(() =>
     },
     cardHeader: {
       color: 'white',
-      backgroundColor: '#24292e',
+      backgroundColor: theme.palette.secondary.main,
       fontSize: '2rem'
     },
     cardName: {

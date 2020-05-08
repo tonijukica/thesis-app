@@ -19,9 +19,9 @@ function initialState(): IUserContext {
 export default function UserProvider({ children }: UserProviderOptions): JSX.Element {
   const [state, setState] = useState(initialState());
   useEffect(() => {
-    const localeStorage = window.localStorage.getItem('user');
-    if(localeStorage){
-      const { user, isAuthenticated }: { user: string, isAuthenticated: boolean}  = JSON.parse(localeStorage!)
+    const sessionStorage = window.sessionStorage.getItem('user');
+    if(sessionStorage){
+      const { user, isAuthenticated }: { user: string, isAuthenticated: boolean}  = JSON.parse(sessionStorage!)
       setState({
         ...state,
         user,

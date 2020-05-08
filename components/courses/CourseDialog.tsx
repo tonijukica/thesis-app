@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react';
-import { makeStyles, createStyles } from '@material-ui/core';
+import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Collapse } from '@material-ui/core';
 import { Button, TextField, LinearProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
@@ -14,7 +14,7 @@ type CourseDialogProps = {
 	addCourse: any;
 };
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		name: {
       marginTop: '21px',
@@ -25,6 +25,10 @@ const useStyles = makeStyles(() =>
       padding: '8px',
       paddingBottom: '16px',
       paddingLeft: '0px'
+    },
+    dialogTitle: {
+      backgroundColor: theme.palette.primary.main,
+      color: 'white'
     }
 	})
 );
@@ -83,7 +87,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({
 	return (
 		<>
 			<Dialog open={open} onClose={handleClose} fullWidth>
-				<DialogTitle>Add new course</DialogTitle>
+				<DialogTitle className={classes.dialogTitle}>Add new course</DialogTitle>
 				<DialogContent>
 					<DialogContentText>Fill out the following:</DialogContentText>
 					<TextField margin='dense' label='Course name' onChange={handleNameChange} fullWidth />
@@ -117,7 +121,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = ({
 					</div>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color='secondary'>
+					<Button onClick={handleClose} color='secondary' style={{color: 'red'}}>
 						Cancel
 					</Button>
 					<Button onClick={handleAddCourse} color='primary' disabled={!!loading || !!!name}>

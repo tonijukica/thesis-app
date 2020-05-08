@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react';
-import { makeStyles, createStyles } from '@material-ui/core';
+import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Collapse } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import { Button, LinearProgress } from '@material-ui/core';
@@ -12,7 +12,7 @@ type ProjectDialogProps = {
 	addProjects: any;
 };
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		name: {
       marginTop: '21px',
@@ -23,6 +23,10 @@ const useStyles = makeStyles(() =>
       padding: '8px',
       paddingBottom: '16px',
       paddingLeft: '0px'
+    },
+    dialogTitle: {
+      backgroundColor: theme.palette.primary.main,
+      color: 'white'
     }
 	})
 );
@@ -75,7 +79,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
 	return (
 		<>
 			<Dialog open={open} onClose={handleClose} fullWidth>
-				<DialogTitle>Add new projects</DialogTitle>
+				<DialogTitle className={classes.dialogTitle}>Add new projects</DialogTitle>
 				<DialogContent>
 					<DialogContentText>Select file with projects</DialogContentText>
 					<input
@@ -108,7 +112,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
 					</div>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color='secondary'>
+					<Button onClick={handleClose} color='secondary' style={{color: 'red'}}>
 						Cancel
 					</Button>
 					<Button onClick={handleAddProjects} color='primary' disabled={!!loading || !!!parsedData}>

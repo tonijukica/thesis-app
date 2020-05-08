@@ -7,10 +7,10 @@ const useStyles = makeStyles(() =>
       borderTop: '1px solid #d1d5da !important',
       color: 'grey',
       height: '2.5rem',
-      position: 'fixed',
+      position: 'absolute',
       bottom: '0',
       textAlign: 'center',
-      paddingTop: '8px'
+      paddingTop: '8px',
     }
 	})
 );

@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, ChangeEvent } from 'react';
-import { makeStyles, createStyles } from '@material-ui/core';
+import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Card, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Button, TextField } from '@material-ui/core';
 import { Clear } from '@material-ui/icons'
@@ -16,7 +16,7 @@ type ProjectDialogProps = {
 	addProject: any;
 };
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		students: {
       paddingTop: '16px'
@@ -35,6 +35,10 @@ const useStyles = makeStyles(() =>
     },
     saveBtn: {
       marginTop: '8px'
+    },
+    dialogTitle: {
+      backgroundColor: theme.palette.primary.main,
+      color: 'white'
     }
 	})
 );
@@ -79,36 +83,43 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 	return (
 		<>
 			<Dialog open={open} onClose={handleClose} fullWidth>
-				<DialogTitle>Add new project</DialogTitle>
+				<DialogTitle className={classes.dialogTitle}>
+          Add new project
+        </DialogTitle>
 				<DialogContent>
 					<DialogContentText><strong>Fill out the following:</strong></DialogContentText>
 					<TextField margin='dense' label='Project name' onChange={handleNameChange} fullWidth />
 					<TextField margin='dense' label='Project GitHub url' onChange={handleUrlChange} fullWidth />
 					<DialogContentText className={classes.students}>
 						<strong>Students:</strong>
-            <Grid container direction='row'>
-              {students.map((student: Student) => (
-                <Grid item xs={3}>
-                  <Card key={student.name} className={classes.studentBox}>
-                    <Clear
-                      className={classes.deleteIcon}
-                      onClick={() =>
-                        setStudents(students.filter(studentEl => studentEl.name !== student.name))
-                      }
-                      />
-                    Student:
-                    <br/>
-                    {student.name}
-                    <br />
-                    GitHub username:
-                    <br/>
-                    {student.github_username}
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-					</DialogContentText>
-					<Button color='primary' variant='outlined' onClick={handleStudentAdd}>
+          </DialogContentText>
+          <Grid container direction='row'>
+            {students.map((student: Student) => (
+              <Grid item xs={3} key={student.name}>
+                <Card className={classes.studentBox}>
+                  <Clear
+                    className={classes.deleteIcon}
+                    onClick={() =>
+                      setStudents(students.filter(studentEl => studentEl.name !== student.name))
+                    }
+                    />
+                  Student:
+                  <br/>
+                  {student.name}
+                  <br />
+                  GitHub username:
+                  <br/>
+                  {student.github_username}
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+          <Button
+            color='primary'
+            variant='outlined'
+            onClick={handleStudentAdd}
+            style={{marginTop: '8px'}}
+          >
 						Add
 					</Button>
 					{studentAdd && (
@@ -122,7 +133,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 					)}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color='secondary'>
+					<Button onClick={handleClose} color='secondary' style={{color: 'red'}}>
 						Cancel
 					</Button>
 					<Button onClick={addProject} color='primary' disabled={!(!!name && !!url)}>
