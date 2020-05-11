@@ -10,7 +10,7 @@ type CourseBoxProps = {
 	name: string;
 	courseId: number;
 	studentProjects: number;
-	deleteMode: boolean;
+  deleteMode: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			width: '60%',
 			textAlign: 'center',
 			marginBottom: '16px',
-			marginTop: '16px',
+      marginTop: '16px',
     },
     cardHeader: {
       color: 'white',
@@ -41,12 +41,12 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentProjects, deleteMode }) => {
+const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentProjects, deleteMode,  }) => {
 	const classes = useStyles();
 	const router = useRouter();
 	const context: any = useContext(Context);
 	const { dispatch } = context;
-	const [deleteCourse] = useMutation(DELETE_COURSE_BY_ID);
+  const [deleteCourse] = useMutation(DELETE_COURSE_BY_ID);
 
 	const handleDelete = async () => {
 		await deleteCourse({
@@ -59,24 +59,26 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentP
 	const handleRedirect = (e: any) => {
 		e.preventDefault();
 		router.push(`/courses/${courseId}`);
-	};
+  };
 
 	return (
-		<Grid container xs={4} item justify='center'>
-			<Card className={classes.card} onClick={deleteMode ? handleDelete : handleRedirect}>
-				<CardActionArea className={classes.cardActionArea}>
-					{deleteMode ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} onClick={handleDelete} /> : null}
-          <CardHeader title={name.toLocaleUpperCase()} className={classes.cardHeader}/>
-					<CardContent>
-						<div>
-              <span className={classes.cardName}>{studentProjects}</span>
-              <br/>
-							Projects
-						</div>
-					</CardContent>
-				</CardActionArea>
-			</Card>
-		</Grid>
+    <Grid container xs={4} item justify='center'>
+        <Card
+          className={classes.card}
+          onClick={deleteMode ? handleDelete : handleRedirect}>
+          <CardActionArea className={classes.cardActionArea}>
+            {deleteMode ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} onClick={handleDelete} /> : null}
+            <CardHeader title={name.toLocaleUpperCase()} className={classes.cardHeader}/>
+            <CardContent>
+              <div>
+                <span className={classes.cardName}>{studentProjects}</span>
+                <br/>
+                Projects
+              </div>
+            </CardContent>
+          </CardActionArea>
+        </Card>
+    </Grid>
 	);
 };
 

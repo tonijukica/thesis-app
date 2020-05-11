@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
-import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress, Theme } from '@material-ui/core';
+import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress, Theme, Switch, FormControlLabel } from '@material-ui/core';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
 		button: {
 			marginRight: '8px',
     },
+    switch: {
+      marginLeft: '12px'
+    },
     delBtn: {
       marginRight: '8px',
       backgroundColor: theme.palette.error.main,
@@ -44,7 +47,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const classes = useStyles();
 	const [dialogAdd, setDialogAdd] = useState(false);
 	const [dialogBulk, setDialogBulk] = useState(false);
-	const [deleteMode, setDeleteMode] = useState(false);
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [standingMode, setStandingMode] = useState(true);
 	const [searchParam, setSearchParam] = useState('');
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [bulkProjects, setBulkProjects] = useState<[]>([]);
@@ -89,6 +93,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	};
 	const handleDeleteMode = () => {
 		setDeleteMode(!deleteMode);
+  };
+  const handleStandingMode = () => {
+		setStandingMode(!standingMode);
 	};
 	const handleProjectNameChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setProjectName(e.target.value);
@@ -161,7 +168,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	return (
 		<>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.container}>
-				<Grid item xs={8}>
+				<Grid container item xs={8}>
 					<TextField
 						label='Search'
 						variant='outlined'
@@ -175,6 +182,15 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 							),
 						}}
 					/>
+          <FormControlLabel
+            className={classes.switch}
+            control={
+              <Switch checked={standingMode} color='secondary' onClick={handleStandingMode} />
+            }
+            label='Standing'
+            labelPlacement='end'
+          />
+
 				</Grid>
 				<Grid container item xs={4} justify='flex-end' alignItems='flex-end'>
 					<Button variant='contained' color='secondary' className={classes.button} onClick={handleDialogAddOpen}>
@@ -240,6 +256,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
                     githubUrl={project.github_url}
                     students={project.students}
                     deleteMode={deleteMode}
+                    standingMode={standingMode}
                     handleDelete={handleDeleteProject}
                   />
                 </Grid>

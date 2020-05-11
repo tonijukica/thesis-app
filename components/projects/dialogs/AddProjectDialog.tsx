@@ -1,4 +1,5 @@
 import { FunctionComponent, useState, ChangeEvent } from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Card, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Button, TextField } from '@material-ui/core';
@@ -94,25 +95,37 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 						<strong>Students:</strong>
           </DialogContentText>
           <Grid container direction='row'>
-            {students.map((student: Student) => (
-              <Grid item xs={3} key={student.name}>
-                <Card className={classes.studentBox}>
-                  <Clear
-                    className={classes.deleteIcon}
-                    onClick={() =>
-                      setStudents(students.filter(studentEl => studentEl.name !== student.name))
-                    }
-                    />
-                  Student:
-                  <br/>
-                  {student.name}
-                  <br />
-                  GitHub username:
-                  <br/>
-                  {student.github_username}
-                </Card>
-              </Grid>
-            ))}
+            <TransitionGroup component={null}>
+              {students.map((student: Student) => (
+                <CSSTransition
+                  key={student.id}
+                  timeout={400}
+                  classNames='custom'
+                >
+                  <Grid item xs={3} key={student.name}>
+                    <Card className={classes.studentBox}>
+                      <Clear
+                        className={classes.deleteIcon}
+                        onClick={() =>
+                          setStudents(students.filter(studentEl => studentEl.name !== student.name))
+                        }
+                        />
+                      Student:
+                      <br/>
+                      {student.name}
+                      <br />
+                      {student.github_username  &&
+                        <>
+                        GitHub username:
+                        <br/>
+                        {student.github_username}
+                        </>
+                      }
+                    </Card>
+                  </Grid>
+                </CSSTransition>
+              ))}
+            </TransitionGroup>
           </Grid>
           <Button
             color='primary'

@@ -1,4 +1,5 @@
 import { FunctionComponent, useState, useReducer, useEffect, ChangeEvent } from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Grid, Button, makeStyles, createStyles, Theme} from '@material-ui/core';
 import { Context, coursesReducer } from './helper';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -30,7 +31,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 		loading: {
 			padding: '32px',
-		},
+    },
+
 	})
 );
 
@@ -67,7 +69,7 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
 					const newCourse = {
 						name: courseName,
 						courseId: data.data.insert_course.id,
-						studentProjects: bulkInsertData.length,
+            studentProjects: bulkInsertData.length
 					};
 					dispatch({ type: 'add', course: newCourse });
 					setDialog(false);
@@ -85,7 +87,7 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
 						const newCourse = {
 							name: courseName,
 							courseId: data.insert_course.id,
-							studentProjects: 0,
+              studentProjects: 0
 						};
 						dispatch({ type: 'add', course: newCourse });
 						setDialog(false);
@@ -106,7 +108,11 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
 			data.courses.forEach((course: any) =>
 				dispatch({
 					type: 'add',
-					course: { name: course.course_name, courseId: course.id, studentProjects: course.projects_count },
+					course: {
+            name: course.course_name,
+            courseId: course.id,
+            studentProjects: course.projects_count
+          },
 				})
 			);
 		}
@@ -140,22 +146,29 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
 					/>
 				</Grid>
 			</Grid>
-			<Grid container direction='row' justify='center'>
-				<Context.Provider value={{ courses, dispatch }}>
-					{loading && <Loader />}
-					{courses.map((course) => {
-						return (
-							<CourseBox
-								key={course.courseId}
-								courseId={course.courseId}
-								name={course.name}
-								studentProjects={course.studentProjects}
-								deleteMode={deleteMode}
-							/>
-						);
-					})}
-				</Context.Provider>
-			</Grid>
+        <Grid container direction='row' justify='center'>
+          <Context.Provider value={{ courses, dispatch }}>
+            {loading && <Loader />}
+			      <TransitionGroup component={null}>
+              {courses.map((course) => {
+                return (
+                  <CSSTransition
+                    key={course.courseId}
+                    timeout={600}
+                    classNames='custom'
+                  >
+                    <CourseBox
+                      courseId={course.courseId}
+                      name={course.name}
+                      studentProjects={course.studentProjects}
+                      deleteMode={deleteMode}
+                    />
+                  </CSSTransition>
+                );
+              })}
+            </TransitionGroup>
+          </Context.Provider>
+        </Grid>
 		</>
 	);
 };

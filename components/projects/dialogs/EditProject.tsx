@@ -1,4 +1,5 @@
 import { FC, useState, ChangeEvent } from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, Grid, Card, LinearProgress, Theme } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core';
 import { UPDATE_PROJECT } from '../../../gql/queries/projects';
@@ -174,28 +175,40 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
           <strong>Students:</strong>
         </DialogContentText>
         <Grid container direction='row'>
+          <TransitionGroup component={null}>
           {state.students.map((student: Student) => (
-            <Grid item xs={3} key={student.name}>
-              <Card className={classes.studentBox}>
-                <Clear
-                  className={classes.deleteIcon}
-                  onClick={() =>
-                    setState({
-                      ...state,
-                      students: state.students.filter(studentEl => studentEl.name !== student.name)
-                    })
+            <CSSTransition
+              key={student.id}
+              timeout={400}
+              classNames='custom'
+            >
+              <Grid item xs={3} key={student.name}>
+                <Card className={classes.studentBox}>
+                  <Clear
+                    className={classes.deleteIcon}
+                    onClick={() =>
+                      setState({
+                        ...state,
+                        students: state.students.filter(studentEl => studentEl.name !== student.name)
+                      })
+                    }
+                    />
+                  Student:
+                  <br/>
+                  {student.name}
+                  <br />
+                  {student.github_username  &&
+                    <>
+                    GitHub username:
+                    <br/>
+                    {student.github_username}
+                    </>
                   }
-                  />
-                Student:
-                <br/>
-                {student.name}
-                <br />
-                GitHub username:
-                <br/>
-                {student.github_username}
-              </Card>
-            </Grid>
+                </Card>
+              </Grid>
+            </CSSTransition>
           ))}
+          </TransitionGroup>
         </Grid>
         <Button color='primary' variant='outlined' onClick={handleStudentAdd}>
 						Add

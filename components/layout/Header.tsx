@@ -50,12 +50,12 @@ const Header: FunctionComponent = () => {
 		<Container maxWidth={false} className={classes.header}>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.row}>
 				<Grid container item xs={12} sm={6} style={{ height: '36.5px' }} alignContent='center'>
-					APP
+					<strong>APP</strong>
 				</Grid>
 				<Grid item xs={12} sm={6}>
 					<nav style={{ textAlign: 'end' }}>
 						{!isLoading && !isAuthenticated && (
-							<Button onClick={() => router.push('/auth') } color='secondary'>
+							<Button onClick={() => router.push('/auth') } color='secondary' variant='contained'>
 								Log in
 							</Button>
 						)}
@@ -64,7 +64,7 @@ const Header: FunctionComponent = () => {
 								<Link href='/courses'>
 									<a className={classes.link}>Courses</a>
 								</Link>
-								<span className={classes.link}>{user}</span>
+								<strong><span className={classes.link}>{user}</span></strong>
 								<Button onClick={handleLogout} variant='text' className={classes.logoutBtn}>
 									Log out
 								</Button>
