@@ -45,7 +45,7 @@ export function AuthProvider({ children }: any,props: any): JSX.Element{
     .then(({data}) => {
       const { status, message } = data.loginResponse;
       if(status === 'ok')
-        localStorage.setItem('user', JSON.stringify({
+        sessionStorage.setItem('user', JSON.stringify({
           user: username,
           isAuthenticated: true
         }));
@@ -97,7 +97,8 @@ export function AuthProvider({ children }: any,props: any): JSX.Element{
   };
 
   const logout = () => {
-    logoutRequest().then(() => localStorage.removeItem('user'));
+    sessionStorage.removeItem('user');
+    return logoutRequest();
   };
 
   return(

@@ -21,9 +21,9 @@ const client = new ApolloClient({
 
 async function takePreview() {
 	const { data } = await client.query({ query: GET_PROJECTS_PROD });
-  const { projects } = data;
+  const { projects_prod } = data;
 	Promise.all(
-		projects.map(async (project: any) => {
+		projects_prod.map(async (project: any) => {
 			const { id, prod_url } = project;
 			if(prod_url){
 				const imageBuffer = await capture.buffer(prod_url, {

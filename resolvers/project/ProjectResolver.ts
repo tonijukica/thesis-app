@@ -4,12 +4,22 @@ import { StudentInput } from '../inputs';
 import { Course } from '../../entities/Course';
 import { Student } from '../../entities/Student';
 import { ProjectInput } from '../inputs/Project';
+import { projectsProd } from '../../types/projectsProd';
 
 @Resolver()
 export class ProjectResolver {
   @Authorized()
 	@Query(() => [Project])
 	async projects(@Arg('id', { nullable: true }) id: number): Promise<Project[]> {
+		if(id)
+			return await Project.find({ id });
+		else
+			return await Project.find();
+  }
+
+
+	@Query(() => [projectsProd])
+	async projects_prod(@Arg('id', { nullable: true }) id: number): Promise<projectsProd[]> {
 		if(id)
 			return await Project.find({ id });
 		else
@@ -85,5 +95,35 @@ export class ProjectResolver {
 	async delete_project(@Arg('id') id: number) {
 		await Project.delete(id);
 		return `Project with ID ${id} was deleted`;
-	}
+  }
+
+  @Authorized()
+  @Mutation(() => Project)
+  async update_project(
+    @Arg('id') id: number,
+    @Arg('name') name: string,
+    @Arg('github_url') githubUrl: string,
+    @Arg('prod_url', { nullable: true }) prodUrl: string,
+    @Arg('students', () => [StudentInput], { nullable: true }) students: StudentInput[]
+  ): Promise<Project | string>{
+    try{
+      let project = await Project.findOneOrFail({id})
+      project.name = name;
+      project.github_url = githubUrl;
+      project.prod_url = prodUrl;
+      (await project.students).map((student: Student) => {
+        student.remove();
+      });
+			const newStudents = await Promise.all(
+				students.map(async (student) => {
+					return await Student.create(student).save();
+				})
+      );
+      project.students = Promise.resolve(newStudents);
+      return project.save();
+    }
+    catch(err){
+      return Promise.reject('No project found');
+    }
+  }
 }

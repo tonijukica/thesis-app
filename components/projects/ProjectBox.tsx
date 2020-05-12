@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react';
-import { Grid, makeStyles, createStyles, Card, CardActionArea, CircularProgress } from '@material-ui/core';
+import { Grid, makeStyles, createStyles, Card, CardActionArea, CircularProgress, Theme } from '@material-ui/core';
 import { Student } from '../../interfaces';
 import { useRouter } from 'next/router';
 import { GET_REPO_INFO } from '../../gql/queries/projects';
@@ -11,11 +11,12 @@ type ProjectBoxProps = {
 	projectId: number;
 	githubUrl: string;
 	students: Student[];
-	deleteMode: boolean;
+  deleteMode: boolean;
+  standingMode: boolean;
 	handleDelete: any;
 };
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		box: {
 			textAlign: 'center',
@@ -23,7 +24,7 @@ const useStyles = makeStyles(() =>
 			paddingTop: '16px',
 			paddingBottom: '16px',
 			marginBottom: '8px',
-			marginTop: '8px',
+      marginTop: '8px',
 		},
 		good: {
 			backgroundColor: '#b7f2ae',
@@ -37,7 +38,7 @@ const useStyles = makeStyles(() =>
 		deleteHover: {
 			'&:hover': {
 				backgroundColor: 'grey',
-				transform: 'scale(1.05)',
+				transform: 'scale(1.01)',
 				cursor: 'pointer',
 			},
 		},
@@ -45,18 +46,27 @@ const useStyles = makeStyles(() =>
 			width: '100%',
 			textAlign: 'center',
 			marginBottom: '8px',
-			marginTop: '8px',
+      marginTop: '8px',
+      border: `2px solid ${theme.palette.secondary.main} !important`
 		},
 		cardActionArea: {
-			height: '64px',
 			paddingTop: '16px',
 			paddingBottom: '16px',
-			fontSize: '0.95em',
+      fontSize: '0.95em',
+      minHeight: '64px'
 		},
 	})
 );
 
-const ProjectBox: FunctionComponent<ProjectBoxProps> = ({ name, projectId, githubUrl, students, deleteMode, handleDelete }) => {
+const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
+  name,
+  projectId,
+  githubUrl,
+  students,
+  deleteMode,
+  standingMode,
+  handleDelete
+}) => {
 	const classes = useStyles();
 	const router = useRouter();
 	const [commitNum, setCommitNum] = useState('');
@@ -82,37 +92,41 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({ name, projectId, githu
 	const handleRedirect = (e: any) => {
 		e.preventDefault();
 		router.push(`/projects/${projectId}`);
-	};
+  };
+  const style = () => {
+    if(deleteMode)
+      return [classes.card, classes.deleteHover].join(' ')
+    else if(standingMode)
+      return [classes.card, projectStanding(lastCommitDate, classes)].join(' ')
+    else
+      return classes.card
+  }
 	if(data)
 		return (
-			<Card
-				className={
-					deleteMode
-						? [classes.card, classes.deleteHover].join(' ')
-						: [classes.card, projectStanding(lastCommitDate, classes)].join(' ')
-				}
-				onClick={deleteMode ? handleDelete : handleRedirect}
-				key={projectId}
-			>
-				<CardActionArea className={classes.cardActionArea}>
-					<Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
-						<Grid item xs={3}>
-							{name}
-						</Grid>
-						<Grid container direction='column' item xs={3}>
-							{students.map((student: Student) => (
-								<Grid key={student.id}>{student.name}</Grid>
-							))}
-						</Grid>
-						<Grid item xs={3}>
-							{commitNum}
-						</Grid>
-						<Grid item xs={3}>
-							{formatDate(lastCommitDate)}
-						</Grid>
-					</Grid>
-				</CardActionArea>
-			</Card>
+        <Card
+          className={style()}
+          onClick={deleteMode ? handleDelete : handleRedirect}
+          key={projectId}
+        >
+          <CardActionArea className={classes.cardActionArea}>
+            <Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
+              <Grid item xs={3}>
+                {name}
+              </Grid>
+              <Grid container direction='column' item xs={3}>
+                {students.map((student: Student) => (
+                  <Grid key={student.id}>{student.name}</Grid>
+                ))}
+              </Grid>
+              <Grid item xs={3}>
+                {commitNum}
+              </Grid>
+              <Grid item xs={3}>
+                {formatDate(lastCommitDate)}
+              </Grid>
+            </Grid>
+          </CardActionArea>
+        </Card>
 		);
 	else
 		return (

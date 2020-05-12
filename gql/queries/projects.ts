@@ -18,7 +18,7 @@ const GET_PROJECTS = gql`
 
 const GET_PROJECTS_PROD = gql`
 	query {
-		projects {
+		projects_prod{
 			id
 			prod_url
 		}
@@ -44,13 +44,14 @@ const GET_PROJECT_IDS = gql`
 const GET_PROJECT = gql`
 	query getProject($projectId: Float!) {
 		projects(id: $projectId) {
+      id
 			github_url
 			prod_url
 			name
 			students {
+        id
 				name
 				github_username
-				id
 			}
 			production_previews {
 				id
@@ -88,6 +89,26 @@ const INSERT_BULK_PROJECTS = gql`
 		}
 	}
 `;
+
+const UPDATE_PROJECT = gql`
+mutation($id: Float!, $name: String!, $githubUrl: String!, $prodUrl: String!, $students: [StudentInput!]!){
+  update_project(
+    id: $id,
+    name: $name,
+    github_url: $githubUrl,
+    prod_url: $prodUrl,
+    students: $students
+  ){
+    id
+    name
+    github_url
+    prod_url
+    students{
+      name
+      github_username
+    }
+  }
+}`;
 
 const DELETE_PROJECT = gql`
 	mutation deleteProject($projectId: Float!) {
@@ -145,7 +166,8 @@ export {
 	GET_PROJECT,
 	INSERT_PROJECT,
 	INSERT_PROD_PREVIEW,
-	INSERT_BULK_PROJECTS,
+  INSERT_BULK_PROJECTS,
+  UPDATE_PROJECT,
 	DELETE_PROJECT,
 	GET_REPO_INFO,
 	GET_COMMITS,

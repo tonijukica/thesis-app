@@ -3,7 +3,7 @@ import { createContext } from 'react';
 interface Course {
 	name: string;
 	courseId: number;
-	studentProjects: number;
+  studentProjects: number;
 }
 interface ActionType {
 	type: 'add' | 'remove';
