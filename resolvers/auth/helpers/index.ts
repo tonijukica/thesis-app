@@ -7,6 +7,7 @@ import { Assertion } from '../../../types/assertion';
 import { allowCredentials } from '../../../types/allowCredentials';
 import { Response } from '../../../types/response';
 import verifyPackedAttestation from './verifyPackedAttestation';
+import noneFormat from './noneFormat';
 import { hash, verifySignature } from './common';
 import { AuthChecker } from 'type-graphql'
 import { IContext } from '../../../types/IContext';
@@ -30,12 +31,44 @@ function generateCredential(id: number, username: string) {
       displayName: username
     },
     attestation: 'direct',
-    pubKeyCredParams: [
-      {
-        type: 'public-key',
-        alg: -7
-      }
-    ]
+		pubKeyCredParams: [
+			{
+				type: 'public-key',
+				alg: -7,
+			},
+			{
+				type: 'public-key',
+				alg: -35,
+			},
+			{
+				type: 'public-key',
+				alg: -36,
+			},
+			{
+				type: 'public-key',
+				alg: -257,
+			},
+			{
+				type: 'public-key',
+				alg: -258,
+			},
+			{
+				type: 'public-key',
+				alg: -259,
+			},
+			{
+				type: 'public-key',
+				alg: -38,
+			},
+			{
+				type: 'public-key',
+				alg: -39,
+			},
+			{
+				type: 'public-key',
+				alg: -8,
+			},
+		],
   };
   return credential;
 }
@@ -65,8 +98,14 @@ async function verifyAttestationResponse(webauthnResponse: Response){
   const { clientDataJSON } = webauthnResponse;
   let verification: any;
 
+  console.log(attestationStruct.fmt);
   if(attestationStruct.fmt === 'packed')
     verification = await verifyPackedAttestation(attestationStruct, clientDataJSON!);
+  else if(attestationStruct.fmt === 'none')
+   verification = await noneFormat(attestationStruct);
+  else{
+    verification!.verified = false
+  }
 
   if (verification!.verified) {
 		const response = {
@@ -138,7 +177,7 @@ async function verifyAssertionResponse(webauthnResponse: Response, id: string, a
   const authenticatorData = base64url.toBuffer(webauthnResponse.authenticatorData!);
   let response: any = { verified: false};
 
-  if(authr.fmt === 'packed'){
+  if(authr.fmt === 'packed' || authr.fmt === 'none'){
     const authenticatorDataStruct = parseAssertAuthenticatorData(authenticatorData);
 
     if (!authenticatorDataStruct.flags.up)
@@ -152,7 +191,11 @@ async function verifyAssertionResponse(webauthnResponse: Response, id: string, a
       clientDataHash
     ]);
 
-    const publicKey: string = ASN1toPEM(base64url.toBuffer(authr.publicKey));
+    const publicKey: string = checkPEM(authr.publicKey) ?
+      authr.publicKey
+      :
+      ASN1toPEM(base64url.toBuffer(authr.publicKey))
+
     const signature = base64url.toBuffer(webauthnResponse.signature!);
 
     const verify = await verifySignature(signature, signatureBase, publicKey);
@@ -176,6 +219,11 @@ const authChecker: AuthChecker<IContext> = (
   else
     return false;
 };
+
+function checkPEM(pubKey: any){
+	return pubKey.toString('base64').includes('BEGIN');
+}
+
 
 export {
   authChecker,

@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react';
-import { Grid, Card, CardHeader, CardContent, Collapse, IconButton } from '@material-ui/core';
+import { Grid, Card, CardHeader, CardContent, Collapse, IconButton, Button } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import classNames from 'classnames';
 import { useStyles } from './common/styles';
@@ -12,13 +12,15 @@ import { CommitGraph } from './common/CommitGraph';
 import { Preview } from './common/ProductionPreview';
 import { CommitList } from './common/CommitList';
 import { Loader } from '../common/CircuralLoader';
+import { useRouter } from 'next/router';
 
 type ProjectProps = {
 	projectId: number;
 };
 
 const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
-	const classes = useStyles();
+  const classes = useStyles();
+  const router = useRouter();
 	const { data } = useQuery(GET_PROJECT, { variables: { projectId } });
 	const [project, setProject] = useState<Project | null>(null);
   const [commits, setCommits] = useState<Commit[] | null>(null);
@@ -40,7 +42,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 		context: {
 			clientName: 'github',
 		},
-	});
+  });
   const handleDetailsExpand = () => {
     setExpand({
       ...expand,
@@ -77,6 +79,13 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 	if(project && commits){
 		return (
 			<>
+        <Button
+          color='secondary'
+          style={{ marginBottom: '4px'}}
+          onClick={() => router.back()}
+          >
+          Back
+        </Button>
 				<Card>
           <CardHeader
             title='Project overview'

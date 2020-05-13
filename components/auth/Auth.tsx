@@ -1,5 +1,5 @@
 import { useState, useEffect, FC } from 'react';
-import { Container, Collapse, Paper, Avatar, TextField, Button, Typography, makeStyles } from '@material-ui/core';
+import { Container, Collapse, Paper, Avatar, TextField, Button, Typography, makeStyles, CircularProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import LockIcon from '@material-ui/icons/LockOutlined';
 import { useAuth } from '../../auth/hooks/useAuth';
@@ -19,6 +19,8 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(1, 0, 1),
+    height: '40px',
+    color: 'white'
   },
 }));
 
@@ -30,7 +32,8 @@ const Auth: FC = () => {
     err: false,
     errMsg: '',
     success: false,
-    successMsg: ''
+    successMsg: '',
+    loading: false
   });
   const { login, register, isLoading, isAuthenticated } = useAuth();
 
@@ -40,40 +43,55 @@ const Auth: FC = () => {
   }, [isAuthenticated]);
 
   const handleRegister = async() => {
+    setState({
+      ...state,
+      loading: true
+    })
     register(username)
     .then(() => setState({
-      err: false,
-      errMsg: '',
-      success: true,
-      successMsg: 'Registration successful, you can log in now.'
+        err: false,
+        errMsg: '',
+        success: true,
+        successMsg: 'Registration successful, you can log in now.',
+        loading: false
     }))
     .catch(err => {
       console.log(err);
       setState({
         ...state,
         err: true,
-        errMsg: err.message
-      })
+        errMsg: err.message,
+        loading: false
+      });
     })
   };
 
   const handleLogin = async() => {
+    setState({
+      ...state,
+      loading: true
+    });
     login(username)
     .then(() => {
+      setState({
+        ...state,
+        loading: false
+      });
       router.push('/')
       .then(() => router.reload());
-
     })
     .catch(err => {
       console.log(err);
       setState({
         ...state,
         err: true,
-        errMsg: err.message
+        errMsg: err.message,
+        loading: false
       });
     });
   }
   const handleAlertClose = () => setState({
+    ...state,
     err: false,
     errMsg: '',
     success: false,
@@ -94,7 +112,16 @@ const Auth: FC = () => {
         </Collapse>
       <Paper variant='elevation' elevation={3} className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockIcon/>
+          {
+            state.loading ?
+            <CircularProgress
+              color='inherit'
+              disableShrink
+              size={35}
+             />
+            :
+            <LockIcon/>
+          }
         </Avatar>
         <Typography component='h1' variant='h5'>
           Log in
