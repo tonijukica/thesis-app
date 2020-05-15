@@ -1,9 +1,7 @@
-import { FunctionComponent, useContext } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { Grid, makeStyles, createStyles, Card, CardActionArea, CardContent, CardHeader, Theme } from '@material-ui/core';
-import { Context } from './CourseList';
+import CourseDeleteDialog from './dialogs/CourseDeleteDialog'
 import DeleteIcon from '@material-ui/icons/Delete';
-import { useMutation } from '@apollo/react-hooks';
-import { DELETE_COURSE_BY_ID } from '../../gql/queries/courses';
 import { useRouter } from 'next/router';
 
 type CourseBoxProps = {
@@ -41,33 +39,31 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentProjects, deleteMode,  }) => {
+const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentProjects, deleteMode }) => {
 	const classes = useStyles();
-	const router = useRouter();
-	const context: any = useContext(Context);
-	const { dispatch } = context;
-  const [deleteCourse] = useMutation(DELETE_COURSE_BY_ID);
+  const router = useRouter();
+  const [dialog, setDialog] = useState(false);
 
-	const handleDelete = async () => {
-		await deleteCourse({
-			variables: {
-				courseId: Number(courseId),
-			},
-		});
-		dispatch({ type: 'remove', course: { courseId, name, studentProjects } });
-	};
 	const handleRedirect = (e: any) => {
 		e.preventDefault();
 		router.push(`/courses/${courseId}`);
   };
+  const handleDialog = () => {
+    setDialog(!dialog);
+  }
 
 	return (
     <Grid container xs={4} item justify='center'>
+        <CourseDeleteDialog
+          courseId={courseId}
+          name={name}
+          open={dialog}
+          closeDialog={handleDialog}/>
         <Card
           className={classes.card}
-          onClick={deleteMode ? handleDelete : handleRedirect}>
+          onClick={deleteMode ? handleDialog : handleRedirect}>
           <CardActionArea className={classes.cardActionArea}>
-            {deleteMode ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} onClick={handleDelete} /> : null}
+            {deleteMode ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} /> : null}
             <CardHeader title={name.toLocaleUpperCase()} className={classes.cardHeader}/>
             <CardContent>
               <div>

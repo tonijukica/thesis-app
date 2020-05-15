@@ -3,7 +3,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Collapse } from '@material-ui/core';
 import { Button, TextField, LinearProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
-import { getFileContent } from '../common/fileUpload';
+import { getFileContent } from '../../common/fileUpload';
 
 type CourseDialogProps = {
 	name: string;

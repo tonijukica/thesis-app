@@ -1,10 +1,11 @@
 import { FunctionComponent, useState, useReducer, useEffect, ChangeEvent } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { Grid, Button, makeStyles, createStyles, Theme} from '@material-ui/core';
+import { Grid, Button, makeStyles, createStyles, Theme, Collapse} from '@material-ui/core';
+import { Alert } from '@material-ui/lab'
 import { Context, coursesReducer } from './helper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CourseBox from './CourseBox';
-import CourseDialog from './CourseDialog';
+import CourseDialog from './dialogs/CourseDialog';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GET_COURSES, INSERT_COURSE, INESRT_COURSE_BULK_PROJECTS } from '../../gql/queries/courses';
 import { Loader } from '../common/CircuralLoader';
@@ -121,9 +122,16 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
 	return (
 		<>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.container}>
-				<Grid item xs={8}>
+				<Grid item xs={4}>
 					{title}
 				</Grid>
+        <Grid item xs={4}>
+          <Collapse in={deleteMode}>
+            <Alert severity="error">
+              Delete mode is enabled
+            </Alert>
+          </Collapse>
+        </Grid>
 				<Grid container item xs={4} justify='flex-end' alignItems='flex-end'>
 					<Button variant='contained' color='secondary' className={classes.button} onClick={handleClickOpen}>
 						New

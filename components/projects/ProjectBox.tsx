@@ -2,6 +2,7 @@ import { FunctionComponent, useState, useEffect } from 'react';
 import { Grid, makeStyles, createStyles, Card, CardActionArea, CircularProgress, Theme } from '@material-ui/core';
 import { Student } from '../../interfaces';
 import { useRouter } from 'next/router';
+import DeleteProjectDialog from './dialogs/DeleteProjectDialog';
 import { GET_REPO_INFO } from '../../gql/queries/projects';
 import { useQuery } from '@apollo/react-hooks';
 import { getUserRepoName, formatDate, projectStanding, dataExtract } from './helpers';
@@ -13,7 +14,8 @@ type ProjectBoxProps = {
 	students: Student[];
   deleteMode: boolean;
   standingMode: boolean;
-	handleDelete: any;
+  handleDelete: any;
+  removeProject: any
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -65,12 +67,14 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
   students,
   deleteMode,
   standingMode,
-  handleDelete
+  handleDelete,
+  removeProject
 }) => {
 	const classes = useStyles();
 	const router = useRouter();
 	const [commitNum, setCommitNum] = useState('');
-	const [lastCommitDate, setLastCommitDate] = useState('');
+  const [lastCommitDate, setLastCommitDate] = useState('');
+  const [dialog, setDialog] = useState(false);
 	const [user, repoName] = getUserRepoName(githubUrl);
 	const { data } = useQuery(GET_REPO_INFO, {
 		variables: {
@@ -93,6 +97,9 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
 		e.preventDefault();
 		router.push(`/projects/${projectId}`);
   };
+  const handleDialog = () => {
+    setDialog(!dialog);
+  }
   const style = () => {
     if(deleteMode)
       return [classes.card, classes.deleteHover].join(' ')
@@ -103,9 +110,17 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
   }
 	if(data)
 		return (
+      <Grid container direction='column' key={projectId}>
+        <DeleteProjectDialog
+          projectId={projectId}
+          name={name}
+          open={dialog}
+          closeDialog={handleDialog}
+          remove={removeProject}
+        />
         <Card
           className={style()}
-          onClick={deleteMode ? handleDelete : handleRedirect}
+          onClick={deleteMode ? handleDialog : handleRedirect}
           key={projectId}
         >
           <CardActionArea className={classes.cardActionArea}>
@@ -127,6 +142,7 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
             </Grid>
           </CardActionArea>
         </Card>
+      </Grid>
 		);
 	else
 		return (

@@ -1,5 +1,6 @@
 import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
-import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress, Theme, Switch, FormControlLabel } from '@material-ui/core';
+import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress, Theme, Switch, FormControlLabel, Collapse } from '@material-ui/core';
+import { Alert } from '@material-ui/lab'
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
@@ -96,7 +97,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
   };
   const handleStandingMode = () => {
 		setStandingMode(!standingMode);
-	};
+  };
 	const handleProjectNameChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setProjectName(e.target.value);
 	};
@@ -118,7 +119,11 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 		}).then(() => {
 			setProjects(projects.filter((project) => project.id !== projectId));
 		});
-	};
+  };
+  const removeProject = (projectId: number) => {
+    setProjects(projects.filter((project) => project.id !== projectId))
+  }
+
 	const addProject = () => {
 		insertProject({
 			variables: {
@@ -168,7 +173,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	return (
 		<>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.container}>
-				<Grid container item xs={8}>
+				<Grid container item xs={4}>
 					<TextField
 						label='Search'
 						variant='outlined'
@@ -190,8 +195,14 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
             label='Standing'
             labelPlacement='end'
           />
-
 				</Grid>
+        <Grid item xs={4}>
+          <Collapse in={deleteMode}>
+            <Alert severity="error">
+              Delete mode is enabled
+            </Alert>
+          </Collapse>
+        </Grid>
 				<Grid container item xs={4} justify='flex-end' alignItems='flex-end'>
 					<Button variant='contained' color='secondary' className={classes.button} onClick={handleDialogAddOpen}>
 						New
@@ -248,18 +259,17 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
           {
             projects.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage).map((project: Project) => {
               return (
-                <Grid container direction='column' key={project.id} onClick={() => (deleteMode ? handleDeleteProject(project.id) : null)}>
-                  <ProjectBox
-                    key={project.id}
-                    name={project.name}
-                    projectId={project.id}
-                    githubUrl={project.github_url}
-                    students={project.students}
-                    deleteMode={deleteMode}
-                    standingMode={standingMode}
-                    handleDelete={handleDeleteProject}
-                  />
-                </Grid>
+              <ProjectBox
+                key={project.id}
+                name={project.name}
+                projectId={project.id}
+                githubUrl={project.github_url}
+                students={project.students}
+                deleteMode={deleteMode}
+                standingMode={standingMode}
+                handleDelete={handleDeleteProject}
+                removeProject={removeProject}
+              />
             )})
           }
           <Grid container style={{marginTop: '16px'}} justify='center'>
