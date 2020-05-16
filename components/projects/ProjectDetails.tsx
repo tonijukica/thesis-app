@@ -1,5 +1,6 @@
 import { FunctionComponent, useState, useEffect } from 'react';
 import { Grid, Card, CardHeader, CardContent, Collapse, IconButton, Button } from '@material-ui/core';
+import GradeProjectDialog from './dialogs/GradeProjectDialog';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import classNames from 'classnames';
 import { useStyles } from './common/styles';
@@ -31,7 +32,8 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
   });
 	const [owner, setOwner] = useState('');
 	const [creationDate, setCreationDate] = useState('');
-	const [repoName, setRepoName] = useState('');
+  const [repoName, setRepoName] = useState('');
+  const [gradeDialog, setGradeDialog] = useState(false);
 
 	const { data: githubData } = useQuery(GET_COMMITS, {
 		skip: !data,
@@ -64,6 +66,10 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
   const updateProject = (state: Project | null) => {
     setProject(state);
   };
+
+  const handleDialog = () => {
+    setGradeDialog(!gradeDialog);
+  }
 	useEffect(() => {
 		if(data){
 			setProject(data.projects[0]);
@@ -79,13 +85,34 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
 	if(project && commits){
 		return (
 			<>
-        <Button
-          color='secondary'
-          style={{ marginBottom: '4px'}}
-          onClick={() => router.back()}
-          >
-          Back
-        </Button>
+        <Grid container direction='row' justify='space-between'>
+          <Grid item>
+            <Button
+              color='secondary'
+              style={{ marginBottom: '4px'}}
+              onClick={() => router.back()}
+            >
+              Back
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant='contained'
+              color='secondary'
+              style={{ marginBottom: '4px'}}
+              onClick={handleDialog}
+             >
+              Grade
+            </Button>
+          </Grid>
+        </Grid>
+        <GradeProjectDialog
+          grade={null}
+          projectId={project.id}
+          name={project.name}
+          open={gradeDialog}
+          closeDialog={handleDialog}
+        />
 				<Card>
           <CardHeader
             title='Project overview'
