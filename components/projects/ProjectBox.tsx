@@ -29,12 +29,15 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: '8px',
 		},
 		good: {
+      color: theme.palette.primary.main,
 			backgroundColor: '#b7f2ae',
 		},
 		bad: {
+      color: theme.palette.primary.main,
 			backgroundColor: '#ffb3b3',
 		},
 		warning: {
+      color: theme.palette.primary.main,
 			backgroundColor: '#fffeb3',
     },
     finished: {

@@ -47,6 +47,10 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
       setfileName(file[0].name);
       const fileData = await getFileContent(file[0]);
       setParsedData(`Found ${fileData.length} projects`);
+      setError({
+        err: false,
+        errMsg: ''
+      });
       bulkProjects(fileData);
       setLoading(false);
     }
@@ -56,6 +60,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
         err: true,
         errMsg: 'Unsupported file format. No projects found!'
       });
+      setParsedData('');
     }
 	};
 	const handleAddProjects = () => {
