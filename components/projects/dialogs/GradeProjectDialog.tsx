@@ -3,6 +3,8 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { RadioGroup, Radio, FormControlLabel} from '@material-ui/core';
 import { Button } from '@material-ui/core';
+import { useMutation } from '@apollo/react-hooks';
+import { GRADE_PROJECT } from '../../../gql/queries/projects';
 
 type GradeProjectDialogProps = {
   projectId: number;
@@ -37,11 +39,18 @@ const GradeProjectDialog: FunctionComponent<GradeProjectDialogProps> = ({
 }) => {
   const classes = useStyles();
   const [grade, setGrade] = useState<Number | null>(initialGrade);
+  const [gradeProject] = useMutation(GRADE_PROJECT);
 
   const handleGradeChange = (event: FormEvent<HTMLInputElement>) => {
     setGrade(Number((event.target as HTMLInputElement).value));
   }
   const handleGrading = async () => {
+    await gradeProject({
+      variables: {
+        id: Number(projectId),
+        grade: Number(grade)
+      }
+    });
     closeDialog();
   }
 	return (

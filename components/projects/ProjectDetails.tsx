@@ -107,7 +107,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
           </Grid>
         </Grid>
         <GradeProjectDialog
-          grade={null}
+          grade={project.grade!}
           projectId={project.id}
           name={project.name}
           open={gradeDialog}

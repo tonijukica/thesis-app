@@ -30,7 +30,8 @@ export type Project = {
 	id: number;
 	name: string;
 	github_url: string;
-	prod_url?: string;
+  prod_url?: string;
+  grade?: number;
 	students: Student[];
 	production_previews?: ProductionPreview[];
 };

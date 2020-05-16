@@ -15,7 +15,7 @@ export default class MyDocument extends Document {
 				<body
 					style={{
 						margin: 0,
-						fontFamily: '-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji',
+            fontFamily: '-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji',
 					}}
 				>
 					<Main />
