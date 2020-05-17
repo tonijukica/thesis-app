@@ -4,7 +4,8 @@ import { EditProjectDialog } from '../dialogs/EditProject';
 import { useStyles } from './styles';
 import { Project, Student } from '../../../interfaces';
 import { formatDate, userCommits } from '../helpers';
-import { Chart, ArgumentAxis, ValueAxis, BarSeries } from '@devexpress/dx-react-chart-material-ui';
+import { Chart, ArgumentAxis, ValueAxis, BarSeries, Tooltip } from '@devexpress/dx-react-chart-material-ui';
+import { EventTracker, Animation } from '@devexpress/dx-react-chart';
 import { Edit } from '@material-ui/icons'
 import * as githubLogo from '../../../assets/img/github_logo.png';
 import * as netlifyLogo from '../../../assets/img/netlify_logo.png';
@@ -20,6 +21,7 @@ type SidebarProps = {
 export const Sidebar: FC<SidebarProps> = ({ project, updateProject, creationDate, commits }) => {
   const classes = useStyles();
   const [dialog, setDialog] = useState(false);
+  const chartData = userCommits(commits);
   const handleEditDialog = () => {
     setDialog(true);
   }
@@ -86,9 +88,12 @@ export const Sidebar: FC<SidebarProps> = ({ project, updateProject, creationDate
             )}
           </Grid>
           <Grid container item justify='center' className={classes.infoBox}>
-            <Chart data={userCommits(commits)} width={200} height={250}>
+            <Chart data={chartData} width={200} height={250}>
               <ValueAxis />
               <ArgumentAxis />
+              <EventTracker/>
+              <Tooltip/>
+              <Animation />
               <BarSeries color='#19857b' valueField='count' argumentField='user' />
             </Chart>
           </Grid>

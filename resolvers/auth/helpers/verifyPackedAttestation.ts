@@ -65,7 +65,6 @@ async function verifyPackedAttestation(ctapCredentialResponse: any, clientDataJS
 			const key = ec.keyFromPublic(ansiKey);
 
       const verified = key.verify(signatureBaseHash, signature);
-      console.log(verified);
 
 			return {
 				verified,
@@ -88,8 +87,6 @@ async function verifyPackedAttestation(ctapCredentialResponse: any, clientDataJS
 				e: publicKeyCose.get(COSE_KEYS.e)
 			}, 'components-public');
       const verified = key.verify(signatureBase, signature);
-
-      console.log(verified);
 
 			return {
 				verified,
