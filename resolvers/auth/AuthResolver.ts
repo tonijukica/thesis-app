@@ -177,7 +177,6 @@ export class AuthResolver{
   ): Promise<ResponseResponse | undefined>{
     const username = ctx.req.session!.username;
     await User.delete({username});
-    console.log(User.findOne({username}));
     return {
       status: 'ok'
     }

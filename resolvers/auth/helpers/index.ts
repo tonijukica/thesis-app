@@ -98,7 +98,6 @@ async function verifyAttestationResponse(webauthnResponse: Response){
   const { clientDataJSON } = webauthnResponse;
   let verification: any;
 
-  console.log(attestationStruct.fmt);
   if(attestationStruct.fmt === 'packed')
     verification = await verifyPackedAttestation(attestationStruct, clientDataJSON!);
   else if(attestationStruct.fmt === 'none')
