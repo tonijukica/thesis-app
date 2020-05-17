@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Grid, Paper } from '@material-ui/core';
+import { Grid, Paper, Theme } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core';
 import { Chart, ArgumentAxis, ValueAxis, SplineSeries, Tooltip } from '@devexpress/dx-react-chart-material-ui';
 import { EventTracker } from '@devexpress/dx-react-chart';
@@ -9,9 +9,10 @@ type Props = {
 	commits: any[];
 };
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
     paper: {
+      color: theme.palette.primary.main,
       paddingTop: '16px',
       paddingLeft: '16px',
       paddingRight: '16px',

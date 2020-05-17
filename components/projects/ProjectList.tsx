@@ -8,7 +8,7 @@ import { Pagination } from '@material-ui/lab';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './dialogs/AddProjectDialog';
 import BulkProjectDialog from './dialogs/AddBulkProjectDialog';
-import { GET_PROJECTS, INSERT_PROJECT, INSERT_BULK_PROJECTS, DELETE_PROJECT } from '../.././gql/queries/projects';
+import { GET_PROJECTS, INSERT_PROJECT, INSERT_BULK_PROJECTS } from '../.././gql/queries/projects';
 import { Student, Project } from '../../interfaces';
 import Fuse from 'fuse.js';
 
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			marginRight: '8px',
     },
     switch: {
+      color: theme.palette.primary.main,
       marginLeft: '12px'
     },
     delBtn: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
       }
     },
 		header: {
+      color: theme.palette.primary.main,
 			paddingTop: '16px',
 			textAlign: 'center',
 			paddingBottom: '16px',
@@ -55,7 +57,6 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const [bulkProjects, setBulkProjects] = useState<[]>([]);
 	const [projectName, setProjectName] = useState('');
 	const [projectUrl, setProjectUrl] = useState('');
-	const [deleteProject] = useMutation(DELETE_PROJECT);
 	const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
 	const [insertProject] = useMutation(INSERT_PROJECT);
 	const [insertProjects] = useMutation(INSERT_BULK_PROJECTS);
@@ -111,15 +112,6 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const addStudent = (student: Student) => {
 		setStudents([...students, student]);
 	};
-	const handleDeleteProject = (projectId: number) => {
-		deleteProject({
-			variables: {
-				projectId: Number(projectId),
-			},
-		}).then(() => {
-			setProjects(projects.filter((project) => project.id !== projectId));
-		});
-  };
   const removeProject = (projectId: number) => {
     setProjects(projects.filter((project) => project.id !== projectId))
   }
@@ -239,17 +231,20 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 			/>
 
 			<Grid container direction='row' justify='space-evenly' className={classes.header}>
-				<Grid item xs={3}>
+				<Grid item xs={2}>
 					<strong>Project name</strong>
 				</Grid>
-				<Grid item xs={3}>
+				<Grid item xs={2}>
 					<strong>Students</strong>
 				</Grid>
-				<Grid item xs={3}>
+				<Grid item xs={2}>
 					<strong>Number of commits</strong>
 				</Grid>
-				<Grid item xs={3}>
+				<Grid item xs={2}>
 					<strong>Last commit</strong>
+				</Grid>
+        <Grid item xs={2}>
+					<strong>Grade</strong>
 				</Grid>
 			</Grid>
 			{loading && <LinearProgress />}
@@ -263,11 +258,11 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
                 key={project.id}
                 name={project.name}
                 projectId={project.id}
+                grade={project.grade!}
                 githubUrl={project.github_url}
                 students={project.students}
                 deleteMode={deleteMode}
                 standingMode={standingMode}
-                handleDelete={handleDeleteProject}
                 removeProject={removeProject}
               />
             )})

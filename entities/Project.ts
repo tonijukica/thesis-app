@@ -21,7 +21,11 @@ export class Project extends BaseEntity {
 
 	@Field({ nullable: true })
 	@Column({ nullable: true })
-	prod_url!: string;
+  prod_url!: string;
+
+  @Field({ nullable: true })
+	@Column({ nullable: true })
+	grade!: number;
 
 	@Field()
 	@CreateDateColumn()

@@ -126,4 +126,20 @@ export class ProjectResolver {
       return Promise.reject('No project found');
     }
   }
+
+  @Authorized()
+  @Mutation(() => Project)
+  async grade_project(
+    @Arg('id') id: number,
+    @Arg('grade') grade: number
+  ): Promise<Project | string> {
+    try{
+      const project = await Project.findOneOrFail({id});
+      project.grade = grade;
+      return project.save();
+    }
+    catch(err){
+      return Promise.reject('No project found');
+    }
+  }
 }

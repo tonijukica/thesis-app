@@ -28,8 +28,11 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '1.5rem',
     },
 		cardActionArea: {
-			fontSize: '1em',
-		},
+      fontSize: '1em',
+    },
+    content: {
+      color: theme.palette.primary.main
+    },
 		deleteIcon: {
 			position: 'absolute',
 			top: 0,
@@ -65,7 +68,7 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentP
           <CardActionArea className={classes.cardActionArea}>
             {deleteMode ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} /> : null}
             <CardHeader title={name.toLocaleUpperCase()} className={classes.cardHeader}/>
-            <CardContent>
+            <CardContent className={classes.content}>
               <div>
                 <span className={classes.cardName}>{studentProjects}</span>
                 <br/>

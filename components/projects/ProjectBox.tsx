@@ -10,11 +10,11 @@ import { getUserRepoName, formatDate, projectStanding, dataExtract } from './hel
 type ProjectBoxProps = {
 	name: string;
 	projectId: number;
-	githubUrl: string;
+  githubUrl: string;
+  grade: number;
 	students: Student[];
   deleteMode: boolean;
   standingMode: boolean;
-  handleDelete: any;
   removeProject: any
 };
 
@@ -29,14 +29,21 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: '8px',
 		},
 		good: {
+      color: theme.palette.primary.main,
 			backgroundColor: '#b7f2ae',
 		},
 		bad: {
+      color: theme.palette.primary.main,
 			backgroundColor: '#ffb3b3',
 		},
 		warning: {
+      color: theme.palette.primary.main,
 			backgroundColor: '#fffeb3',
-		},
+    },
+    finished: {
+      backgroundColor: '#3D9970',
+      color: 'white'
+    },
 		deleteHover: {
 			'&:hover': {
 				backgroundColor: 'grey',
@@ -64,10 +71,10 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
   name,
   projectId,
   githubUrl,
+  grade,
   students,
   deleteMode,
   standingMode,
-  handleDelete,
   removeProject
 }) => {
 	const classes = useStyles();
@@ -102,11 +109,13 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
   }
   const style = () => {
     if(deleteMode)
-      return [classes.card, classes.deleteHover].join(' ')
+      return [classes.card, classes.deleteHover].join(' ');
+    else if(grade)
+      return [classes.card, classes.finished].join(' ');
     else if(standingMode)
-      return [classes.card, projectStanding(lastCommitDate, classes)].join(' ')
+      return [classes.card, projectStanding(lastCommitDate, classes)].join(' ');
     else
-      return classes.card
+      return classes.card;
   }
 	if(data)
 		return (
@@ -125,19 +134,24 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
         >
           <CardActionArea className={classes.cardActionArea}>
             <Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 {name}
               </Grid>
-              <Grid container direction='column' item xs={3}>
+              <Grid container direction='column' item xs={2}>
                 {students.map((student: Student) => (
                   <Grid key={student.id}>{student.name}</Grid>
                 ))}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 {commitNum}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 {formatDate(lastCommitDate)}
+              </Grid>
+              <Grid xs={2}>
+                {
+                  grade ? grade : '-'
+                }
               </Grid>
             </Grid>
           </CardActionArea>

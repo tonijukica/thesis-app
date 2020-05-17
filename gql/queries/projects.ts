@@ -5,7 +5,8 @@ const GET_PROJECTS = gql`
 		courses(id: $courseId) {
 			projects {
 				name
-				id
+        id
+        grade
 				students {
 					id
 					name
@@ -47,7 +48,8 @@ const GET_PROJECT = gql`
       id
 			github_url
 			prod_url
-			name
+      name
+      grade
 			students {
         id
 				name
@@ -110,6 +112,17 @@ mutation($id: Float!, $name: String!, $githubUrl: String!, $prodUrl: String!, $s
   }
 }`;
 
+const GRADE_PROJECT = gql`
+mutation($id: Float!, $grade: Float!){
+  grade_project(
+    id: $id,
+    grade: $grade
+  ){
+    grade
+    name
+  }
+}
+`;
 const DELETE_PROJECT = gql`
 	mutation deleteProject($projectId: Float!) {
 		delete_project(id: $projectId)
@@ -168,6 +181,7 @@ export {
 	INSERT_PROD_PREVIEW,
   INSERT_BULK_PROJECTS,
   UPDATE_PROJECT,
+  GRADE_PROJECT,
 	DELETE_PROJECT,
 	GET_REPO_INFO,
 	GET_COMMITS,

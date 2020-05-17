@@ -8,9 +8,11 @@ export const useStyles = makeStyles((theme: Theme) =>
 			textAlign: 'center',
 		},
 		details: {
+      color: theme.palette.primary.main,
 			minHeight: '600px',
 		},
 		projectInfo: {
+      color: theme.palette.primary.main,
       padding: '16px',
       textAlign: 'center',
       position: 'relative'
@@ -25,10 +27,12 @@ export const useStyles = makeStyles((theme: Theme) =>
 			zIndex: 1000
     },
 		commitList: {
+      color: theme.palette.primary.main,
 			borderBottom: '1px solid #e1e4e8 !important',
 			textAlign: 'center',
 		},
 		infoBox: {
+      color: theme.palette.primary.main,
 			paddingTop: '8px',
     },
     cardHeader: {
