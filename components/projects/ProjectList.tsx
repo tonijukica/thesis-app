@@ -11,10 +11,17 @@ import BulkProjectDialog from './dialogs/AddBulkProjectDialog';
 import { GET_PROJECTS, INSERT_PROJECT, INSERT_BULK_PROJECTS } from '../.././gql/queries/projects';
 import { Student, Project } from '../../interfaces';
 import Fuse from 'fuse.js';
+import orderBy from 'lodash.orderby';
 
 type ProjectListProps = {
 	courseId: number;
 };
+
+type SortType = {
+  grade: null | Boolean,
+  commitDate: null | Boolean
+};
+
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		container: {
@@ -57,7 +64,11 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const [bulkProjects, setBulkProjects] = useState<[]>([]);
 	const [projectName, setProjectName] = useState('');
 	const [projectUrl, setProjectUrl] = useState('');
-	const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
+  const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
+  const [sort, setSort] = useState<SortType>({
+    grade: null,
+    commitDate: null
+  });
 	const [insertProject] = useMutation(INSERT_PROJECT);
 	const [insertProjects] = useMutation(INSERT_BULK_PROJECTS);
   const [students, setStudents] = useState<Student[]>([]);
@@ -80,6 +91,29 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 			setProjects(searchResults);
 		}
 	}, [data, searchParam]);
+
+  useEffect(() => {
+    if(sort.grade === true){
+      const sortedProjects = [...projects].sort((a, b) => b.grade! - a.grade!);
+      setProjects(sortedProjects);
+    }
+
+    else if(sort.grade === false){
+      const sortedProjects = [...projects].sort((a, b) => a.grade! - b.grade!);
+      setProjects(sortedProjects);
+    }
+  }, [sort.grade]);
+  useEffect(() => {
+    if(sort.commitDate === true)
+      setProjects(
+        orderBy(projects, ['lastCommitDate'], ['desc'])
+      );
+    else if(sort.commitDate === false)
+      setProjects(
+        orderBy(projects, ['lastCommitDate'], ['asc'])
+      );
+  }, [sort.commitDate]);
+
 
 	const handleDialogAddOpen = () => {
 		setDialogAdd(true);
@@ -104,7 +138,19 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	};
 	const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setProjectUrl(e.target.value);
-	};
+  };
+  const handleSortDate = () => {
+    setSort({
+      grade: null,
+      commitDate: !sort.commitDate
+    });
+  }
+  const handleSortGrade = () => {
+    setSort({
+      grade: !sort.grade,
+      commitDate: null
+    });
+  }
 	const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setPage(1);
 		setSearchParam(e.target.value);
@@ -114,6 +160,11 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	};
   const removeProject = (projectId: number) => {
     setProjects(projects.filter((project) => project.id !== projectId))
+  }
+  const setLastCommitDate = (projectId: number, date: number) => {
+    const project: Project = projects.find((projectEl: Project) => projectEl.id === projectId)!;
+    project.lastCommitDate = date;
+    setProjects(projects.map((projectEl: Project) => projectEl.id === projectId ? project : projectEl));
   }
 
 	const addProject = () => {
@@ -240,10 +291,10 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				<Grid item xs={2}>
 					<strong>Number of commits</strong>
 				</Grid>
-				<Grid item xs={2}>
+				<Grid item xs={2} onClick={handleSortDate}>
 					<strong>Last commit</strong>
 				</Grid>
-        <Grid item xs={2}>
+        <Grid item xs={2} onClick={handleSortGrade}>
 					<strong>Grade</strong>
 				</Grid>
 			</Grid>
@@ -264,6 +315,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
                 deleteMode={deleteMode}
                 standingMode={standingMode}
                 removeProject={removeProject}
+                setDate={setLastCommitDate}
               />
             )})
           }

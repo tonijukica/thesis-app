@@ -33,5 +33,6 @@ export type Project = {
   prod_url?: string;
   grade?: number;
 	students: Student[];
-	production_previews?: ProductionPreview[];
+  production_previews?: ProductionPreview[];
+  lastCommitDate?: number;
 };

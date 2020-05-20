@@ -15,7 +15,8 @@ type ProjectBoxProps = {
 	students: Student[];
   deleteMode: boolean;
   standingMode: boolean;
-  removeProject: any
+  removeProject: any;
+  setDate: any;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -75,7 +76,8 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
   students,
   deleteMode,
   standingMode,
-  removeProject
+  removeProject,
+  setDate
 }) => {
 	const classes = useStyles();
 	const router = useRouter();
@@ -96,7 +98,8 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
 		if(data){
 			const { num, date } = dataExtract(data);
 			setCommitNum(num);
-			setLastCommitDate(date);
+      setLastCommitDate(date);
+      setDate(projectId, date);
 		}
 	}, [data]);
 
