@@ -4,6 +4,8 @@ import { Alert } from '@material-ui/lab'
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
 import { Pagination } from '@material-ui/lab';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './dialogs/AddProjectDialog';
@@ -12,6 +14,7 @@ import { GET_PROJECTS, INSERT_PROJECT, INSERT_BULK_PROJECTS } from '../.././gql/
 import { Student, Project } from '../../interfaces';
 import Fuse from 'fuse.js';
 import orderBy from 'lodash.orderby';
+import classnames from 'classnames';
 
 type ProjectListProps = {
 	courseId: number;
@@ -49,7 +52,20 @@ const useStyles = makeStyles((theme: Theme) =>
 			textAlign: 'center',
 			paddingBottom: '16px',
 			borderBottom: '1px solid #e1e4e8 !important',
-    }
+    },
+    expandIcon: {
+      transform: 'rotate(0deg)',
+      paddingTop: '2px',
+      transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+      }),
+    },
+    expandIconUp: {
+      transform: 'rotate(180deg)'
+    },
+    expandIconDown: {
+      transform: 'rotate(0deg)'
+    },
 	})
 );
 
@@ -150,6 +166,31 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
       grade: !sort.grade,
       commitDate: null
     });
+  }
+  const sortStyle = (sort: Boolean | null) => {
+    if(sort === true)
+      return classnames(
+        classes.expandIcon,
+        classes.expandIconDown
+      );
+    else if(sort === false)
+      return classnames(
+        classes.expandIcon,
+        classes.expandIconUp
+      );
+    else
+      return '';
+  }
+  const sortIndicator = (sort: Boolean | null) => {
+    if(sort !== true && sort !== false)
+      return( <UnfoldMoreIcon style={{width: '20px'}}/>);
+    else
+      return(
+      <ExpandMoreIcon
+        fontSize='small'
+        className={sortStyle(sort)}
+      />
+      );
   }
 	const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setPage(1);
@@ -291,11 +332,17 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				<Grid item xs={2}>
 					<strong>Number of commits</strong>
 				</Grid>
-				<Grid item xs={2} onClick={handleSortDate}>
-					<strong>Last commit</strong>
+				<Grid container justify='center' item xs={2} onClick={handleSortDate}>
+					<strong style={{marginLeft: '20px'}}>Last commit</strong>
+          {
+            sortIndicator(sort.commitDate)
+          }
 				</Grid>
-        <Grid item xs={2} onClick={handleSortGrade}>
-					<strong>Grade</strong>
+        <Grid container  justify='center'item xs={2} onClick={handleSortGrade}>
+          <strong style={{marginLeft: '20px'}}>Grade</strong>
+          {
+            sortIndicator(sort.grade)
+          }
 				</Grid>
 			</Grid>
 			{loading && <LinearProgress />}
