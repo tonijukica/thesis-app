@@ -39,6 +39,10 @@ export const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.secondary.main,
       color: 'white',
     },
+    cardHeaderBad: {
+      backgroundColor: theme.palette.error.main,
+      color: 'white',
+    },
     cardContent: {
       padding: '16px'
     },

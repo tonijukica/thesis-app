@@ -1,5 +1,7 @@
 import { FunctionComponent, useState, useEffect } from 'react';
 import { Grid, Card, CardHeader, CardContent, Collapse, IconButton, Button } from '@material-ui/core';
+import ErrorOutline from '@material-ui/icons/ErrorOutline';
+import CheckCircle from '@material-ui/icons/CheckCircleOutline'
 import GradeProjectDialog from './dialogs/GradeProjectDialog';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import classNames from 'classnames';
@@ -35,7 +37,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
   const [repoName, setRepoName] = useState('');
   const [gradeDialog, setGradeDialog] = useState(false);
 
-	const { data: githubData } = useQuery(GET_COMMITS, {
+	const { data: githubData, error } = useQuery(GET_COMMITS, {
 		skip: !data,
 		variables: {
 			repoName,
@@ -101,6 +103,12 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
               color='secondary'
               style={{ marginBottom: '4px'}}
               onClick={handleDialog}
+              endIcon={
+                project.grade ?
+                <CheckCircle/>
+                :
+                <ErrorOutline/>
+              }
              >
               Grade
             </Button>
@@ -190,6 +198,52 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
         </Card>
 			</>
 		);
-	} else return <Loader />;
+  } else if(error){
+    return(
+      <>
+        <Grid container direction='row' justify='space-between'>
+        <Grid item>
+          <Button
+            color='secondary'
+            style={{ marginBottom: '4px'}}
+            onClick={() => router.back()}
+          >
+            Back
+          </Button>
+        </Grid>
+      </Grid>
+      <Card>
+        <CardHeader
+          title='Project overview'
+          className={classes.cardHeaderBad}
+          action={
+            <IconButton
+              onClick={handleDetailsExpand}
+              className={classNames(classes.expandIcon, {
+                [classes.expandIconOpen]: expand.details
+              })}
+            >
+              <ExpandMoreIcon/>
+            </IconButton>
+          }
+          onClick={handleDetailsExpand}
+        />
+        <Collapse in={expand.details}>
+          <CardContent className={classes.cardContent}>
+            <Grid container direction='row' justify='center' className={classNames(classes.details)}>
+              <Sidebar
+                project={project!}
+                updateProject={updateProject}
+                creationDate={creationDate}
+              />
+            </Grid>
+          </CardContent>
+        </Collapse>
+        </Card>
+      </>
+    )
+  }
+  else
+    return <Loader />;
 };
 export default ProjectDetails;

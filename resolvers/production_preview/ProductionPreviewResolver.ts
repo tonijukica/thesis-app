@@ -13,11 +13,18 @@ export class ProductionPreviewResolver {
 
 	@Mutation(() => ProductionPreview)
 	async insert_production_preview(@Arg('project_id') id: number, @Arg('image') image: string): Promise<ProductionPreview> {
-		const project = await Project.findOne({ id });
+    const project = await Project.findOne({ id });
+    const previews = (await project!.production_previews);
+    const previewsCount = previews.length;
+    const limit = process.env.PROD_PREVIEW_LIMIT;
 		const productionPreview = await ProductionPreview.create({
 			image,
 		}).save();
-		(await project!.production_previews).push(productionPreview);
+    previews.push(productionPreview);
+    if(previewsCount >= Number(limit)){
+      previews.shift();
+    }
+    project!.production_previews = Promise.resolve(previews);
 		await project!.save();
 		return productionPreview;
 	}

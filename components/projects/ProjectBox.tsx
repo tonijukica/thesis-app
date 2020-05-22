@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from 'react';
-import { Grid, makeStyles, createStyles, Card, CardActionArea, CircularProgress, Theme } from '@material-ui/core';
+import { Grid, makeStyles, createStyles, Card, CardActionArea, Theme, CircularProgress } from '@material-ui/core';
 import { Student } from '../../interfaces';
 import { useRouter } from 'next/router';
 import DeleteProjectDialog from './dialogs/DeleteProjectDialog';
@@ -64,7 +64,14 @@ const useStyles = makeStyles((theme: Theme) =>
 			paddingBottom: '16px',
       fontSize: '0.95em',
       minHeight: '64px'
-		},
+    },
+    badProject: {
+      width: '100%',
+			textAlign: 'center',
+			marginBottom: '8px',
+      marginTop: '8px',
+      border: `2px solid ${theme.palette.error.main} !important`
+    }
 	})
 );
 
@@ -85,7 +92,7 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
   const [lastCommitDate, setLastCommitDate] = useState('');
   const [dialog, setDialog] = useState(false);
 	const [user, repoName] = getUserRepoName(githubUrl);
-	const { data } = useQuery(GET_REPO_INFO, {
+	const { data, error } = useQuery(GET_REPO_INFO, {
 		variables: {
 			ownerName: user,
 			repoName,
@@ -151,7 +158,7 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
               <Grid item xs={2}>
                 {formatDate(lastCommitDate)}
               </Grid>
-              <Grid xs={2}>
+              <Grid item xs={2}>
                 {
                   grade ? grade : '-'
                 }
@@ -161,11 +168,48 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
         </Card>
       </Grid>
 		);
-	else
+	else if(error)
 		return (
-			<Grid className={classes.box} container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
-				<CircularProgress />
+			<Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
+				<DeleteProjectDialog
+          projectId={projectId}
+          name={name}
+          open={dialog}
+          closeDialog={handleDialog}
+          remove={removeProject}
+        />
+        <Card
+          className={classes.badProject}
+          onClick={deleteMode ? handleDialog : handleRedirect}
+          key={projectId}
+        >
+          <CardActionArea className={classes.cardActionArea}>
+            <Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
+              <Grid item xs={2}>
+                {name}
+              </Grid>
+              <Grid container direction='column' item xs={2}>
+                {students.map((student: Student) => (
+                  <Grid key={student.id}>{student.name}</Grid>
+                ))}
+              </Grid>
+              <Grid item xs={2}>
+              </Grid>
+              <Grid item xs={2}>
+                Invalid GitHub Repo
+              </Grid>
+              <Grid item xs={2}>
+              </Grid>
+            </Grid>
+          </CardActionArea>
+        </Card>
 			</Grid>
-		);
+    );
+  else
+    return (
+      <Grid className={classes.box} container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
+        <CircularProgress />
+      </Grid>
+    );
 };
 export default ProjectBox;

@@ -12,16 +12,15 @@ import * as netlifyLogo from '../../../assets/img/netlify_logo.png';
 
 type SidebarProps = {
 	project: Project;
-	creationDate: string;
-  commits: any[];
-  updateProject: any
-  ;
+	creationDate?: string;
+  commits?: any[];
+  updateProject: any;
 };
 
 export const Sidebar: FC<SidebarProps> = ({ project, updateProject, creationDate, commits }) => {
   const classes = useStyles();
   const [dialog, setDialog] = useState(false);
-  const chartData = userCommits(commits);
+  const chartData = commits ? userCommits(commits) : null;
   const handleEditDialog = () => {
     setDialog(true);
   }
@@ -70,11 +69,13 @@ export const Sidebar: FC<SidebarProps> = ({ project, updateProject, creationDate
               );
             })}
           </Grid>
-          <Grid item className={classes.infoBox}>
-            <strong>Created at:</strong>
-            <br />
-            {formatDate(creationDate)}
-          </Grid>
+          {creationDate &&
+            <Grid item className={classes.infoBox}>
+              <strong>Created at:</strong>
+              <br />
+              {formatDate(creationDate)}
+            </Grid>
+          }
           <Grid item className={classes.infoBox}>
             Links:
             <br />
@@ -88,14 +89,16 @@ export const Sidebar: FC<SidebarProps> = ({ project, updateProject, creationDate
             )}
           </Grid>
           <Grid container item justify='center' className={classes.infoBox}>
-            <Chart data={chartData} width={200} height={250}>
-              <ValueAxis />
-              <ArgumentAxis />
-              <EventTracker/>
-              <Tooltip/>
-              <Animation />
-              <BarSeries color='#19857b' valueField='count' argumentField='user' />
-            </Chart>
+            { commits &&
+              <Chart data={chartData} width={200} height={250}>
+                <ValueAxis />
+                <ArgumentAxis />
+                <EventTracker/>
+                <Tooltip/>
+                <Animation />
+                <BarSeries color='#19857b' valueField='count' argumentField='user' />
+              </Chart>
+            }
           </Grid>
         </Paper>
 			</Grid>
