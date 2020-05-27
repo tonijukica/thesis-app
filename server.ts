@@ -5,6 +5,7 @@ import cookieSession from 'cookie-session';
 import cookieParser from 'cookie-parser';
 import next from 'next';
 import cron from 'node-cron';
+import { randomBytes } from 'crypto'
 import takePreview from './helpers';
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
@@ -12,7 +13,7 @@ import { getSchema } from './resolvers';
 import { json } from 'express';
 
 dotenv.config();
-const dev = process.env.NODE_ENV !== 'production';
+const dev = process.env.PRODUCTION !== 'true';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
@@ -36,7 +37,9 @@ app
 		});
     server.use(cookieSession({
       name: 'session',
-      keys: ['hexkey'],
+      keys: [
+        randomBytes(16).toString('hex')
+      ],
       maxAge: 24*60*60*1000
     }));
     server.use(cookieParser());
@@ -44,12 +47,13 @@ app
 
 		server.get('*', (req, res) => {
 			return handle(req, res);
-		});
+    });
 
-		server.listen(3000, (err) => {
+    const port = Number(process.env.PORT);
+		server.listen(port, (err) => {
 			if(err)
 				throw err;
-			console.log('> Ready on http://localhost:3000');
+			console.log(`> Ready on http://localhost:${port}`);
 		});
 	})
 	.catch((ex) => {

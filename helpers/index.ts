@@ -7,7 +7,8 @@ import capture from 'capture-website';
 import { GET_PROJECTS_PROD, INSERT_PROD_PREVIEW } from '../gql/queries/projects';
 dotenv.config();
 
-const GRAPHQL_URL = process.env.GRAPHQL_URL;
+const port = process.env.PORT;
+const GRAPHQL_URL = `http://localhost:${port}/graphql`;
 
 const link = new HttpLink({
 	fetch,
