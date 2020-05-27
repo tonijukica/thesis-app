@@ -51,4 +51,5 @@ Alternatively, legacy format can be used with predefined headers such as:
 | Prezime i ime | Projekt ID | GitHub Repo                           | Production link                      |
 |---------------|------------|---------------------------------------|--------------------------------------|
 | Jukica Toni   | 1          | https://github.com/tonijukica/project | https://production.com/tonijukica    |
+
 If two or more students are working on a project then they have the same Projekt ID.
