@@ -12,7 +12,8 @@ type ProjectDialogProps = {
 	open: boolean;
 	handleClose: any;
 	handleNameChange: any;
-	handleUrlChange: any;
+  handleUrlChange: any;
+  handleProdUrlChange: any;
 	addStudent: any;
 	addProject: any;
 };
@@ -51,7 +52,8 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 	handleClose,
 	addStudent,
 	handleNameChange,
-	handleUrlChange,
+  handleUrlChange,
+  handleProdUrlChange,
 	addProject,
 }) => {
   const classes = useStyles();
@@ -91,6 +93,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 					<DialogContentText><strong>Fill out the following:</strong></DialogContentText>
 					<TextField margin='dense' label='Project name' onChange={handleNameChange} fullWidth />
 					<TextField margin='dense' label='Project GitHub url' onChange={handleUrlChange} fullWidth />
+          <TextField margin='dense' label='Project Prod url' onChange={handleProdUrlChange} fullWidth />
 					<DialogContentText className={classes.students}>
 						<strong>Students:</strong>
           </DialogContentText>

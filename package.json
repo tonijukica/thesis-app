@@ -2,7 +2,7 @@
   "name": "thesis-app",
   "version": "1.0.0",
   "scripts": {
-    "dev": "ts-node-dev --ignore-watch=.next --project tsconfig.server.json --respawn  server.ts",
+    "dev": "ts-node-dev --ignore-watch=.next --project tsconfig.server.json --respawn server.ts",
     "build": "next build",
     "start": "ts-node --project tsconfig.server.json ./server.ts",
     "type-check": "tsc"

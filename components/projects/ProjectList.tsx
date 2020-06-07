@@ -79,7 +79,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [bulkProjects, setBulkProjects] = useState<[]>([]);
 	const [projectName, setProjectName] = useState('');
-	const [projectUrl, setProjectUrl] = useState('');
+  const [projectUrl, setProjectUrl] = useState('');
+  const [projectProdUrl, setProjectProdUrl] = useState('');
   const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
   const [sort, setSort] = useState<SortType>({
     grade: null,
@@ -155,6 +156,9 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setProjectUrl(e.target.value);
   };
+  const handleProjectProdUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setProjectProdUrl(e.target.value);
+  };
   const handleSortDate = () => {
     setSort({
       grade: null,
@@ -213,7 +217,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 			variables: {
 				courseId,
 				projectName,
-				githubUrl: projectUrl,
+        githubUrl: projectUrl,
+        prodUrl: projectProdUrl,
 				students,
 			},
 		}).then(({ data }) => {
@@ -311,7 +316,8 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				open={dialogAdd}
 				handleClose={handleDialogAddClose}
 				handleNameChange={handleProjectNameChange}
-				handleUrlChange={handleProjectUrlChange}
+        handleUrlChange={handleProjectUrlChange}
+        handleProdUrlChange={handleProjectProdUrlChange}
 				addStudent={addStudent}
 				addProject={addProject}
 			/>

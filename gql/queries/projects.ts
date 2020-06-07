@@ -65,11 +65,12 @@ const GET_PROJECT = gql`
 `;
 
 const INSERT_PROJECT = gql`
-	mutation InsertProject($courseId: Float!, $projectName: String!, $githubUrl: String!, $students: [StudentInput!]!) {
-		insert_project(course_id: $courseId, name: $projectName, github_url: $githubUrl, students: $students) {
+	mutation InsertProject($courseId: Float!, $projectName: String!, $githubUrl: String!, $prodUrl: String!, $students: [StudentInput!]!) {
+		insert_project(course_id: $courseId, name: $projectName, github_url: $githubUrl, students: $students, prod_url: $prodUrl) {
 			id
 			name
-			github_url
+      github_url
+      prod_url
 			students {
 				id
 				name
