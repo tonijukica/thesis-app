@@ -18,7 +18,9 @@ const Layout: FunctionComponent = ({ children }) => (
 		<ApolloProvider client={client}>
       <ThemeProvider theme={theme}>
         <Header />
-        <Main>{children}</Main>
+        <Main>
+          {children}
+        </Main>
         <Footer />
       </ThemeProvider>
 		</ApolloProvider>

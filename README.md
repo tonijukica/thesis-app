@@ -1,4 +1,5 @@
 # Student GitHub Repo overview app
+Web application for professors or anyone else that wants to have information about multiple Github repositories in one place. App allows for creation of courses that hold student projects which are linked to a Github repo. Project information page displays commit graph, list of commits and a snapshot of production(if the production URL is provided). Server takes snapshots of production every Monday and Friday at 04:00h. Written in typescript with next.js, graphql, express.
 
 ## Dependencies
 
@@ -37,6 +38,11 @@
 ### Development
 
 - Client & Server: `npm run dev`
+
+### Production
+- Set production to `true` in `.env`
+- Run `next build`
+- Finally `npm start`
 
 ## File import structure
 
