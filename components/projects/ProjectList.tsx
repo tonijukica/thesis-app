@@ -1,7 +1,8 @@
-import { FunctionComponent, useState, useEffect, ChangeEvent } from 'react';
+import { FunctionComponent, useState, useEffect, ChangeEvent, useReducer } from 'react';
 import { Grid, Button, makeStyles, createStyles, TextField, InputAdornment, LinearProgress, Theme, Switch, FormControlLabel, Collapse } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
+import { Context, projectsReducer } from './Context';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -10,8 +11,8 @@ import { Pagination } from '@material-ui/lab';
 import ProjectBox from './ProjectBox';
 import ProjectDialog from './dialogs/AddProjectDialog';
 import BulkProjectDialog from './dialogs/AddBulkProjectDialog';
-import { GET_PROJECTS, INSERT_PROJECT, INSERT_BULK_PROJECTS } from '../.././gql/queries/projects';
-import { Student, Project } from '../../interfaces';
+import { GET_PROJECTS  } from '../.././gql/queries/projects';
+import { Project } from '../../interfaces';
 import Fuse from 'fuse.js';
 import orderBy from 'lodash.orderby';
 import classnames from 'classnames';
@@ -71,24 +72,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const classes = useStyles();
-	const [dialogAdd, setDialogAdd] = useState(false);
-	const [dialogBulk, setDialogBulk] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
   const [standingMode, setStandingMode] = useState(true);
 	const [searchParam, setSearchParam] = useState('');
-	const [projects, setProjects] = useState<Project[]>([]);
-	const [bulkProjects, setBulkProjects] = useState<[]>([]);
-	const [projectName, setProjectName] = useState('');
-  const [projectUrl, setProjectUrl] = useState('');
-  const [projectProdUrl, setProjectProdUrl] = useState('');
+  const [state, dispatch] = useReducer(projectsReducer, {
+    projects: [],
+    dialogAdd: false,
+    dialogBulk: false
+  });
   const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
   const [sort, setSort] = useState<SortType>({
     grade: null,
     commitDate: null
   });
-	const [insertProject] = useMutation(INSERT_PROJECT);
-	const [insertProjects] = useMutation(INSERT_BULK_PROJECTS);
-  const [students, setStudents] = useState<Student[]>([]);
   const rowsPerPage = 10;
   const [page, setPage] = useState(1);
 
@@ -98,66 +94,64 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 		threshold: 0.3,
 		keys: ['name', 'students.name'],
 	};
-	const fuse = new Fuse(projects, fuseOptions);
+	const fuse = new Fuse(state.projects, fuseOptions);
 
 	useEffect(() => {
 		if(data)
-			setProjects(data.courses[0].projects);
+      dispatch({
+        type: 'set',
+        projects: data.courses[0].projects
+      });
 		if(searchParam.length > 0){
 			const searchResults = fuse.search(searchParam);
-			setProjects(searchResults);
+      dispatch({
+        type: 'set',
+        projects: searchResults
+      });
 		}
 	}, [data, searchParam]);
 
   useEffect(() => {
     if(sort.grade === true){
-      const sortedProjects = [...projects].sort((a, b) => b.grade! - a.grade!);
-      setProjects(sortedProjects);
+      const sortedProjects = [...state.projects].sort((a, b) => b.grade! - a.grade!);
+      dispatch({
+        type: 'set',
+        projects: sortedProjects
+      });
     }
-
     else if(sort.grade === false){
-      const sortedProjects = [...projects].sort((a, b) => a.grade! - b.grade!);
-      setProjects(sortedProjects);
+      const sortedProjects = [...state.projects].sort((a, b) => a.grade! - b.grade!);
+      dispatch({
+        type: 'set',
+        projects: sortedProjects
+      });
     }
   }, [sort.grade]);
   useEffect(() => {
     if(sort.commitDate === true)
-      setProjects(
-        orderBy(projects, ['lastCommitDate'], ['desc'])
-      );
+      dispatch({
+        type: 'set',
+        projects: orderBy(state.projects, ['lastCommitDate'], ['desc'])
+      });
     else if(sort.commitDate === false)
-      setProjects(
-        orderBy(projects, ['lastCommitDate'], ['asc'])
-      );
+      dispatch({
+        type: 'set',
+        projects: orderBy(state.projects, ['lastCommitDate'], ['asc'])
+      });
   }, [sort.commitDate]);
 
 
 	const handleDialogAddOpen = () => {
-		setDialogAdd(true);
-	};
-	const handleDialogAddClose = () => {
-		setDialogAdd(false);
+		dispatch({ type: 'dialogAddToggle'});
 	};
 	const handleDialogBulkOpen = () => {
-		setDialogBulk(true);
-	};
-	const handleDialogBulkClose = () => {
-		setDialogBulk(false);
+		dispatch({ type: 'dialogBulkToggle'});
 	};
 	const handleDeleteMode = () => {
 		setDeleteMode(!deleteMode);
   };
   const handleStandingMode = () => {
 		setStandingMode(!standingMode);
-  };
-	const handleProjectNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setProjectName(e.target.value);
-	};
-	const handleProjectUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setProjectUrl(e.target.value);
-  };
-  const handleProjectProdUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setProjectProdUrl(e.target.value);
   };
   const handleSortDate = () => {
     setSort({
@@ -200,59 +194,22 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
     setPage(1);
 		setSearchParam(e.target.value);
 	};
-	const addStudent = (student: Student) => {
-		setStudents([...students, student]);
-	};
   const removeProject = (projectId: number) => {
-    setProjects(projects.filter((project) => project.id !== projectId))
+    const project: Project = state.projects.find((projectEl: Project) => projectEl.id === projectId)!;
+    dispatch({
+      type: 'remove',
+      project
+    });
   }
   const setLastCommitDate = (projectId: number, date: number) => {
-    const project: Project = projects.find((projectEl: Project) => projectEl.id === projectId)!;
+    const project: Project = state.projects.find((projectEl: Project) => projectEl.id === projectId)!;
     project.lastCommitDate = date;
-    setProjects(projects.map((projectEl: Project) => projectEl.id === projectId ? project : projectEl));
+    const dateProjects = state.projects.map((projectEl: Project) => projectEl.id === projectId ? project : projectEl);
+    dispatch({
+      type: 'set',
+      projects: dateProjects
+    });
   }
-
-	const addProject = () => {
-		insertProject({
-			variables: {
-				courseId,
-				projectName,
-        githubUrl: projectUrl,
-        prodUrl: projectProdUrl,
-				students,
-			},
-		}).then(({ data }) => {
-			const projectData = data.insert_project;
-			const newProject: Project = {
-				id: projectData.id,
-				name: projectData.name,
-				github_url: projectData.github_url,
-				students: projectData.students,
-			};
-			setProjects([...projects, newProject]);
-			setStudents([]);
-		});
-		setDialogAdd(false);
-	};
-	const addProjects = () => {
-		return new Promise((resolve) => {
-			const newProjects = bulkProjects.map((project: any) => {
-				return {
-					...project,
-				};
-			});
-			insertProjects({
-				variables: {
-					projects: newProjects,
-					courseId,
-				},
-			}).then(({ data }) => {
-				setProjects([...projects, ...data.insert_projects]);
-				setDialogBulk(false);
-				resolve();
-			});
-		});
-  };
 
   const handlePageChange = (event: any, value: number) => {
 		if(event)
@@ -261,6 +218,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 
 	return (
 		<>
+    <Context.Provider value={{ state, dispatch }}>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.container}>
 				<Grid container item xs={4}>
 					<TextField
@@ -311,21 +269,10 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 				</Grid>
 			</Grid>
 			<ProjectDialog
-				name={projectName}
-				url={projectUrl}
-				open={dialogAdd}
-				handleClose={handleDialogAddClose}
-				handleNameChange={handleProjectNameChange}
-        handleUrlChange={handleProjectUrlChange}
-        handleProdUrlChange={handleProjectProdUrlChange}
-				addStudent={addStudent}
-				addProject={addProject}
+        courseId={courseId}
 			/>
 			<BulkProjectDialog
-				open={dialogBulk}
-				handleClose={handleDialogBulkClose}
-				bulkProjects={setBulkProjects}
-				addProjects={addProjects}
+        courseId={courseId}
 			/>
 
 			<Grid container direction='row' justify='space-evenly' className={classes.header}>
@@ -353,10 +300,10 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 			</Grid>
 			{loading && <LinearProgress />}
 			{!loading &&
-				projects &&
+				state.projects &&
         <Grid container direction='row' justify='center'>
           {
-            projects.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage).map((project: Project) => {
+            state.projects.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage).map((project: Project) => {
               return (
               <ProjectBox
                 key={project.id}
@@ -377,12 +324,13 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
               shape='round'
               color='secondary'
               page={page}
-              count={Math.ceil(projects.length / rowsPerPage)}
+              count={Math.ceil(state.projects.length / rowsPerPage)}
               onChange={handlePageChange}
             />
           </Grid>
         </Grid>
       }
+    </Context.Provider>
 		</>
 	);
 };

@@ -1,15 +1,15 @@
-import { FunctionComponent, useState, useEffect } from 'react';
+import { FunctionComponent, useState, useEffect, useContext } from 'react';
+import { useMutation } from '@apollo/react-hooks';
 import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Collapse } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import { Button, LinearProgress } from '@material-ui/core';
 import { getFileContent } from '../../common/fileUpload';
+import { Context } from '../Context';
+import { INSERT_BULK_PROJECTS } from '../../.././gql/queries/projects';
 
 type ProjectDialogProps = {
-	open: boolean;
-	handleClose: any;
-	bulkProjects: any;
-	addProjects: any;
+  courseId: number;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,11 +31,14 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleClose, bulkProjects, addProjects }) => {
+const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ courseId  }) => {
   const classes = useStyles();
 	const [fileName, setfileName] = useState('');
 	const [parsedData, setParsedData] = useState('');
   const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const { state, dispatch } = useContext(Context);
+  const [insertProjects] = useMutation(INSERT_BULK_PROJECTS);
   const [error, setError] = useState({
     err: false,
     errMsg: ''
@@ -51,7 +54,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
         err: false,
         errMsg: ''
       });
-      bulkProjects(fileData);
+      setProjects(fileData);
       setLoading(false);
     }
     catch(err){
@@ -68,7 +71,8 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
 		addProjects().then(() => {
 			setLoading(false);
 			setParsedData('');
-			setfileName('');
+      setfileName('');
+      dispatch({ type: 'dialogBulkToggle' });
 		});
   };
 
@@ -81,9 +85,41 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
     setParsedData('');
     setLoading(false);
   }, [open]);
+
+  const addProjects = () => {
+		return new Promise((resolve) => {
+			const newProjects = projects.map((project: any) => {
+				return {
+					...project,
+				};
+			});
+			insertProjects({
+				variables: {
+					projects: newProjects,
+					courseId,
+				},
+			}).then(({ data }) => {
+				dispatch({
+          type: 'addBulk',
+          projects: data.insert_projects
+        });
+				resolve();
+			});
+		});
+  };
+  const closeCleanup = () => {
+    setError({
+      err: false,
+      errMsg: ''
+    });
+    setLoading(false);
+    setParsedData('');
+    setfileName('');
+    dispatch({ type: 'dialogBulkToggle' });
+  }
 	return (
 		<>
-			<Dialog open={open} onClose={handleClose} fullWidth>
+			<Dialog open={state.dialogBulk} onClose={closeCleanup} fullWidth>
 				<DialogTitle className={classes.dialogTitle}>Add new projects</DialogTitle>
 				<DialogContent>
 					<DialogContentText>Select file with projects</DialogContentText>
@@ -117,7 +153,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({ open, handleC
 					</div>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color='secondary' style={{color: 'red'}}>
+					<Button onClick={closeCleanup} color='secondary' style={{color: 'red'}}>
 						Cancel
 					</Button>
 					<Button onClick={handleAddProjects} color='primary' disabled={!!loading || !!!parsedData}>

@@ -1,21 +1,18 @@
-import { FunctionComponent, useState, ChangeEvent } from 'react';
+import { FunctionComponent, useState, ChangeEvent, useContext } from 'react';
+import { useMutation } from '@apollo/react-hooks';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Card, Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Button, TextField } from '@material-ui/core';
 import { Clear } from '@material-ui/icons'
 import { Student } from '../../../interfaces';
+import { Context } from '../Context';
+import { INSERT_PROJECT } from '../../.././gql/queries/projects';
+import { Project } from '../../../interfaces';
+
 
 type ProjectDialogProps = {
-	name: string;
-	url: string;
-	open: boolean;
-	handleClose: any;
-	handleNameChange: any;
-  handleUrlChange: any;
-  handleProdUrlChange: any;
-	addStudent: any;
-	addProject: any;
+  courseId: number;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -46,21 +43,18 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
-	name,
-	url,
-	open,
-	handleClose,
-	addStudent,
-	handleNameChange,
-  handleUrlChange,
-  handleProdUrlChange,
-	addProject,
+  courseId
 }) => {
   const classes = useStyles();
 	const [studentAdd, setStudentAdd] = useState(false);
 	const [studentName, setStudentName] = useState('');
-	const [studentUsername, setStudentUsername] = useState('');
+  const [studentUsername, setStudentUsername] = useState('');
+  const [projectName, setProjectName] = useState('');
+  const [projectUrl, setProjectUrl] = useState('');
+  const [projectProdUrl, setProjectProdUrl] = useState('')
 	const [students, setStudents] = useState<Student[]>([]);
+  const { state, dispatch } = useContext(Context);
+  const [insertProject] = useMutation(INSERT_PROJECT);
 
 	const addLocalStudent = () => {
 		const student: Student = {
@@ -68,7 +62,6 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 			github_username: studentUsername,
 		};
 		setStudents([...students, student]);
-		addStudent(student);
 		setStudentAdd(!studentAdd);
 		setStudentName('');
 		setStudentUsername('');
@@ -81,11 +74,55 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 	};
 	const handleStudentUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setStudentUsername(e.target.value);
-	};
+  };
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setProjectName(e.target.value);
+  };
+  const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setProjectUrl(e.target.value);
+  };
+  const handleProdUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setProjectProdUrl(e.target.value);
+  };
+  const addProj = () => {
+		insertProject({
+			variables: {
+				courseId,
+				projectName,
+        githubUrl: projectUrl,
+        prodUrl: projectProdUrl,
+				students,
+			},
+		}).then(({ data }) => {
+			const projectData = data.insert_project;
+			const newProject: Project = {
+				id: projectData.id,
+				name: projectData.name,
+				github_url: projectData.github_url,
+				students: projectData.students,
+			};
+			dispatch({
+        type: 'add',
+        project: newProject
+      });
+			setStudents([]);
+		});
+		dispatch({ type: 'dialogAddToggle'});
+  };
+  const cleanup = () => {
+    setStudentAdd(false);
+    setProjectName('');
+    setProjectUrl('');
+    setProjectProdUrl('');
+    setStudentName('');
+    setStudentUsername('');
+    setStudents([]);
+    dispatch({ type: 'dialogAddToggle'});
+  }
 
 	return (
 		<>
-			<Dialog open={open} onClose={handleClose} fullWidth>
+			<Dialog open={state.dialogAdd} onClose={cleanup} fullWidth>
 				<DialogTitle className={classes.dialogTitle}>
           Add new project
         </DialogTitle>
@@ -101,7 +138,7 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
             <TransitionGroup component={null}>
               {students.map((student: Student) => (
                 <CSSTransition
-                  key={student.id}
+                  key={student.name}
                   timeout={400}
                   classNames='custom'
                 >
@@ -149,10 +186,10 @@ const AddProjectDialog: FunctionComponent<ProjectDialogProps> = ({
 					)}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color='secondary' style={{color: 'red'}}>
+					<Button onClick={cleanup} color='secondary' style={{color: 'red'}}>
 						Cancel
 					</Button>
-					<Button onClick={addProject} color='primary' disabled={!(!!name && !!url)}>
+					<Button onClick={addProj} color='primary' disabled={!(!!projectName && !!projectUrl)}>
 						Save
 					</Button>
 				</DialogActions>
