@@ -41,7 +41,7 @@ Web application for professors or anyone else that wants to have information abo
 
 ### Production
 - Set production to `true` in `.env`
-- Run `next build`
+- Run `npm run build`
 - Finally `npm start`
 
 ## File import structure
