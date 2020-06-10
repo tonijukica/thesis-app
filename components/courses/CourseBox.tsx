@@ -1,14 +1,14 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState, useContext } from 'react';
 import { Grid, makeStyles, createStyles, Card, CardActionArea, CardContent, CardHeader, Theme } from '@material-ui/core';
 import CourseDeleteDialog from './dialogs/CourseDeleteDialog'
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useRouter } from 'next/router';
+import { Context } from './helper';
 
 type CourseBoxProps = {
 	name: string;
 	courseId: number;
 	studentProjects: number;
-  deleteMode: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -42,10 +42,11 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 );
 
-const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentProjects, deleteMode }) => {
+const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentProjects }) => {
 	const classes = useStyles();
   const router = useRouter();
   const [dialog, setDialog] = useState(false);
+  const { state } = useContext(Context);
 
 	const handleRedirect = (e: any) => {
 		e.preventDefault();
@@ -64,9 +65,9 @@ const CourseBox: FunctionComponent<CourseBoxProps> = ({ name, courseId, studentP
           closeDialog={handleDialog}/>
         <Card
           className={classes.card}
-          onClick={deleteMode ? handleDialog : handleRedirect}>
+          onClick={state.delete ? handleDialog : handleRedirect}>
           <CardActionArea className={classes.cardActionArea}>
-            {deleteMode ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} /> : null}
+            {state.delete ? <DeleteIcon style={{color: 'white'}} className={classes.deleteIcon} /> : null}
             <CardHeader title={name.toLocaleUpperCase()} className={classes.cardHeader}/>
             <CardContent className={classes.content}>
               <div>
