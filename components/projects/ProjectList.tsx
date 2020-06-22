@@ -72,13 +72,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 	const classes = useStyles();
-  const [deleteMode, setDeleteMode] = useState(false);
-  const [standingMode, setStandingMode] = useState(true);
 	const [searchParam, setSearchParam] = useState('');
   const [state, dispatch] = useReducer(projectsReducer, {
     projects: [],
     dialogAdd: false,
-    dialogBulk: false
+    dialogBulk: false,
+    delete: false,
+    standing: true
   });
   const { data, loading } = useQuery(GET_PROJECTS, { variables: { courseId } });
   const [sort, setSort] = useState<SortType>({
@@ -148,10 +148,10 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
 		dispatch({ type: 'dialogBulkToggle'});
 	};
 	const handleDeleteMode = () => {
-		setDeleteMode(!deleteMode);
+		dispatch({ type: 'deleteToggle'});
   };
   const handleStandingMode = () => {
-		setStandingMode(!standingMode);
+		dispatch({ type: 'standingToggle'});;
   };
   const handleSortDate = () => {
     setSort({
@@ -194,13 +194,6 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
     setPage(1);
 		setSearchParam(e.target.value);
 	};
-  const removeProject = (projectId: number) => {
-    const project: Project = state.projects.find((projectEl: Project) => projectEl.id === projectId)!;
-    dispatch({
-      type: 'remove',
-      project
-    });
-  }
   const setLastCommitDate = (projectId: number, date: number) => {
     const project: Project = state.projects.find((projectEl: Project) => projectEl.id === projectId)!;
     project.lastCommitDate = date;
@@ -237,14 +230,14 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
           <FormControlLabel
             className={classes.switch}
             control={
-              <Switch checked={standingMode} color='secondary' onClick={handleStandingMode} />
+              <Switch checked={state.standing} color='secondary' onClick={handleStandingMode} />
             }
             label='Standing'
             labelPlacement='end'
           />
 				</Grid>
         <Grid item xs={4}>
-          <Collapse in={deleteMode}>
+          <Collapse in={state.delete}>
             <Alert severity="error">
               Delete mode is enabled
             </Alert>
@@ -306,15 +299,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
             state.projects.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage).map((project: Project) => {
               return (
               <ProjectBox
-                key={project.id}
-                name={project.name}
-                projectId={project.id}
-                grade={project.grade!}
-                githubUrl={project.github_url}
-                students={project.students}
-                deleteMode={deleteMode}
-                standingMode={standingMode}
-                removeProject={removeProject}
+                project={project}
                 setDate={setLastCommitDate}
               />
             )})

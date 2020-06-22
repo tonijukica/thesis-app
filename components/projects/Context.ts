@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import { Project } from '../../interfaces';
 
 interface ActionType {
-  type: 'add' | 'addBulk' | 'remove' | 'set' | 'dialogAddToggle' | 'dialogBulkToggle';
+  type: 'add' | 'addBulk' | 'remove' | 'set' | 'dialogAddToggle' | 'dialogBulkToggle' | 'deleteToggle' | 'standingToggle';
   project?: Project;
   projects?: Project[];
 }
@@ -18,13 +18,17 @@ interface State {
   projects: Project[];
   dialogAdd: boolean;
   dialogBulk: boolean;
+  delete: boolean;
+  standing: boolean
 }
 
 const Context = createContext<Context>({
   state: {
     projects: [],
     dialogAdd: false,
-    dialogBulk: false
+    dialogBulk: false,
+    delete: false,
+    standing: false
   },
   dispatch: () => null
 });
@@ -68,6 +72,18 @@ function projectsReducer(state: State, action: ActionType): State {
       return {
         ...state,
         dialogBulk: !state.dialogBulk
+      }
+    }
+    case 'deleteToggle': {
+      return {
+        ...state,
+        delete: !state.delete
+      }
+    }
+    case 'standingToggle': {
+      return {
+        ...state,
+        standing: !state.standing
       }
     }
   }

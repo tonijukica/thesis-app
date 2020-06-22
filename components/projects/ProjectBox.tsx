@@ -1,6 +1,7 @@
-import { FunctionComponent, useState, useEffect } from 'react';
+import { FunctionComponent, useState, useEffect, useContext } from 'react';
+import { Context } from './Context';
 import { Grid, makeStyles, createStyles, Card, CardActionArea, Theme, CircularProgress } from '@material-ui/core';
-import { Student } from '../../interfaces';
+import { Student, Project } from '../../interfaces';
 import { useRouter } from 'next/router';
 import DeleteProjectDialog from './dialogs/DeleteProjectDialog';
 import { GET_REPO_INFO } from '../../gql/queries/projects';
@@ -8,14 +9,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { getUserRepoName, formatDate, projectStanding, dataExtract } from './helpers';
 
 type ProjectBoxProps = {
-	name: string;
-	projectId: number;
-  githubUrl: string;
-  grade: number;
-	students: Student[];
-  deleteMode: boolean;
-  standingMode: boolean;
-  removeProject: any;
+  project: Project;
   setDate: any;
 };
 
@@ -76,22 +70,16 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
-  name,
-  projectId,
-  githubUrl,
-  grade,
-  students,
-  deleteMode,
-  standingMode,
-  removeProject,
+  project,
   setDate
 }) => {
 	const classes = useStyles();
-	const router = useRouter();
+  const router = useRouter();
+  const { state } = useContext(Context);
 	const [commitNum, setCommitNum] = useState('');
   const [lastCommitDate, setLastCommitDate] = useState('');
   const [dialog, setDialog] = useState(false);
-	const [user, repoName] = getUserRepoName(githubUrl);
+	const [user, repoName] = getUserRepoName(project.github_url);
 	const { data, error } = useQuery(GET_REPO_INFO, {
 		variables: {
 			ownerName: user,
@@ -106,105 +94,81 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
 			const { num, date } = dataExtract(data);
 			setCommitNum(num);
       setLastCommitDate(date);
-      setDate(projectId, date);
+      setDate(project.id, date);
 		}
 	}, [data]);
 
 	const handleRedirect = (e: any) => {
 		e.preventDefault();
-		router.push(`/projects/${projectId}`);
+		router.push(`/projects/${project.id}`);
   };
   const handleDialog = () => {
     setDialog(!dialog);
   }
   const style = () => {
-    if(deleteMode)
-      return [classes.card, classes.deleteHover].join(' ');
-    else if(grade)
+    if(project.grade)
       return [classes.card, classes.finished].join(' ');
-    else if(standingMode)
+    else if(state.standing)
       return [classes.card, projectStanding(lastCommitDate, classes)].join(' ');
     else
       return classes.card;
   }
-	if(data)
+
+	if(data || error)
 		return (
-      <Grid container direction='column' key={projectId}>
+      <Grid container direction='column' key={project.id}>
         <DeleteProjectDialog
-          projectId={projectId}
+          projectId={project.id}
           name={name}
           open={dialog}
           closeDialog={handleDialog}
-          remove={removeProject}
         />
         <Card
-          className={style()}
-          onClick={deleteMode ? handleDialog : handleRedirect}
-          key={projectId}
+          className={error ? classes.badProject : style()}
+          onClick={state.delete ? handleDialog : handleRedirect}
+          key={project.id}
         >
           <CardActionArea className={classes.cardActionArea}>
             <Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
               <Grid item xs={2}>
-                {name}
+                {project.name}
               </Grid>
               <Grid container direction='column' item xs={2}>
-                {students.map((student: Student) => (
+                {project.students.map((student: Student) => (
                   <Grid key={student.id}>{student.name}</Grid>
                 ))}
               </Grid>
-              <Grid item xs={2}>
-                {commitNum}
-              </Grid>
-              <Grid item xs={2}>
-                {formatDate(lastCommitDate)}
-              </Grid>
-              <Grid item xs={2}>
-                {
-                  grade ? grade : '-'
-                }
-              </Grid>
+              {
+                error ?
+                  <>
+                    <Grid item xs={2}>
+                    </Grid>
+                    <Grid item xs={2}>
+                      Invalid GitHub Repo
+                    </Grid>
+                    <Grid item xs={2}>
+                    </Grid>
+                  </>
+                :
+                  <>
+                    <Grid item xs={2}>
+                      {commitNum}
+                    </Grid>
+                    <Grid item xs={2}>
+                      {formatDate(lastCommitDate)}
+                    </Grid>
+                    <Grid item xs={2}>
+                      {
+                        project.grade ? project.grade : '-'
+                      }
+                    </Grid>
+                  </>
+              }
             </Grid>
           </CardActionArea>
         </Card>
       </Grid>
 		);
-	else if(error)
-		return (
-			<Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
-				<DeleteProjectDialog
-          projectId={projectId}
-          name={name}
-          open={dialog}
-          closeDialog={handleDialog}
-          remove={removeProject}
-        />
-        <Card
-          className={classes.badProject}
-          onClick={deleteMode ? handleDialog : handleRedirect}
-          key={projectId}
-        >
-          <CardActionArea className={classes.cardActionArea}>
-            <Grid container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>
-              <Grid item xs={2}>
-                {name}
-              </Grid>
-              <Grid container direction='column' item xs={2}>
-                {students.map((student: Student) => (
-                  <Grid key={student.id}>{student.name}</Grid>
-                ))}
-              </Grid>
-              <Grid item xs={2}>
-              </Grid>
-              <Grid item xs={2}>
-                Invalid GitHub Repo
-              </Grid>
-              <Grid item xs={2}>
-              </Grid>
-            </Grid>
-          </CardActionArea>
-        </Card>
-			</Grid>
-    );
   else
     return (
       <Grid className={classes.box} container direction='row' alignContent='center' alignItems='center' justify='space-evenly'>

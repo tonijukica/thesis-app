@@ -1,16 +1,17 @@
-import { FunctionComponent, } from 'react';
+import { FunctionComponent, useContext } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { useMutation } from '@apollo/react-hooks';
-import { DELETE_PROJECT } from '../../../gql/queries/projects';;
+import { DELETE_PROJECT } from '../../../gql/queries/projects';
+import { Context } from '../Context';
+import { Project } from '../../../interfaces';
 
 type DeleteProjectDialogProps = {
   projectId: number;
 	name: string;
 	open: boolean;
   closeDialog: any;
-  remove: any
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,8 +38,8 @@ const DeleteProjectDialog: FunctionComponent<DeleteProjectDialogProps> = ({
 	name,
 	open,
   closeDialog,
-  remove
 }) => {
+  const { state, dispatch } = useContext(Context);
   const classes = useStyles();
   const [deleteProject] = useMutation(DELETE_PROJECT);
   const handleDelete = async () => {
@@ -47,7 +48,11 @@ const DeleteProjectDialog: FunctionComponent<DeleteProjectDialogProps> = ({
 				projectId: Number(projectId),
 			},
     });
-    remove(projectId);
+    const project: Project = state.projects.find((projectEl: Project) => projectEl.id === projectId)!;
+    dispatch({
+      type: 'remove',
+      project
+    });
     closeDialog();
   }
 	return (
