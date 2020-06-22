@@ -24,7 +24,8 @@ Web application for professors or anyone else that wants to have information abo
   - read:org
   - read:public_key
   - read:gpg_key
-- FIDO2 security key or Windows Hello (pin or fingerprint) set up. (Sorry MacOS users, I don't have a mac to test is there an onboard system that supports WebAuthN as Windows Hello does)
+- FIDO2 security key or Windows Hello (pin or fingerprint) set up.
+ - Alternatively, use Virtual Authenticators Chrome Extension (https://chrome.google.com/webstore/detail/virtual-authenticators-ta/gafbpmlmeiikmhkhiapjlfjgdioafmja) and add new CTAP2 authenticator.
 
 ### Setup
 
