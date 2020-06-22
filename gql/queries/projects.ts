@@ -1,5 +1,7 @@
 import { gql } from 'apollo-boost';
 
+const branch = process.env.TARGET_BRANCH;
+
 const GET_PROJECTS = gql`
 	query getProjects($courseId: Float!) {
 		courses(id: $courseId) {
@@ -133,7 +135,7 @@ const DELETE_PROJECT = gql`
 const GET_REPO_INFO = gql`
 	query getRepoInfo($ownerName: String!, $repoName: String!) {
 		repository(owner: $ownerName, name: $repoName) {
-			object(expression: "master") {
+			object(expression: "${branch}") {
 				... on Commit {
 					history(first: 1) {
 						totalCount
@@ -151,7 +153,7 @@ const GET_REPO_INFO = gql`
 const GET_COMMITS = gql`
 	query getCommits($repoName: String!, $owner: String!) {
 		repository(name: $repoName, owner: $owner) {
-			object(expression: "master") {
+			object(expression: "${branch}") {
 				... on Commit {
 					history(first: 100) {
 						nodes {
