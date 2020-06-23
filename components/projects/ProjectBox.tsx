@@ -119,7 +119,7 @@ const ProjectBox: FunctionComponent<ProjectBoxProps> = ({
       <Grid container direction='column' key={project.id}>
         <DeleteProjectDialog
           projectId={project.id}
-          name={name}
+          name={project.name}
           open={dialog}
           closeDialog={handleDialog}
         />

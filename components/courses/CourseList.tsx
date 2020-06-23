@@ -1,18 +1,10 @@
 import { FunctionComponent, useReducer, useEffect } from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
-import {
-  Grid,
-  Button,
-  makeStyles,
-  createStyles,
-  Theme,
-  Collapse,
-} from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+import { Grid } from "@material-ui/core";
 import { Context, coursesReducer } from "./helper";
-import DeleteIcon from "@material-ui/icons/Delete";
 import CourseBox from "./CourseBox";
 import CourseDialog from "./dialogs/CourseDialog";
+import ListHeader from "./common/ListHeader";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_COURSES } from "../../gql/queries/courses";
 import { Loader } from "../common/CircuralLoader";
@@ -20,31 +12,8 @@ import { Loader } from "../common/CircuralLoader";
 type CourseProps = {
   title: string;
 };
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    container: {
-      paddingBottom: "16px",
-      borderBottom: "1px solid #e1e4e8 !important",
-    },
-    button: {
-      marginRight: "8px",
-    },
-    delBtn: {
-      marginRight: "8px",
-      backgroundColor: theme.palette.error.main,
-      color: "white",
-      "&:hover": {
-        backgroundColor: theme.palette.error.dark,
-      },
-    },
-    loading: {
-      padding: "32px",
-    },
-  })
-);
 
 const Courses: FunctionComponent<CourseProps> = ({ title }) => {
-  const classes = useStyles();
   const { data, loading } = useQuery(GET_COURSES);
   const [state, dispatch] = useReducer(coursesReducer, {
     courses: [],
@@ -52,12 +21,6 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
     delete: false,
   });
 
-  const handleClickOpen = () => {
-    dispatch({ type: "dialogAddToggle" });
-  };
-  const handleDelete = () => {
-    dispatch({ type: "deleteToggle" });
-  };
   useEffect(() => {
     if (data) {
       data.courses.forEach((course: any) =>
@@ -76,41 +39,8 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
   return (
     <>
       <Context.Provider value={{ state, dispatch }}>
-        <Grid
-          container
-          direction="row"
-          justify="space-around"
-          alignItems="flex-start"
-          className={classes.container}
-        >
-          <Grid item xs={4}>
-            {title}
-          </Grid>
-          <Grid item xs={4}>
-            <Collapse in={state.delete}>
-              <Alert severity="error">Delete mode is enabled</Alert>
-            </Collapse>
-          </Grid>
-          <Grid container item xs={4} justify="flex-end" alignItems="flex-end">
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-              onClick={handleClickOpen}
-            >
-              New
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<DeleteIcon />}
-              className={classes.delBtn}
-              onClick={handleDelete}
-            >
-              Delete
-            </Button>
-            <CourseDialog />
-          </Grid>
-        </Grid>
+        <ListHeader title={title} />
+        <CourseDialog />
         <Grid container direction="row" justify="center">
           {loading && <Loader />}
           <TransitionGroup component={null}>
