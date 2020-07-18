@@ -13,7 +13,7 @@ import { getSchema } from './resolvers';
 import { json } from 'express';
 
 dotenv.config();
-const dev = process.env.PRODUCTION !== 'true';
+const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
@@ -22,7 +22,7 @@ app
 	.then(async () => {
 		await createConnection();
 		const server = express();
-		server.use(json({ limit: '2mb' }));
+		server.use(json({ limit: '10mb' }));
 
 		cron.schedule('* 4 * * 1,5', () => {
 			console.log('_________________________');

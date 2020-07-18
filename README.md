@@ -41,9 +41,8 @@ Web application for professors or anyone else that wants to have information abo
 - Client & Server: `npm run dev`
 
 ### Production
-- Set production to `true` in `.env`
-- Run `npm run build`
-- Finally `npm start`
+- Run `npm run start`
+- If on Windows, `run npm run start:win`
 
 ## File import structure
 

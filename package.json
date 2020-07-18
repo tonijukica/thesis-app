@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "ts-node-dev --ignore-watch=.next --project tsconfig.server.json --respawn server.ts",
     "build": "next build",
-    "start": "ts-node --project tsconfig.server.json ./server.ts",
+    "serve": "ts-node --project tsconfig.server.json server.ts",
+    "start": "NODE_ENV=production&& npm run build && npm run serve",
+    "start:win": "set NODE_ENV=production&& npm run build && npm run serve",
     "type-check": "tsc"
   },
   "dependencies": {
