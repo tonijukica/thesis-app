@@ -299,6 +299,7 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
             state.projects.slice(page * rowsPerPage - rowsPerPage, page * rowsPerPage).map((project: Project) => {
               return (
               <ProjectBox
+                key={project.id}
                 project={project}
                 setDate={setLastCommitDate}
               />
