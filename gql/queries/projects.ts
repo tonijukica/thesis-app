@@ -121,8 +121,8 @@ mutation($id: Float!, $grade: Float!){
     id: $id,
     grade: $grade
   ){
+    id
     grade
-    name
   }
 }
 `;

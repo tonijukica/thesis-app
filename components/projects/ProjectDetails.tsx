@@ -111,6 +111,14 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
               }
              >
               Grade
+              {
+                project.grade ?
+                <strong>
+                  ({project.grade})
+                </strong>
+                :
+                null
+              }
             </Button>
           </Grid>
         </Grid>
