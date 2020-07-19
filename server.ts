@@ -33,7 +33,12 @@ app
 		const schema = await getSchema();
 		const apolloServer = new ApolloServer({
       schema,
-      context: ({ req }: any) => ({req})
+      context: ({ req }: any) => ({req}),
+      playground: {
+        settings: {
+          "request.credentials": "include",
+        },
+      }
 		});
     server.use(cookieSession({
       name: 'session',
