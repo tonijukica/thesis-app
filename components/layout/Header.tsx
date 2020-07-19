@@ -50,7 +50,9 @@ const Header: FunctionComponent = () => {
 		<Container maxWidth={false} className={classes.header}>
 			<Grid container direction='row' justify='space-around' alignItems='flex-start' className={classes.row}>
 				<Grid container item xs={12} sm={6} style={{ height: '36.5px' }} alignContent='center'>
-					<strong>APP</strong>
+					<Link href='/'>
+            <strong style={{ cursor: 'pointer' }}>APP</strong>
+          </Link>
 				</Grid>
 				<Grid item xs={12} sm={6}>
 					<nav style={{ textAlign: 'end' }}>
@@ -61,9 +63,6 @@ const Header: FunctionComponent = () => {
 						)}
 						{!isLoading && isAuthenticated && (
 							<>
-								<Link href='/courses'>
-									<a className={classes.link}>Courses</a>
-								</Link>
 								<strong><span className={classes.link}>{user}</span></strong>
 								<Button onClick={handleLogout} variant='text' className={classes.logoutBtn}>
 									Log out
