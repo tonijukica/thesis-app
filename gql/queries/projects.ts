@@ -126,6 +126,16 @@ mutation($id: Float!, $grade: Float!){
   }
 }
 `;
+
+const UNGRADE_PROJECT = gql`
+mutation($id: Float!){
+  ungrade_project(id: $id){
+    id
+    grade
+  }
+}
+`;
+
 const DELETE_PROJECT = gql`
 	mutation deleteProject($projectId: Float!) {
 		delete_project(id: $projectId)
@@ -185,6 +195,7 @@ export {
   INSERT_BULK_PROJECTS,
   UPDATE_PROJECT,
   GRADE_PROJECT,
+  UNGRADE_PROJECT,
 	DELETE_PROJECT,
 	GET_REPO_INFO,
 	GET_COMMITS,
