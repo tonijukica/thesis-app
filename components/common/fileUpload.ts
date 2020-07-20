@@ -30,7 +30,7 @@ function prepareInputData(data: any) {
 function prepareLegacyInputData(data: any) {
 	let projects: any = [];
 	data.map((el: any) => {
-		const project = data.filter((pro: any) => pro['Projekt ID'] == el['Projekt ID']);
+		const project = data.filter((pro: any) => pro['Project ID'] == el['Project ID']);
 		const name = el['GitHub Repo'].split('/')[4];
 		const validProject = {
 			name,
@@ -45,8 +45,8 @@ function prepareLegacyInputData(data: any) {
 			}),
 		};
 
-		const exists = projects.find((el: any) => el.name === validProject.name);
-		if(!exists) 
+		const exists = projects.find((el: any) => el.github_url === validProject.github_url);
+		if(!exists)
 			projects.push(validProject);
 	});
 	return projects;
@@ -67,7 +67,7 @@ async function getFileContent(fileName: Blob) {
 	const legacyMode = process.env.LEGACY;
 	const legacy = legacyMode === 'true' ? true : false;
 	let fileData;
-	if(legacy) 
+	if(legacy)
 		fileData = prepareLegacyInputData(parseInput(rawFileData));
 	else
 		fileData = prepareInputData(parseInput(rawFileData));
