@@ -41,8 +41,8 @@ Web application for professors or anyone else that wants to have information abo
 - Client & Server: `npm run dev`
 
 ### Production
-- Run `npm run start`
-- If on Windows, `run npm run start:win`
+- Run `npm start`
+- If on Windows, `npm run start:win`
 
 ## File import structure
 
