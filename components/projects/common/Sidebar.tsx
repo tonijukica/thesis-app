@@ -4,8 +4,7 @@ import { EditProjectDialog } from '../dialogs/EditProject';
 import { useStyles } from './styles';
 import { Project, Student } from '../../../interfaces';
 import { formatDate, userCommits } from '../helpers';
-import { Chart, ArgumentAxis, ValueAxis, BarSeries, Tooltip } from '@devexpress/dx-react-chart-material-ui';
-import { EventTracker, Animation } from '@devexpress/dx-react-chart';
+import { Chart, SeriesTemplate, CommonSeriesSettings, Size, Tooltip, Animation, } from 'devextreme-react/chart';
 import { Edit } from '@material-ui/icons'
 import * as githubLogo from '../../../assets/img/github_logo.png';
 import * as netlifyLogo from '../../../assets/img/netlify_logo.png';
@@ -90,13 +89,29 @@ export const Sidebar: FC<SidebarProps> = ({ project, updateProject, creationDate
           </Grid>
           <Grid container item justify='center' className={classes.infoBox}>
             { commits &&
-              <Chart data={chartData} width={200} height={250}>
-                <ValueAxis />
-                <ArgumentAxis />
-                <EventTracker/>
-                <Tooltip/>
-                <Animation />
-                <BarSeries color='#19857b' valueField='count' argumentField='user' />
+              <Chart
+                id='commitGraph'
+                dataSource={chartData}
+              >
+                <Size
+                  width={250}
+                  height={250}
+                />
+                <CommonSeriesSettings
+                  argumentField='user'
+                  valueField='count'
+                  type='bar'
+                  ignoreEmptyPoints={true}
+                  showInLegend={false}
+                  barPadding={0.6}
+                />
+                <SeriesTemplate nameField='user'/>
+                <Tooltip
+                  enabled={true}
+                />
+                <Animation
+                  enabled={true}
+                />
               </Chart>
             }
           </Grid>

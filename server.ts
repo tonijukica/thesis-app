@@ -43,7 +43,7 @@ app
     server.use(cookieSession({
       name: 'session',
       keys: [
-        randomBytes(16).toString('hex')
+        dev ? 'devsess' : randomBytes(16).toString('hex')
       ],
       maxAge: 24*60*60*1000
     }));

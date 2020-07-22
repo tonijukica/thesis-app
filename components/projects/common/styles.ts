@@ -15,7 +15,8 @@ export const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.main,
       padding: '16px',
       textAlign: 'center',
-      position: 'relative'
+      position: 'relative',
+      paddingBottom: '16px'
     },
     editIcon: {
       padding: '4px',
@@ -33,7 +34,7 @@ export const useStyles = makeStyles((theme: Theme) =>
 		},
 		infoBox: {
       color: theme.palette.primary.main,
-			paddingTop: '8px',
+      paddingTop: '8px',
     },
     cardHeader: {
       backgroundColor: theme.palette.secondary.main,

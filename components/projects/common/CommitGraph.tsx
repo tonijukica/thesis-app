@@ -1,8 +1,7 @@
 import { FC } from 'react';
 import { Grid, Paper, Theme } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core';
-import { Chart, ArgumentAxis, ValueAxis, LineSeries, Tooltip, Legend } from '@devexpress/dx-react-chart-material-ui';
-import { EventTracker, Stack, Animation } from '@devexpress/dx-react-chart';
+import { Chart, Series, ArgumentAxis, Label, CommonSeriesSettings, Size, Animation, Tooltip  } from 'devextreme-react/chart'
 import { userCommitsGraph } from '../helpers';
 
 type Props = {
@@ -16,7 +15,8 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: '16px',
       paddingLeft: '16px',
       paddingRight: '16px',
-      textAlign: 'center'
+      textAlign: 'center',
+      paddingBottom: '16px'
     }
 	})
 );
@@ -24,36 +24,48 @@ const useStyles = makeStyles((theme: Theme) =>
 export const CommitGraph: FC<Props> = ({ commits }) => {
   const classes = useStyles();
   const chartData = userCommitsGraph(commits);
-  const stack = [{
-    series: chartData.graphCommits.map((el: any) => el.label)
-  }];
 	return (
 		<Grid container direction='column' item xs={9} justify='center' style={{ marginLeft: '16px' }}>
 			<Paper className={classes.paper}>
         <h2>Commits graph</h2>
         <br />
         <Grid container justify='center' item>
-            <Chart data={chartData.history} width={900} height={500}>
-              <ValueAxis />
-              <ArgumentAxis />
-              <EventTracker/>
-              <Tooltip/>
-              {
-                chartData.graphCommits.map((user: any) => {
-                  return(
-                    <LineSeries
-                      key={user.label}
-                      name={user.label}
-                      valueField={user.label}
-                      argumentField='date'
-                    />
-                  )
-                })
-              }
-              <Animation />
-              <Stack stacks={stack} />
-              <Legend position="right"/>
-            </Chart>
+          <Chart
+            dataSource={chartData.history}
+
+          >
+            <Size
+              width={900}
+              height={500}
+            />
+            <CommonSeriesSettings
+              type='line'
+              argumentField='date'
+            />
+            {
+              chartData.graphCommits.map((user: any) => {
+                return(
+                  <Series
+                    key={user.label}
+                    name={user.label}
+                    valueField={user.label}
+                  />
+                )
+              })
+            }
+            <ArgumentAxis>
+              <Label
+                wordWrap='none'
+                overlappingBehavior='rotate'
+              />
+            </ArgumentAxis>
+            <Animation
+              enabled={true}
+            />
+            <Tooltip
+              enabled={true}
+            />
+          </Chart>
         </Grid>
 			</Paper>
 		</Grid>
