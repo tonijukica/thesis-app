@@ -11,6 +11,9 @@ import { ApolloProvider } from "@apollo/react-hooks";
 const Layout: FunctionComponent = ({ children }) => (
   <div
     style={{
+      display: "flex",
+      flexDirection: "column",
+      minHeight: "100vh",
       position: "relative",
       backgroundColor: "#F5F5F5",
     }}
