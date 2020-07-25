@@ -41,10 +41,10 @@
 	top: 0;
 }
 .Carousel .ButtonWrapper.Next {
-	right: 0;
+	right: -7%;
 }
 .Carousel .ButtonWrapper.Prev {
-	left: 0;
+	left: -7%;
 }
 .Carousel .ButtonWrapper:hover > .Button {
 	background-color: black;
