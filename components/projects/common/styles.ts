@@ -1,39 +1,39 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		border: {
-			border: '1px solid #e1e4e8 !important',
-			padding: '16px',
-			textAlign: 'center',
-		},
-		details: {
+  createStyles({
+    border: {
+      border: '1px solid #e1e4e8 !important',
+      padding: '16px',
+      textAlign: 'center',
+    },
+    details: {
       color: theme.palette.primary.main,
-			minHeight: '600px',
-		},
-		projectInfo: {
+      minHeight: '600px',
+    },
+    projectInfo: {
       color: theme.palette.primary.main,
       padding: '16px',
       textAlign: 'center',
-      position: 'relative'
+      position: 'relative',
     },
     editIcon: {
       padding: '4px',
       color: 'grey',
       cursor: 'pointer',
       position: 'absolute',
-			top: 0,
-			right: 0,
-			zIndex: 1000
+      top: 0,
+      right: 0,
+      zIndex: 1000,
     },
-		commitList: {
+    commitList: {
       color: theme.palette.primary.main,
-			borderBottom: '1px solid #e1e4e8 !important',
-			textAlign: 'center',
-		},
-		infoBox: {
+      borderBottom: '1px solid #e1e4e8 !important',
+      textAlign: 'center',
+    },
+    infoBox: {
       color: theme.palette.primary.main,
-			paddingTop: '8px',
+      paddingTop: '8px',
     },
     cardHeader: {
       backgroundColor: theme.palette.secondary.main,
@@ -44,10 +44,10 @@ export const useStyles = makeStyles((theme: Theme) =>
       color: 'white',
     },
     cardContent: {
-      padding: '16px'
+      padding: '16px',
     },
     card: {
-      marginTop: '16px'
+      marginTop: '16px',
     },
     expandIcon: {
       transform: 'rotate(0deg)',
@@ -58,7 +58,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       }),
     },
     expandIconOpen: {
-      transform: 'rotate(180deg)'
-    }
-	})
+      transform: 'rotate(180deg)',
+    },
+  })
 );

@@ -2,16 +2,24 @@ import { createContext } from 'react';
 import { Project } from '../../interfaces';
 
 interface ActionType {
-  type: 'add' | 'addBulk' | 'remove' | 'set' | 'dialogAddToggle' | 'dialogBulkToggle' | 'deleteToggle' | 'standingToggle';
+  type:
+    | 'add'
+    | 'addBulk'
+    | 'remove'
+    | 'set'
+    | 'dialogAddToggle'
+    | 'dialogBulkToggle'
+    | 'deleteToggle'
+    | 'standingToggle';
   project?: Project;
   projects?: Project[];
 }
 
 type Dispatch = (action: ActionType) => void;
 
-interface Context{
+interface Context {
   dispatch: Dispatch;
-  state: State
+  state: State;
 }
 
 interface State {
@@ -19,7 +27,7 @@ interface State {
   dialogAdd: boolean;
   dialogBulk: boolean;
   delete: boolean;
-  standing: boolean
+  standing: boolean;
 }
 
 const Context = createContext<Context>({
@@ -28,63 +36,65 @@ const Context = createContext<Context>({
     dialogAdd: false,
     dialogBulk: false,
     delete: false,
-    standing: false
+    standing: false,
   },
-  dispatch: () => null
+  dispatch: () => null,
 });
 function projectsReducer(state: State, action: ActionType): State {
-  switch(action.type){
-    case 'add':{
+  switch (action.type) {
+    case 'add': {
       const newProjects = [...state.projects];
       newProjects.push(action.project!);
       return {
         ...state,
-        projects: newProjects
+        projects: newProjects,
       };
     }
-    case 'addBulk':{
-      const newProjects = [ ...state.projects, ...action.projects!];
+    case 'addBulk': {
+      const newProjects = [...state.projects, ...action.projects!];
       return {
         ...state,
-        projects: newProjects
-      };;
-    }
-    case 'remove':{
-      const newProjects = state.projects.filter((el) => el.id !== action.project!.id);
-      return {
-        ...state,
-        projects: newProjects
+        projects: newProjects,
       };
     }
-    case 'set':{
+    case 'remove': {
+      const newProjects = state.projects.filter(
+        (el) => el.id !== action.project!.id
+      );
       return {
         ...state,
-        projects: action.projects!
-      }
+        projects: newProjects,
+      };
     }
-    case 'dialogAddToggle':{
+    case 'set': {
       return {
         ...state,
-        dialogAdd: !state.dialogAdd
-      }
+        projects: action.projects!,
+      };
     }
-    case 'dialogBulkToggle':{
+    case 'dialogAddToggle': {
       return {
         ...state,
-        dialogBulk: !state.dialogBulk
-      }
+        dialogAdd: !state.dialogAdd,
+      };
+    }
+    case 'dialogBulkToggle': {
+      return {
+        ...state,
+        dialogBulk: !state.dialogBulk,
+      };
     }
     case 'deleteToggle': {
       return {
         ...state,
-        delete: !state.delete
-      }
+        delete: !state.delete,
+      };
     }
     case 'standingToggle': {
       return {
         ...state,
-        standing: !state.standing
-      }
+        standing: !state.standing,
+      };
     }
   }
 }
