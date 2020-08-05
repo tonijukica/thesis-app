@@ -1,10 +1,23 @@
 import { FC, useState, ChangeEvent } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, Grid, Card, LinearProgress, Theme } from '@material-ui/core';
-import { makeStyles, createStyles } from '@material-ui/core';
-import { UPDATE_PROJECT } from '../../../gql/queries/projects';
+import {
+  makeStyles,
+  createStyles,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Button,
+  Grid,
+  Card,
+  LinearProgress,
+  Theme,
+} from '@material-ui/core';
 import { useMutation } from '@apollo/react-hooks';
 import { Clear } from '@material-ui/icons';
+import { UPDATE_PROJECT } from '../../../gql/queries/projects';
 import { Project, Student } from '../../../interfaces';
 
 type EditDialogProps = {
@@ -12,35 +25,35 @@ type EditDialogProps = {
   updateProject: any;
   open: boolean;
   handleClose: any;
-  handleSave: any
-}
+  handleSave: any;
+};
 
 const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		students: {
-      paddingTop: '16px'
+  createStyles({
+    students: {
+      paddingTop: '16px',
     },
     studentBox: {
       fontSize: '0.9rem',
       position: 'relative',
       marginRight: '10px',
       padding: '8px',
-      marginBottom: '16px'
+      marginBottom: '16px',
     },
     deleteIcon: {
-			position: 'absolute',
-			top: 0,
-			right: 0,
-			zIndex: 1000,
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      zIndex: 1000,
     },
     saveBtn: {
-      marginTop: '8px'
+      marginTop: '8px',
     },
     dialogTitle: {
       backgroundColor: theme.palette.primary.main,
-      color: 'white'
-    }
-	})
+      color: 'white',
+    },
+  })
 );
 
 export const EditProjectDialog: FC<EditDialogProps> = ({
@@ -48,7 +61,7 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
   updateProject,
   open,
   handleClose,
-  handleSave
+  handleSave,
 }) => {
   const classes = useStyles();
   const [state, setState] = useState<Project>(project);
@@ -56,44 +69,44 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
   const [studentAdd, setStudentAdd] = useState({
     state: false,
     studentName: '',
-    studentUsername: ''
+    studentUsername: '',
   });
   const [update] = useMutation(UPDATE_PROJECT);
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value)
+    console.log(e.target.value);
     setState({
       ...state,
-      name: e.target.value
+      name: e.target.value,
     });
-  }
+  };
   const handleGitHubURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     setState({
       ...state,
-      github_url: e.target.value
+      github_url: e.target.value,
     });
-  }
+  };
   const handleProdURLChange = (e: ChangeEvent<HTMLInputElement>) => {
     setState({
       ...state,
-      prod_url: e.target.value
+      prod_url: e.target.value,
     });
-  }
+  };
   const handleStudentAdd = () => {
-		setStudentAdd({
+    setStudentAdd({
       ...studentAdd,
-      state: true
+      state: true,
     });
   };
   const handleStudentNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setStudentAdd({
       ...studentAdd,
-      studentName: e.target.value
+      studentName: e.target.value,
     });
-	};
-	const handleStudentUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
+  };
+  const handleStudentUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setStudentAdd({
       ...studentAdd,
-      studentUsername: e.target.value
+      studentUsername: e.target.value,
     });
   };
   const addStudent = () => {
@@ -103,23 +116,24 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
         ...state.students,
         {
           name: studentAdd.studentName,
-          github_username: studentAdd.studentUsername
-      }]
+          github_username: studentAdd.studentUsername,
+        },
+      ],
     });
     setStudentAdd({
       state: false,
       studentName: '',
-      studentUsername: ''
-    })
-  }
+      studentUsername: '',
+    });
+  };
   const close = () => {
     setStudentAdd({
       state: false,
       studentName: '',
-      studentUsername: ''
+      studentUsername: '',
     });
-    handleClose()
-  }
+    handleClose();
+  };
   const saveEdit = () => {
     setLoading(true);
     updateProject(state);
@@ -128,110 +142,122 @@ export const EditProjectDialog: FC<EditDialogProps> = ({
         id: Number(state.id),
         name: state.name,
         githubUrl: state.github_url,
-        prodUrl: state.prod_url ? state.prod_url : "",
-        students: state.students.map(student => {
+        prodUrl: state.prod_url ? state.prod_url : '',
+        students: state.students.map((student) => {
           return {
             name: student.name,
-            github_username: student.github_username
-          }
-        })
-      }
+            github_username: student.github_username,
+          };
+        }),
+      },
     }).then(() => {
       setLoading(false);
       handleSave();
-    })
-  }
-  return(
+    });
+  };
+  return (
     <Dialog open={open} fullWidth>
-      <DialogTitle className={classes.dialogTitle}>
-        Edit project
-      </DialogTitle>
+      <DialogTitle className={classes.dialogTitle}>Edit project</DialogTitle>
       <DialogContent>
         <DialogContentText>
           <strong>Edit following project information:</strong>
         </DialogContentText>
         <TextField
-          margin='dense'
+          margin="dense"
           value={state.name}
           onChange={handleNameChange}
-          label='Project name'
+          label="Project name"
           fullWidth
         />
         <TextField
-          margin='dense'
+          margin="dense"
           value={state.github_url}
           onChange={handleGitHubURLChange}
-          label='Project GitHub url'
+          label="Project GitHub url"
           fullWidth
         />
         <TextField
-          margin='dense'
+          margin="dense"
           value={state.prod_url}
           onChange={handleProdURLChange}
-          label='Project production url'
+          label="Project production url"
           fullWidth
         />
         <DialogContentText>
           <strong>Students:</strong>
         </DialogContentText>
-        <Grid container direction='row'>
+        <Grid container direction="row">
           <TransitionGroup component={null}>
-          {state.students.map((student: Student) => (
-            <CSSTransition
-              key={student.id}
-              timeout={400}
-              classNames='custom'
-            >
-              <Grid item xs={3} key={student.name}>
-                <Card className={classes.studentBox}>
-                  <Clear
-                    className={classes.deleteIcon}
-                    onClick={() =>
-                      setState({
-                        ...state,
-                        students: state.students.filter(studentEl => studentEl.name !== student.name)
-                      })
-                    }
+            {state.students.map((student: Student) => (
+              <CSSTransition key={student.id} timeout={400} classNames="custom">
+                <Grid item xs={3} key={student.name}>
+                  <Card className={classes.studentBox}>
+                    <Clear
+                      className={classes.deleteIcon}
+                      onClick={() =>
+                        setState({
+                          ...state,
+                          students: state.students.filter(
+                            (studentEl) => studentEl.name !== student.name
+                          ),
+                        })
+                      }
                     />
-                  Student:
-                  <br/>
-                  {student.name}
-                  <br />
-                  {student.github_username  &&
-                    <>
-                    GitHub username:
-                    <br/>
-                    {student.github_username}
-                    </>
-                  }
-                </Card>
-              </Grid>
-            </CSSTransition>
-          ))}
+                    Student:
+                    <br />
+                    {student.name}
+                    <br />
+                    {student.github_username && (
+                      <>
+                        GitHub username:
+                        <br />
+                        {student.github_username}
+                      </>
+                    )}
+                  </Card>
+                </Grid>
+              </CSSTransition>
+            ))}
           </TransitionGroup>
         </Grid>
-        <Button color='primary' variant='outlined' onClick={handleStudentAdd}>
-						Add
-					</Button>
-					{studentAdd.state && (
-						<>
-							<TextField margin='dense' label='Student Name' onChange={handleStudentNameChange} fullWidth />
-							<TextField margin='dense' label='Student GitHub username' onChange={handleStudentUsernameChange} fullWidth />
-							<Button color='primary' variant='contained' onClick={addStudent} disabled={!!!studentAdd.studentName} className={classes.saveBtn}>
-								Save
-							</Button>
-						</>
-					)}
+        <Button color="primary" variant="outlined" onClick={handleStudentAdd}>
+          Add
+        </Button>
+        {studentAdd.state && (
+          <>
+            <TextField
+              margin="dense"
+              label="Student Name"
+              onChange={handleStudentNameChange}
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              label="Student GitHub username"
+              onChange={handleStudentUsernameChange}
+              fullWidth
+            />
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={addStudent}
+              disabled={!studentAdd.studentName}
+              className={classes.saveBtn}
+            >
+              Save
+            </Button>
+          </>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button color='secondary' onClick={close} style={{color: 'red'}}>
+        <Button color="secondary" onClick={close} style={{ color: 'red' }}>
           Cancel
         </Button>
-        <Button color='primary' onClick={saveEdit}>
+        <Button color="primary" onClick={saveEdit}>
           Save
         </Button>
-        {loading && <LinearProgress color='primary' />}
+        {loading && <LinearProgress color="primary" />}
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};

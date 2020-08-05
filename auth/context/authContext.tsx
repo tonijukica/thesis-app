@@ -1,6 +1,5 @@
 import { createContext } from 'react';
 
-
 export interface IAuthContext {
   login: (username: string) => Promise<void>;
   logout: () => void;

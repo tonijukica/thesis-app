@@ -1,8 +1,15 @@
-import { FC, useContext } from "react";
-import { Context } from '../helper';
-import { Grid, Button, Collapse, Theme, makeStyles, createStyles } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+import { FC, useContext } from 'react';
+import {
+  Grid,
+  Button,
+  Collapse,
+  Theme,
+  makeStyles,
+  createStyles,
+} from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { Context } from '../helper';
 
 type ListHeaderProps = {
   title: string;
@@ -11,20 +18,20 @@ type ListHeaderProps = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      paddingBottom: "16px",
-      borderBottom: "1px solid #e1e4e8 !important",
+      paddingBottom: '16px',
+      borderBottom: '1px solid #e1e4e8 !important',
     },
     button: {
-      marginRight: "8px",
+      marginRight: '8px',
     },
     delBtn: {
-      marginRight: "8px",
+      marginRight: '8px',
       backgroundColor: theme.palette.error.main,
-      color: "white",
-      "&:hover": {
+      color: 'white',
+      '&:hover': {
         backgroundColor: theme.palette.error.dark,
       },
-    }
+    },
   })
 );
 
@@ -33,10 +40,10 @@ const ListHeader: FC<ListHeaderProps> = ({ title }) => {
   const { state, dispatch } = useContext(Context);
 
   const handleClickOpen = () => {
-    dispatch({ type: "dialogAddToggle" });
+    dispatch({ type: 'dialogAddToggle' });
   };
   const handleDelete = () => {
-    dispatch({ type: "deleteToggle" });
+    dispatch({ type: 'deleteToggle' });
   };
 
   return (

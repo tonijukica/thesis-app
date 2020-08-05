@@ -1,7 +1,7 @@
-import { ObjectType, Field} from 'type-graphql';
+import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
-export class projectsProd{
+export class projectsProd {
   @Field()
   id?: number;
 

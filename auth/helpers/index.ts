@@ -1,54 +1,53 @@
 import base64url from './base64urlArrayBuffer';
 
 function publicKeyCredentialToJSON(pubKeyCred: any) {
-	if (pubKeyCred instanceof Array) {
-		let arr: any = [];
-    for (let i of pubKeyCred)
-      arr.push(publicKeyCredentialToJSON(i));
+  if (pubKeyCred instanceof Array) {
+    const arr: any = [];
+    for (const i of pubKeyCred) arr.push(publicKeyCredentialToJSON(i));
 
-		return arr;
-	}
+    return arr;
+  } else if (pubKeyCred instanceof ArrayBuffer) {
+    return base64url.encode(pubKeyCred);
+  } else if (pubKeyCred instanceof Object) {
+    const obj: any = {};
 
-	else if (pubKeyCred instanceof ArrayBuffer) {
-		return base64url.encode(pubKeyCred);
-	}
+    for (const key in pubKeyCred)
+      obj[key] = publicKeyCredentialToJSON(pubKeyCred[key]);
 
-	else if (pubKeyCred instanceof Object) {
-		let obj: any = {};
+    return obj;
+  }
 
-		for (let key in pubKeyCred) {
-			obj[key] = publicKeyCredentialToJSON(pubKeyCred[key]);
-		}
-
-		return obj;
-	}
-
-	return pubKeyCred;
+  return pubKeyCred;
 }
 
 function generateRandomBuffer(len: number) {
-	len = len || 32;
+  len = len || 32;
 
-	const randomBuffer = new Uint8Array(len);
-	window.crypto.getRandomValues(randomBuffer);
+  const randomBuffer = new Uint8Array(len);
+  window.crypto.getRandomValues(randomBuffer);
 
-	return randomBuffer;
+  return randomBuffer;
 }
 
-const  formatCredReq = (credReq: any) => {
-	credReq.challenge = base64url.decode(credReq.challenge);
-	credReq.user.id = base64url.decode(credReq.user.id);
-	return credReq;
+const formatCredReq = (credReq: any) => {
+  credReq.challenge = base64url.decode(credReq.challenge);
+  credReq.user.id = base64url.decode(credReq.user.id);
+  return credReq;
 };
 
 const formatAssertReq = (assertReq: any) => {
-	assertReq.challenge = base64url.decode(assertReq.challenge);
+  assertReq.challenge = base64url.decode(assertReq.challenge);
 
-	for(let allowCred of assertReq.allowCredentials) {
-		allowCred.id = base64url.decode(allowCred.id);
+  for (const allowCred of assertReq.allowCredentials) {
+    allowCred.id = base64url.decode(allowCred.id);
   }
 
-	return assertReq;
+  return assertReq;
 };
 
-export { publicKeyCredentialToJSON, generateRandomBuffer, formatCredReq, formatAssertReq };
+export {
+  publicKeyCredentialToJSON,
+  generateRandomBuffer,
+  formatCredReq,
+  formatAssertReq,
+};

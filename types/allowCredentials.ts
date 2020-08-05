@@ -1,7 +1,7 @@
-import { ObjectType, Field} from 'type-graphql';
+import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
-export class allowCredentials{
+export class allowCredentials {
   @Field()
   type?: string;
 
