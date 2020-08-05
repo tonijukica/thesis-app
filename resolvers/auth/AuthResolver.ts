@@ -167,7 +167,7 @@ export class AuthResolver {
 
   @Mutation(() => ResponseResponse)
   async logout(@Ctx() ctx: IContext): Promise<ResponseResponse | undefined> {
-    ctx.req.session! = null;
+    ctx.req.session = null;
     return {
       status: 'ok',
     };
