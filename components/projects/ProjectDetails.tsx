@@ -11,7 +11,7 @@ import {
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import CheckCircle from '@material-ui/icons/CheckCircleOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import { useStyles } from './common/styles';
@@ -114,14 +114,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
               endIcon={project.grade ? <CheckCircle /> : <ErrorOutline />}
             >
               Grade
-              {
-                project.grade ?
-                <strong>
-                  ({project.grade})
-                </strong>
-                :
-                null
-              }
+              {project.grade ? <strong>({project.grade})</strong> : null}
             </Button>
           </Grid>
         </Grid>

@@ -9,7 +9,7 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { Context } from './Context';
 import { Student, Project } from '../../interfaces';
 import DeleteProjectDialog from './dialogs/DeleteProjectDialog';

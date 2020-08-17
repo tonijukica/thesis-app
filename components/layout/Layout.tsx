@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { ThemeProvider } from '@material-ui/core';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 import Head from 'next/head';
 import Header from './Header';
 import Main from './Main';

@@ -10,7 +10,7 @@ import {
   DialogTitle,
   Button,
 } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { DELETE_PROJECT } from '../../../gql/queries/projects';
 import { Context } from '../Context';
 import { Project } from '../../../interfaces';

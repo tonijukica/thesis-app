@@ -13,7 +13,7 @@ import {
   FormControlLabel,
   Button,
 } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { GRADE_PROJECT, UNGRADE_PROJECT } from '../../../gql/queries/projects';
 
 type GradeProjectDialogProps = {

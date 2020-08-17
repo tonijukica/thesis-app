@@ -15,7 +15,7 @@ import {
   LinearProgress,
   Theme,
 } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { Clear } from '@material-ui/icons';
 import { UPDATE_PROJECT } from '../../../gql/queries/projects';
 import { Project, Student } from '../../../interfaces';

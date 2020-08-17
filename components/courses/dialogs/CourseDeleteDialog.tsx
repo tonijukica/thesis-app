@@ -10,7 +10,7 @@ import {
   DialogTitle,
   Button,
 } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { Context } from '../CourseList';
 import { DELETE_COURSE_BY_ID } from '../../../gql/queries/courses';
 

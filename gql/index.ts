@@ -1,7 +1,9 @@
-import { ApolloClient } from 'apollo-client';
-import { ApolloLink } from 'apollo-link';
-import { InMemoryCache } from 'apollo-boost';
-import { HttpLink } from 'apollo-link-http';
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  HttpLink,
+} from '@apollo/client';
 import fetch from 'isomorphic-unfetch';
 
 const port = process.env.PORT;
