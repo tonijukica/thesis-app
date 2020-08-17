@@ -13,5 +13,4 @@ export class Response {
 
   @Field({ nullable: true })
   signature?: string;
-
 }

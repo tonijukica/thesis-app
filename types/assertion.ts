@@ -1,6 +1,5 @@
 import { ObjectType, Field } from 'type-graphql';
-import { allowCredentials } from './allowCredentials'
-
+import { allowCredentials } from './allowCredentials';
 
 @ObjectType()
 export class Assertion {
@@ -8,14 +7,14 @@ export class Assertion {
   challenge?: string;
 
   @Field(() => [allowCredentials], { nullable: true })
-  allowCredentials?: allowCredentials[]
+  allowCredentials?: allowCredentials[];
 
   @Field({ nullable: true })
-  userVerification?: string
+  userVerification?: string;
 
   @Field({ nullable: true })
-  rpId?: string
+  rpId?: string;
 
   @Field({ nullable: true })
-  timeout?: number
+  timeout?: number;
 }

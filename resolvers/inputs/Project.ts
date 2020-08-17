@@ -3,15 +3,15 @@ import { StudentInput } from './Student';
 
 @InputType()
 export class ProjectInput {
-	@Field()
-	name!: string;
+  @Field()
+  name!: string;
 
-	@Field()
-	github_url!: string;
+  @Field()
+  github_url!: string;
 
-	@Field({ nullable: true })
-	prod_url?: string;
+  @Field({ nullable: true })
+  prod_url?: string;
 
-	@Field(() => [StudentInput], { nullable: true })
-	student_data?: StudentInput[];
+  @Field(() => [StudentInput], { nullable: true })
+  student_data?: StudentInput[];
 }

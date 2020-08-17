@@ -1,14 +1,14 @@
 import { NextPage } from 'next';
-import Auth from '../components/auth/Auth';
 import { ThemeProvider } from '@material-ui/core';
+import Auth from '../components/auth/Auth';
 import theme from '../components/layout/theme';
 
 const AuthPage: NextPage = () => {
-	return (
+  return (
     <ThemeProvider theme={theme}>
-      <Auth/>
+      <Auth />
     </ThemeProvider>
-  )
+  );
 };
 
 export default AuthPage;

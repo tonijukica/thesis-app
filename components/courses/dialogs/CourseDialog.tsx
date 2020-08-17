@@ -4,52 +4,54 @@ import {
   useEffect,
   useContext,
   ChangeEvent,
-} from "react";
-import { makeStyles, createStyles, Theme } from "@material-ui/core";
+} from 'react';
 import {
+  makeStyles,
+  createStyles,
+  Theme,
+  Button,
+  TextField,
+  LinearProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Collapse,
-} from "@material-ui/core";
-import { Button, TextField, LinearProgress } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import { getFileContent } from "../../common/fileUpload";
-import { useMutation } from "@apollo/react-hooks";
+} from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import { useMutation } from '@apollo/react-hooks';
+import { getFileContent } from '../../common/fileUpload';
 import {
   INSERT_COURSE,
   INESRT_COURSE_BULK_PROJECTS,
-} from "../../../gql/queries/courses";
-import { Context } from "../helper";
-
-type CourseDialogProps = {};
+} from '../../../gql/queries/courses';
+import { Context } from '../helper';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     name: {
-      marginTop: "21px",
-      paddingLeft: "16px",
+      marginTop: '21px',
+      paddingLeft: '16px',
     },
     uploadBox: {
-      display: "flex",
-      padding: "8px",
-      paddingBottom: "16px",
-      paddingLeft: "0px",
+      display: 'flex',
+      padding: '8px',
+      paddingBottom: '16px',
+      paddingLeft: '0px',
     },
     dialogTitle: {
       backgroundColor: theme.palette.primary.main,
-      color: "white",
+      color: 'white',
     },
   })
 );
 
-const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
+const CourseDialog: FunctionComponent = () => {
   const classes = useStyles();
-  const [fileName, setfileName] = useState("");
-  const [parsedData, setParsedData] = useState("");
-  const [courseName, setCourseName] = useState("");
+  const [fileName, setfileName] = useState('');
+  const [parsedData, setParsedData] = useState('');
+  const [courseName, setCourseName] = useState('');
   const [insertCourse] = useMutation(INSERT_COURSE);
   const [insertCourseBulkProjects] = useMutation(INESRT_COURSE_BULK_PROJECTS);
   const [loading, setLoading] = useState(false);
@@ -57,7 +59,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
   const { state, dispatch } = useContext(Context);
   const [error, setError] = useState({
     err: false,
-    errMsg: "",
+    errMsg: '',
   });
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -76,18 +78,18 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
       setLoading(false);
       setError({
         err: true,
-        errMsg: "Unsupported file format. No projects found!",
+        errMsg: 'Unsupported file format. No projects found!',
       });
     }
   };
 
   const addCourse = () => {
-    return new Promise(function (resolve) {
+    return new Promise((resolve) => {
       if (bulkInsertData) {
         insertCourseBulkProjects({
           variables: {
             courseName,
-            year: "2020",
+            year: '2020',
             projects: bulkInsertData,
           },
         }).then((data) => {
@@ -96,14 +98,14 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
             courseId: data.data.insert_course.id,
             studentProjects: bulkInsertData.length,
           };
-          dispatch({ type: "add", course: newCourse });
+          dispatch({ type: 'add', course: newCourse });
           resolve();
         });
       } else {
         insertCourse({
           variables: {
             name: courseName,
-            year: "2020",
+            year: '2020',
           },
         })
           .then(({ data }) => {
@@ -112,7 +114,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
               courseId: data.insert_course.id,
               studentProjects: 0,
             };
-            dispatch({ type: "add", course: newCourse });
+            dispatch({ type: 'add', course: newCourse });
             resolve();
           })
           .catch((e) => console.log(e));
@@ -120,27 +122,27 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
     });
   };
   const handleClose = () => {
-    dispatch({ type: "dialogAddToggle" });
+    dispatch({ type: 'dialogAddToggle' });
   };
   const handleAddCourse = () => {
     setLoading(true);
     addCourse().then(() => {
       setLoading(false);
       setBulkInsertData([]);
-      setParsedData("");
-      setfileName("");
-      dispatch({ type: "dialogAddToggle" });
+      setParsedData('');
+      setfileName('');
+      dispatch({ type: 'dialogAddToggle' });
     });
   };
   useEffect(() => {
     setError({
-      errMsg: "",
+      errMsg: '',
       err: false,
     });
-    setfileName("");
-    setParsedData("");
+    setfileName('');
+    setParsedData('');
     setLoading(false);
-  }, [open]);
+  }, [state.dialogAdd]);
   return (
     <>
       <Dialog open={state.dialogAdd} onClose={handleClose} fullWidth>
@@ -160,7 +162,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
             type="file"
             accept=".csv"
             onChange={(e) => handleFileInput(e.target.files)}
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
           />
           <div className={classes.uploadBox}>
             <label htmlFor="fileInput">
@@ -168,7 +170,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
                 variant="outlined"
                 color="primary"
                 component="span"
-                style={{ marginTop: "16px" }}
+                style={{ marginTop: '16px' }}
               >
                 Upload
               </Button>
@@ -180,7 +182,7 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
             <Collapse in={error.err}>
               <Alert
                 severity="error"
-                onClose={() => setError({ err: false, errMsg: "" })}
+                onClose={() => setError({ err: false, errMsg: '' })}
               >
                 {error.errMsg}
               </Alert>
@@ -194,14 +196,14 @@ const CourseDialog: FunctionComponent<CourseDialogProps> = () => {
           <Button
             onClick={handleClose}
             color="secondary"
-            style={{ color: "red" }}
+            style={{ color: 'red' }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleAddCourse}
             color="primary"
-            disabled={!!loading || !!!courseName}
+            disabled={!!loading || !courseName}
           >
             Save
           </Button>

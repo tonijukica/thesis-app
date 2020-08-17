@@ -2,7 +2,7 @@ import {
   ReactNode,
   ReactChildren,
   FunctionComponent,
-  ComponentClass
+  ComponentClass,
 } from 'react';
 
 interface INextPage {
@@ -42,7 +42,8 @@ export default function withWrapper<TPropsType extends IComponentProps>(
   const getInitialProps = tryGetInitialPropsMethod(ChildComponent);
   if (getInitialProps) {
     const WrappedComponentNext = WrappedComponent as INextPage;
-    WrappedComponentNext.getInitialProps = async (args: any): Promise<any> => getInitialProps(args);
+    WrappedComponentNext.getInitialProps = async (args: any): Promise<any> =>
+      getInitialProps(args);
   }
 
   return WrappedComponent;

@@ -1,7 +1,7 @@
 import { ObjectType, Field } from 'type-graphql';
-import { rp } from './rp'
+import { rp } from './rp';
 import { pubKeyCred } from './pubKeyCred';
-import { user } from './user'
+import { user } from './user';
 
 @ObjectType()
 export class Credential {
@@ -9,15 +9,14 @@ export class Credential {
   challenge?: string;
 
   @Field(() => rp, { nullable: true })
-  rp?: rp
+  rp?: rp;
 
   @Field(() => user, { nullable: true })
-  user?: user
+  user?: user;
 
   @Field({ nullable: true })
   attestation?: string;
 
   @Field(() => [pubKeyCred], { nullable: true })
-  pubKeyCredParams?: pubKeyCred[]
-
+  pubKeyCredParams?: pubKeyCred[];
 }
