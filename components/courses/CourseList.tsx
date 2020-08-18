@@ -1,13 +1,13 @@
-import { FunctionComponent, useReducer, useEffect } from "react";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
-import { Grid } from "@material-ui/core";
-import { Context, coursesReducer } from "./helper";
-import CourseBox from "./CourseBox";
-import CourseDialog from "./dialogs/CourseDialog";
-import ListHeader from "./common/ListHeader";
-import { useQuery } from "@apollo/react-hooks";
-import { GET_COURSES } from "../../gql/queries/courses";
-import { Loader } from "../common/CircuralLoader";
+import { FunctionComponent, useReducer, useEffect } from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { Grid } from '@material-ui/core';
+import { useQuery } from '@apollo/client';
+import { Context, coursesReducer } from './helper';
+import CourseBox from './CourseBox';
+import CourseDialog from './dialogs/CourseDialog';
+import ListHeader from './common/ListHeader';
+import { GET_COURSES } from '../../gql/queries/courses';
+import { Loader } from '../common/CircuralLoader';
 
 type CourseProps = {
   title: string;
@@ -25,7 +25,7 @@ const Courses: FunctionComponent<CourseProps> = ({ title }) => {
     if (data) {
       data.courses.forEach((course: any) =>
         dispatch({
-          type: "add",
+          type: 'add',
           course: {
             name: course.course_name,
             courseId: course.id,

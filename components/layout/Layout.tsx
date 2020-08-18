@@ -1,21 +1,21 @@
-import { FunctionComponent } from "react";
-import Head from "next/head";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
-import client from "../../gql";
-import theme from "./theme";
-import { ThemeProvider } from "@material-ui/core";
-import { ApolloProvider } from "@apollo/react-hooks";
+import { FunctionComponent } from 'react';
+import { ThemeProvider } from '@material-ui/core';
+import { ApolloProvider } from '@apollo/client';
+import Head from 'next/head';
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
+import client from '../../gql';
+import theme from './theme';
 
 const Layout: FunctionComponent = ({ children }) => (
   <div
     style={{
-      display: "flex",
-      flexDirection: "column",
-      minHeight: "100vh",
-      position: "relative",
-      backgroundColor: "#F5F5F5",
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+      position: 'relative',
+      backgroundColor: '#F5F5F5',
     }}
   >
     <Head>

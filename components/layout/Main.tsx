@@ -1,11 +1,11 @@
-import { FunctionComponent } from "react";
-import { Container, makeStyles, createStyles } from "@material-ui/core";
+import { FunctionComponent } from 'react';
+import { Container, makeStyles, createStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() =>
   createStyles({
     container: {
-      paddingBottom: "3rem",
-      paddingTop: "16px",
+      paddingBottom: '3rem',
+      paddingTop: '16px',
       flex: 1,
     },
   })

@@ -9,7 +9,6 @@ export class LoginResponse {
   @Field({ nullable: true })
   message?: string;
 
- @Field(() => Assertion, { nullable: true })
- assertion?: Assertion
-
+  @Field(() => Assertion, { nullable: true })
+  assertion?: Assertion;
 }

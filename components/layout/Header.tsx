@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { FunctionComponent } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   Container,
   Grid,
@@ -8,33 +8,33 @@ import {
   createStyles,
   Button,
   Theme,
-} from "@material-ui/core";
-import { useAuth } from "../../auth/hooks/useAuth";
-import red from "@material-ui/core/colors/red";
+} from '@material-ui/core';
+import red from '@material-ui/core/colors/red';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     header: {
       backgroundColor: theme.palette.primary.main,
-      paddingTop: "16px",
-      paddingBottom: "21px",
-      fontSize: "14px",
+      paddingTop: '16px',
+      paddingBottom: '21px',
+      fontSize: '14px',
       lineHeight: 1.5,
-      color: "white",
-      height: "64px",
+      color: 'white',
+      height: '64px',
     },
     row: {
-      height: "16px",
+      height: '16px',
     },
     link: {
-      marginRight: "16px",
-      color: "white",
+      marginRight: '16px',
+      color: 'white',
     },
     logoutBtn: {
-      marginRight: "8px",
+      marginRight: '8px',
       backgroundColor: red[300],
-      color: "white",
-      "&:hover": {
+      color: 'white',
+      '&:hover': {
         backgroundColor: red[500],
       },
     },
@@ -46,7 +46,7 @@ const Header: FunctionComponent = () => {
   const router = useRouter();
   const { user, isAuthenticated, logout, isLoading } = useAuth();
   const handleLogout = () => {
-    router.push("/").then(() => {
+    router.push('/').then(() => {
       logout();
       router.reload();
     });
@@ -66,15 +66,15 @@ const Header: FunctionComponent = () => {
           item
           xs={12}
           sm={6}
-          style={{ height: "36.5px" }}
+          style={{ height: '36.5px' }}
           alignContent="center"
         >
           <Link href="/">
             <p
               style={{
-                cursor: "pointer",
-                fontSize: "24px",
-                letterSpacing: "1px",
+                cursor: 'pointer',
+                fontSize: '24px',
+                letterSpacing: '1px',
               }}
             >
               APP
@@ -82,10 +82,10 @@ const Header: FunctionComponent = () => {
           </Link>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <nav style={{ textAlign: "end" }}>
+          <nav style={{ textAlign: 'end' }}>
             {!isLoading && !isAuthenticated && (
               <Button
-                onClick={() => router.push("/auth")}
+                onClick={() => router.push('/auth')}
                 color="secondary"
                 variant="contained"
               >

@@ -41,8 +41,8 @@ Web application for professors or anyone else that wants to have information abo
 - Client & Server: `npm run dev`
 
 ### Production
-- Run `npm run start`
-- If on Windows, `run npm run start:win`
+- Run `npm start`
+- If on Windows, `npm run start:win`
 
 ## File import structure
 
@@ -54,8 +54,8 @@ Projects can be imported in bulk with a `.csv` file. The structure of that file 
 Column headers can be customized and set in `.env` file.
 
 Alternatively, legacy format can be used with predefined headers such as:
-| Prezime i ime | Projekt ID | GitHub Repo                           | Production link                      |
+| Prezime i ime | Project ID | GitHub Repo                           | Production link                      |
 |---------------|------------|---------------------------------------|--------------------------------------|
 | Jukica Toni   | 1          | https://github.com/tonijukica/project | https://production.com/tonijukica    |
 
-If two or more students are working on a project then they have the same Projekt ID.
+If two or more students are working on a project then they have the same Project ID.

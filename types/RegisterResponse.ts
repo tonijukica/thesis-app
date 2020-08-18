@@ -9,7 +9,6 @@ export class RegisterResponse {
   @Field({ nullable: true })
   message?: string;
 
- @Field(() => Credential, { nullable: true })
- credential?: Credential
-
+  @Field(() => Credential, { nullable: true })
+  credential?: Credential;
 }

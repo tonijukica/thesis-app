@@ -1,19 +1,19 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from 'react';
 import {
   Container,
   Grid,
   makeStyles,
   createStyles,
   Theme,
-} from "@material-ui/core";
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     footer: {
       color: theme.palette.grey[500],
-      height: "2.5rem",
-      textAlign: "center",
-      paddingTop: "8px",
+      height: '2.5rem',
+      textAlign: 'center',
+      paddingTop: '8px',
     },
   })
 );

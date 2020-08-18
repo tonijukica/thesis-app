@@ -2,16 +2,16 @@ import { Field, InputType } from 'type-graphql';
 import { Response } from './response';
 
 @InputType()
-export class ResponseInput{
-  @Field({ nullable: true})
-  id?: string
+export class ResponseInput {
+  @Field({ nullable: true })
+  id?: string;
 
   @Field({ nullable: true })
-  rawId?: string
+  rawId?: string;
 
-  @Field(() => Response, { nullable: true})
-  response?: Response
+  @Field(() => Response, { nullable: true })
+  response?: Response;
 
-  @Field({ nullable: true})
-  type?: string
+  @Field({ nullable: true })
+  type?: string;
 }

@@ -1,42 +1,50 @@
 import { FunctionComponent, useContext } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
-import { Button } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
+import {
+  makeStyles,
+  createStyles,
+  Theme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from '@material-ui/core';
+import { useMutation } from '@apollo/client';
 import { DELETE_PROJECT } from '../../../gql/queries/projects';
 import { Context } from '../Context';
 import { Project } from '../../../interfaces';
 
 type DeleteProjectDialogProps = {
   projectId: number;
-	name: string;
-	open: boolean;
+  name: string;
+  open: boolean;
   closeDialog: any;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		name: {
+  createStyles({
+    name: {
       marginTop: '21px',
-      paddingLeft: '16px'
+      paddingLeft: '16px',
     },
     uploadBox: {
       display: 'flex',
       padding: '8px',
       paddingBottom: '16px',
-      paddingLeft: '0px'
+      paddingLeft: '0px',
     },
     dialogTitle: {
       backgroundColor: theme.palette.primary.main,
-      color: 'white'
-    }
-	})
+      color: 'white',
+    },
+  })
 );
 
 const DeleteProjectDialog: FunctionComponent<DeleteProjectDialogProps> = ({
   projectId,
-	name,
-	open,
+  name,
+  open,
   closeDialog,
 }) => {
   const { state, dispatch } = useContext(Context);
@@ -44,37 +52,43 @@ const DeleteProjectDialog: FunctionComponent<DeleteProjectDialogProps> = ({
   const [deleteProject] = useMutation(DELETE_PROJECT);
   const handleDelete = async () => {
     await deleteProject({
-			variables: {
-				projectId: Number(projectId),
-			},
+      variables: {
+        projectId: Number(projectId),
+      },
     });
-    const project: Project = state.projects.find((projectEl: Project) => projectEl.id === projectId)!;
+    const project: Project = state.projects.find(
+      (projectEl: Project) => projectEl.id === projectId
+    )!;
     dispatch({
       type: 'remove',
-      project
+      project,
     });
     closeDialog();
-  }
-	return (
-		<>
-			<Dialog open={open} onClose={closeDialog} fullWidth>
-				<DialogTitle className={classes.dialogTitle}>Confirmation</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
+  };
+  return (
+    <>
+      <Dialog open={open} onClose={closeDialog} fullWidth>
+        <DialogTitle className={classes.dialogTitle}>Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
             Are you sure you want to delete <strong>{name}</strong> project?
           </DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={closeDialog} color='secondary' style={{color: 'red'}}>
-						Cancel
-					</Button>
-					<Button onClick={handleDelete} color='primary'>
-						Delete
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</>
-	);
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={closeDialog}
+            color="secondary"
+            style={{ color: 'red' }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="primary">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 };
 
 export default DeleteProjectDialog;
