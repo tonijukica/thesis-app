@@ -57,6 +57,13 @@ const GET_PROJECT = gql`
         name
         github_username
       }
+      prod_preview_count
+    }
+  }
+`;
+const GET_PROJECT_PREVIEWS = gql`
+  query getProject($projectId: Float!) {
+    projects(id: $projectId) {
       production_previews {
         id
         created_at
@@ -206,6 +213,7 @@ export {
   GET_PROJECTS_PROD,
   GET_PROJECT_IDS,
   GET_PROJECT,
+  GET_PROJECT_PREVIEWS,
   INSERT_PROJECT,
   INSERT_PROD_PREVIEW,
   INSERT_BULK_PROJECTS,

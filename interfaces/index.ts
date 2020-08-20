@@ -35,4 +35,5 @@ export type Project = {
   students: Student[];
   production_previews?: ProductionPreview[];
   lastCommitDate?: number | null;
+  prod_preview_count?: number;
 };

@@ -54,4 +54,7 @@ export class Project extends BaseEntity {
     (productionPreview) => productionPreview.project
   )
   production_previews!: Promise<ProductionPreview[]>;
+
+  @Field()
+  prod_preview_count!: number;
 }
