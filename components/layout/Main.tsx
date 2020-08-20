@@ -6,7 +6,7 @@ const useStyles = makeStyles(() =>
     container: {
       paddingBottom: '3rem',
       paddingTop: '16px',
-      minHeight: '95vh',
+      flex: 1,
     },
   })
 );

@@ -9,7 +9,15 @@ import client from '../../gql';
 import theme from './theme';
 
 const Layout: FunctionComponent = ({ children }) => (
-  <div style={{ position: 'relative', backgroundColor: '#F5F5F5' }}>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+      position: 'relative',
+      backgroundColor: '#F5F5F5',
+    }}
+  >
     <Head>
       <title>App</title>
       <meta charSet="utf-8" />
