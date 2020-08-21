@@ -1,14 +1,14 @@
 import { FC, useState } from 'react';
 import { Grid, Paper } from '@material-ui/core';
+import { Edit } from '@material-ui/icons';
 import {
   Chart,
-  ArgumentAxis,
-  ValueAxis,
-  BarSeries,
+  SeriesTemplate,
+  CommonSeriesSettings,
+  Size,
   Tooltip,
-} from '@devexpress/dx-react-chart-material-ui';
-import { EventTracker, Animation } from '@devexpress/dx-react-chart';
-import { Edit } from '@material-ui/icons';
+  Animation,
+} from 'devextreme-react/chart';
 import { EditProjectDialog } from '../dialogs/EditProject';
 import { useStyles } from './styles';
 import { Project, Student } from '../../../interfaces';
@@ -109,17 +109,19 @@ export const Sidebar: FC<SidebarProps> = ({
           </Grid>
           <Grid container item justify="center" className={classes.infoBox}>
             {commits && (
-              <Chart data={chartData} width={200} height={250}>
-                <ValueAxis />
-                <ArgumentAxis />
-                <EventTracker />
-                <Tooltip />
-                <Animation />
-                <BarSeries
-                  color="#19857b"
-                  valueField="count"
+              <Chart id="commitGraph" dataSource={chartData}>
+                <Size width={250} height={250} />
+                <CommonSeriesSettings
                   argumentField="user"
+                  valueField="count"
+                  type="bar"
+                  ignoreEmptyPoints
+                  showInLegend={false}
+                  barPadding={0.6}
                 />
+                <SeriesTemplate nameField="user" />
+                <Tooltip enabled />
+                <Animation enabled />
               </Chart>
             )}
           </Grid>

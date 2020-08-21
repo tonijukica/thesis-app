@@ -30,7 +30,7 @@ export const Preview: FC<PreviewProps> = ({ previews }) => {
                   <img
                     alt="preview_image"
                     height="576"
-                    width="1024"
+                    width="auto"
                     src={`data:image/png;base64,${preview.image}`}
                   />
                 </div>

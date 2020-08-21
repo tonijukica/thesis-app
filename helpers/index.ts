@@ -1,7 +1,5 @@
 import * as dotenv from 'dotenv';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-boost';
-import { HttpLink } from 'apollo-link-http';
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 import fetch from 'isomorphic-unfetch';
 import capture from 'capture-website';
 import {

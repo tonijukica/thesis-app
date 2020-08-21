@@ -13,8 +13,8 @@ import {
   FormControlLabel,
   Button,
 } from '@material-ui/core';
-import { useMutation } from '@apollo/react-hooks';
-import { GRADE_PROJECT } from '../../../gql/queries/projects';
+import { useMutation } from '@apollo/client';
+import { GRADE_PROJECT, UNGRADE_PROJECT } from '../../../gql/queries/projects';
 
 type GradeProjectDialogProps = {
   projectId: number;
@@ -50,6 +50,7 @@ const GradeProjectDialog: FunctionComponent<GradeProjectDialogProps> = ({
   const classes = useStyles();
   const [grade, setGrade] = useState<number | null>(initialGrade);
   const [gradeProject] = useMutation(GRADE_PROJECT);
+  const [ungradeProject] = useMutation(UNGRADE_PROJECT);
 
   const handleGradeChange = (event: FormEvent<HTMLInputElement>) => {
     setGrade(Number((event.target as HTMLInputElement).value));
@@ -63,6 +64,15 @@ const GradeProjectDialog: FunctionComponent<GradeProjectDialogProps> = ({
     });
     closeDialog();
   };
+  const handleUngrading = async () => {
+    await ungradeProject({
+      variables: {
+        id: Number(projectId),
+      },
+    });
+    closeDialog();
+  };
+
   return (
     <>
       <Dialog open={open} onClose={closeDialog} fullWidth>
@@ -93,6 +103,9 @@ const GradeProjectDialog: FunctionComponent<GradeProjectDialogProps> = ({
             style={{ color: 'red' }}
           >
             Cancel
+          </Button>
+          <Button onClick={handleUngrading} color="secondary" disabled={!grade}>
+            Ungrade
           </Button>
           <Button onClick={handleGrading} color="primary" disabled={!grade}>
             Grade

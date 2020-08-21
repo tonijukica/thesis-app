@@ -20,7 +20,7 @@ import {
   Collapse,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import { getFileContent } from '../../common/fileUpload';
 import {
   INSERT_COURSE,

@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import red from '@material-ui/core/colors/red';
 import { useAuth } from '../../auth/hooks/useAuth';
+import * as appLogo from '../../assets/img/logo.png';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,7 +70,16 @@ const Header: FunctionComponent = () => {
           style={{ height: '36.5px' }}
           alignContent="center"
         >
-          <strong>APP</strong>
+          <Link href="/">
+            <p
+              style={{
+                cursor: 'pointer',
+                letterSpacing: '1px',
+              }}
+            >
+              <img src={appLogo} alt="app_logo" width="36px" height="36px" />
+            </p>
+          </Link>
         </Grid>
         <Grid item xs={12} sm={6}>
           <nav style={{ textAlign: 'end' }}>
@@ -84,9 +94,6 @@ const Header: FunctionComponent = () => {
             )}
             {!isLoading && isAuthenticated && (
               <>
-                <Link href="/courses">
-                  <a className={classes.link}>Courses</a>
-                </Link>
                 <strong>
                   <span className={classes.link}>{user}</span>
                 </strong>

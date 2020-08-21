@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import { ThemeProvider } from '@material-ui/core';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 import Head from 'next/head';
 import Header from './Header';
 import Main from './Main';
@@ -9,7 +9,15 @@ import client from '../../gql';
 import theme from './theme';
 
 const Layout: FunctionComponent = ({ children }) => (
-  <div style={{ position: 'relative', backgroundColor: '#F5F5F5' }}>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+      position: 'relative',
+      backgroundColor: '#F5F5F5',
+    }}
+  >
     <Head>
       <title>App</title>
       <meta charSet="utf-8" />

@@ -33,11 +33,16 @@ app
     const apolloServer = new ApolloServer({
       schema,
       context: ({ req }: any) => ({ req }),
+      playground: {
+        settings: {
+          'request.credentials': 'include',
+        },
+      },
     });
     server.use(
       cookieSession({
         name: 'session',
-        keys: [randomBytes(16).toString('hex')],
+        keys: [dev ? 'devsess' : randomBytes(16).toString('hex')],
         maxAge: 24 * 60 * 60 * 1000,
       })
     );

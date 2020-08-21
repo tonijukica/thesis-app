@@ -1,7 +1,7 @@
 import { FunctionComponent, useReducer, useEffect } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Grid } from '@material-ui/core';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 import { Context, coursesReducer } from './helper';
 import CourseBox from './CourseBox';
 import CourseDialog from './dialogs/CourseDialog';

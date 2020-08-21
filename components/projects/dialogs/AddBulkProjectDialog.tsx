@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect, useContext } from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import {
   makeStyles,
   Button,

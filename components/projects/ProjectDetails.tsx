@@ -11,12 +11,16 @@ import {
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import CheckCircle from '@material-ui/icons/CheckCircleOutline';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useLazyQuery } from '@apollo/client';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import { useStyles } from './common/styles';
 import GradeProjectDialog from './dialogs/GradeProjectDialog';
-import { GET_PROJECT, GET_COMMITS } from '../../gql/queries/projects';
+import {
+  GET_PROJECT,
+  GET_PROJECT_PREVIEWS,
+  GET_COMMITS,
+} from '../../gql/queries/projects';
 import { Commit, Project } from '../../interfaces';
 import { getUserRepoName } from './helpers';
 import { Sidebar } from './common/Sidebar';
@@ -33,6 +37,10 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
   const classes = useStyles();
   const router = useRouter();
   const { data } = useQuery(GET_PROJECT, { variables: { projectId } });
+  const [
+    getProdPreviews,
+    { called, loading, data: prodPreviewData },
+  ] = useLazyQuery(GET_PROJECT_PREVIEWS, { variables: { projectId } });
   const [project, setProject] = useState<Project | null>(null);
   const [commits, setCommits] = useState<Commit[] | null>(null);
   const [expand, setExpand] = useState({
@@ -62,6 +70,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
     });
   };
   const handlePreviewsExpand = () => {
+    getProdPreviews();
     setExpand({
       ...expand,
       previews: !expand.previews,
@@ -114,6 +123,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
               endIcon={project.grade ? <CheckCircle /> : <ErrorOutline />}
             >
               Grade
+              {project.grade ? <strong>({project.grade})</strong> : null}
             </Button>
           </Grid>
         </Grid>
@@ -159,7 +169,7 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
             </CardContent>
           </Collapse>
         </Card>
-        {project.production_previews!.length > 0 && (
+        {project.prod_preview_count! > 0 && (
           <Card className={classes.card}>
             <CardHeader
               title="Production previews"
@@ -178,7 +188,12 @@ const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
             />
             <Collapse in={expand.previews}>
               <CardContent>
-                <Preview previews={project.production_previews!} />
+                {called && loading && <Loader />}
+                {prodPreviewData && (
+                  <Preview
+                    previews={prodPreviewData.projects[0].production_previews!}
+                  />
+                )}
               </CardContent>
             </Collapse>
           </Card>

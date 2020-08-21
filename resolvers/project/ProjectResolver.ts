@@ -4,7 +4,6 @@ import { StudentInput } from '../inputs';
 import { Course } from '../../entities/Course';
 import { Student } from '../../entities/Student';
 import { ProjectInput } from '../inputs/Project';
-import { projectsProd } from '../../types/projectsProd';
 
 @Resolver()
 export class ProjectResolver {
@@ -13,16 +12,27 @@ export class ProjectResolver {
   async projects(
     @Arg('id', { nullable: true }) id: number
   ): Promise<Project[]> {
-    if (id) return Project.find({ id });
-    else return Project.find();
-  }
-
-  @Query(() => [projectsProd])
-  async projects_prod(
-    @Arg('id', { nullable: true }) id: number
-  ): Promise<projectsProd[]> {
-    if (id) return Project.find({ id });
-    else return Project.find();
+    if (id) {
+      const projects = await Project.find({ id });
+      return Promise.all(
+        projects.map(async (project) => {
+          project.prod_preview_count = (
+            await project.production_previews
+          ).length;
+          return project;
+        })
+      );
+    } else {
+      const projects = await Project.find();
+      return Promise.all(
+        projects.map(async (project) => {
+          project.prod_preview_count = (
+            await project.production_previews
+          ).length;
+          return project;
+        })
+      );
+    }
   }
 
   @Authorized()
@@ -135,6 +145,18 @@ export class ProjectResolver {
     try {
       const project = await Project.findOneOrFail({ id });
       project.grade = grade;
+      return project.save();
+    } catch (err) {
+      return Promise.reject(new Error('No project found'));
+    }
+  }
+
+  @Authorized()
+  @Mutation(() => Project)
+  async ungrade_project(@Arg('id') id: number): Promise<Project | string> {
+    try {
+      const project = await Project.findOneOrFail({ id });
+      project.grade = Number(null);
       return project.save();
     } catch (err) {
       return Promise.reject(new Error('No project found'));

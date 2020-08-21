@@ -16,6 +16,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       padding: '16px',
       textAlign: 'center',
       position: 'relative',
+      paddingBottom: '16px',
     },
     editIcon: {
       padding: '4px',

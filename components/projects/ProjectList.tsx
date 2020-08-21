@@ -19,7 +19,7 @@ import {
   Collapse,
 } from '@material-ui/core';
 import { Alert, Pagination } from '@material-ui/lab';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
@@ -202,10 +202,15 @@ const ProjectList: FunctionComponent<ProjectListProps> = ({ courseId }) => {
     setSearchParam(e.target.value);
   };
   const setLastCommitDate = (projectId: number, date: number) => {
-    const project: Project = state.projects.find(
+    let project: Project = state.projects.find(
       (projectEl: Project) => projectEl.id === projectId
     )!;
-    project.lastCommitDate = date;
+    console.log(date);
+    console.log(project.lastCommitDate);
+    project = {
+      ...project,
+      lastCommitDate: date,
+    };
     const dateProjects = state.projects.map((projectEl: Project) =>
       projectEl.id === projectId ? project : projectEl
     );

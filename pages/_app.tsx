@@ -1,5 +1,5 @@
 import App from 'next/app';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloProvider } from '@apollo/client';
 import { AuthProvider } from '../auth/context/authProvider';
 import '../assets/index.css';
 import client from '../gql';

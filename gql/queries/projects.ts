@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import { gql } from '@apollo/client';
 
 const branch = process.env.TARGET_BRANCH;
 
@@ -57,6 +57,13 @@ const GET_PROJECT = gql`
         name
         github_username
       }
+      prod_preview_count
+    }
+  }
+`;
+const GET_PROJECT_PREVIEWS = gql`
+  query getProject($projectId: Float!) {
+    projects(id: $projectId) {
       production_previews {
         id
         created_at
@@ -137,11 +144,21 @@ const UPDATE_PROJECT = gql`
 const GRADE_PROJECT = gql`
   mutation($id: Float!, $grade: Float!) {
     grade_project(id: $id, grade: $grade) {
+      id
       grade
-      name
     }
   }
 `;
+
+const UNGRADE_PROJECT = gql`
+  mutation($id: Float!) {
+    ungrade_project(id: $id) {
+      id
+      grade
+    }
+  }
+`;
+
 const DELETE_PROJECT = gql`
   mutation deleteProject($projectId: Float!) {
     delete_project(id: $projectId)
@@ -196,11 +213,13 @@ export {
   GET_PROJECTS_PROD,
   GET_PROJECT_IDS,
   GET_PROJECT,
+  GET_PROJECT_PREVIEWS,
   INSERT_PROJECT,
   INSERT_PROD_PREVIEW,
   INSERT_BULK_PROJECTS,
   UPDATE_PROJECT,
   GRADE_PROJECT,
+  UNGRADE_PROJECT,
   DELETE_PROJECT,
   GET_REPO_INFO,
   GET_COMMITS,
