@@ -36,6 +36,14 @@ const INSERT_PROD_PREVIEW = gql`
   }
 `;
 
+const TAKE_PROD_PREVIEW = gql`
+  mutation takeProdPreview($projectId: Float!) {
+    take_producation_preview(project_id: $projectId) {
+      id
+    }
+  }
+`;
+
 const GET_PROJECT_IDS = gql`
   query getProjectsIds($courseId: Int!) {
     projects(where: { course_id: { _eq: $courseId } }) {
@@ -216,6 +224,7 @@ export {
   GET_PROJECT_PREVIEWS,
   INSERT_PROJECT,
   INSERT_PROD_PREVIEW,
+  TAKE_PROD_PREVIEW,
   INSERT_BULK_PROJECTS,
   UPDATE_PROJECT,
   GRADE_PROJECT,

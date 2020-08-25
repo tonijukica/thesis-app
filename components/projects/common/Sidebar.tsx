@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
-import { Grid, Paper } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
+import { Grid, Paper, Button, CircularProgress } from '@material-ui/core';
+import { Edit, CameraAlt } from '@material-ui/icons';
 import {
   Chart,
   SeriesTemplate,
@@ -9,10 +9,12 @@ import {
   Tooltip,
   Animation,
 } from 'devextreme-react/chart';
+import { useMutation } from '@apollo/client';
 import { EditProjectDialog } from '../dialogs/EditProject';
 import { useStyles } from './styles';
 import { Project, Student } from '../../../interfaces';
 import { formatDate, userCommits } from '../helpers';
+import { TAKE_PROD_PREVIEW } from '../../../gql/queries/projects';
 import * as githubLogo from '../../../assets/img/github_logo.png';
 import * as netlifyLogo from '../../../assets/img/netlify_logo.png';
 
@@ -32,6 +34,7 @@ export const Sidebar: FC<SidebarProps> = ({
   const classes = useStyles();
   const [dialog, setDialog] = useState(false);
   const chartData = commits ? userCommits(commits) : null;
+  const [takeSnapshot, { loading }] = useMutation(TAKE_PROD_PREVIEW);
   const handleEditDialog = () => {
     setDialog(true);
   };
@@ -40,6 +43,13 @@ export const Sidebar: FC<SidebarProps> = ({
   };
   const handleSave = () => {
     setDialog(false);
+  };
+  const handleSnapshot = async () => {
+    await takeSnapshot({
+      variables: {
+        projectId: Number(project.id),
+      },
+    });
   };
   return (
     <>
@@ -107,6 +117,25 @@ export const Sidebar: FC<SidebarProps> = ({
               </a>
             )}
           </Grid>
+          {project.prod_url && (
+            <Grid item>
+              Take preview:
+              <br />
+              <Button
+                variant="contained"
+                size="small"
+                color="secondary"
+                style={{ margin: '5px' }}
+                onClick={handleSnapshot}
+              >
+                {loading ? (
+                  <CircularProgress size={25} style={{ color: 'white' }} />
+                ) : (
+                  <CameraAlt />
+                )}
+              </Button>
+            </Grid>
+          )}
           <Grid container item justify="center" className={classes.infoBox}>
             {commits && (
               <Chart id="commitGraph" dataSource={chartData}>

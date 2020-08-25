@@ -36,11 +36,17 @@ type ProjectProps = {
 const ProjectDetails: FunctionComponent<ProjectProps> = ({ projectId }) => {
   const classes = useStyles();
   const router = useRouter();
-  const { data } = useQuery(GET_PROJECT, { variables: { projectId } });
+  const { data } = useQuery(GET_PROJECT, {
+    variables: { projectId },
+    pollInterval: 500,
+  });
   const [
     getProdPreviews,
     { called, loading, data: prodPreviewData },
-  ] = useLazyQuery(GET_PROJECT_PREVIEWS, { variables: { projectId } });
+  ] = useLazyQuery(GET_PROJECT_PREVIEWS, {
+    variables: { projectId },
+    pollInterval: 500,
+  });
   const [project, setProject] = useState<Project | null>(null);
   const [commits, setCommits] = useState<Commit[] | null>(null);
   const [expand, setExpand] = useState({

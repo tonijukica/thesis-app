@@ -1,4 +1,5 @@
 import { Resolver, Query, Arg, Mutation, Authorized } from 'type-graphql';
+import capture from 'capture-website';
 import { Project } from '../../entities/Project';
 import { ProductionPreview } from '../../entities/ProductionPreview';
 
@@ -32,6 +33,30 @@ export class ProductionPreviewResolver {
     project!.production_previews = Promise.resolve(previews);
     await project!.save();
     return productionPreview;
+  }
+
+  @Mutation(() => ProductionPreview)
+  async take_producation_preview(
+    @Arg('project_id') id: number
+  ): Promise<ProductionPreview> {
+    const project = await Project.findOne({ id });
+    if (project?.prod_url) {
+      const imageBuffer = await capture.buffer(project.prod_url, {
+        width: 1920,
+        height: 1080,
+      });
+      const image = imageBuffer.toString('base64');
+      const previews = await project!.production_previews;
+      const productionPreview = await ProductionPreview.create({
+        image,
+      }).save();
+      previews.push(productionPreview);
+      project!.production_previews = Promise.resolve(previews);
+      await project!.save();
+      return productionPreview;
+    } else {
+      return Promise.reject(new Error('No production URL'));
+    }
   }
 
   @Authorized()
