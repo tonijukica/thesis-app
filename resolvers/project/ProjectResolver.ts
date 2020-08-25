@@ -4,6 +4,7 @@ import { StudentInput } from '../inputs';
 import { Course } from '../../entities/Course';
 import { Student } from '../../entities/Student';
 import { ProjectInput } from '../inputs/Project';
+import { projectsProd } from '../../types/projectsProd';
 
 @Resolver()
 export class ProjectResolver {
@@ -33,6 +34,14 @@ export class ProjectResolver {
         })
       );
     }
+  }
+
+  @Query(() => [projectsProd])
+  async projects_prod(
+    @Arg('id', { nullable: true }) id: number
+  ): Promise<projectsProd[]> {
+    if (id) return Project.find({ id });
+    else return Project.find();
   }
 
   @Authorized()
