@@ -24,6 +24,7 @@ const GET_PROJECTS_PROD = gql`
     projects_prod {
       id
       prod_url
+      grade
     }
   }
 `;

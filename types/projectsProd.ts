@@ -7,4 +7,7 @@ export class projectsProd {
 
   @Field({ nullable: true })
   prod_url?: string;
+
+  @Field({ nullable: true })
+  grade?: number;
 }

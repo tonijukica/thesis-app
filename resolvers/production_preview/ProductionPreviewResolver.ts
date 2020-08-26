@@ -1,5 +1,5 @@
 import { Resolver, Query, Arg, Mutation, Authorized } from 'type-graphql';
-import capture from 'capture-website';
+import { captureSnapshot } from '../../helpers';
 import { Project } from '../../entities/Project';
 import { ProductionPreview } from '../../entities/ProductionPreview';
 
@@ -35,25 +35,25 @@ export class ProductionPreviewResolver {
     return productionPreview;
   }
 
-  @Mutation(() => ProductionPreview)
+  @Mutation(() => [ProductionPreview])
   async take_producation_preview(
     @Arg('project_id') id: number
-  ): Promise<ProductionPreview> {
+  ): Promise<ProductionPreview[]> {
     const project = await Project.findOne({ id });
     if (project?.prod_url) {
-      const imageBuffer = await capture.buffer(project.prod_url, {
-        width: 1920,
-        height: 1080,
-      });
-      const image = imageBuffer.toString('base64');
-      const previews = await project!.production_previews;
-      const productionPreview = await ProductionPreview.create({
-        image,
-      }).save();
-      previews.push(productionPreview);
-      project!.production_previews = Promise.resolve(previews);
+      const images = await captureSnapshot(project!.prod_url);
+      const previews = await Promise.all(
+        images.map(async (image: string) => {
+          const preview = await ProductionPreview.create({ image }).save();
+          return preview;
+        })
+      );
+      const projectPreviews = (await project!.production_previews).concat(
+        previews
+      );
+      project!.production_previews = Promise.resolve(projectPreviews);
       await project!.save();
-      return productionPreview;
+      return previews;
     } else {
       return Promise.reject(new Error('No production URL'));
     }

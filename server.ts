@@ -9,7 +9,7 @@ import { randomBytes } from 'crypto';
 import { createConnection } from 'typeorm';
 import { ApolloServer } from 'apollo-server-express';
 import { getSchema } from './resolvers';
-import takePreview from './helpers';
+import { takePreview } from './helpers';
 
 dotenv.config();
 const dev = process.env.NODE_ENV !== 'production';
