@@ -42,7 +42,6 @@ Web application for professors or anyone else that wants to have information abo
 
 ### Production
 - Run `npm start`
-- If on Windows, `npm run start:win`
 
 ## File import structure
 
