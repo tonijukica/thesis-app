@@ -8,6 +8,7 @@ export type Commit = {
   commitUrl: string;
   committedDate: string;
   author: {
+    name: string;
     user: {
       login: string;
     };

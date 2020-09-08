@@ -204,9 +204,10 @@ const GET_COMMITS = gql`
 							commitUrl
 							committedDate
 							author {
-								user {
-									login
-								}
+                name
+                user {
+                  login
+                }
 							}
 						}
 					}

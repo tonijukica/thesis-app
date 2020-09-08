@@ -34,7 +34,9 @@ function projectStanding(date: string, classes: any) {
 function userCommits(commits: any) {
   const userCommits: any = [];
   commits.forEach((commit: any) => {
-    const user = commit.author.user.login;
+    const user = commit.author.user
+      ? commit.author.user.login
+      : commit.author.name;
     const userIndex = userCommits.findIndex((x: any) => x.user === user);
     if (userCommits[userIndex] == null) {
       userCommits.push({ user, count: 1 });
@@ -46,7 +48,9 @@ function userCommits(commits: any) {
 function userCommitsGraph(commits: any) {
   const graphCommits: any = [];
   commits.forEach((commit: any) => {
-    const user = commit.author.user.login;
+    const user = commit.author.user
+      ? commit.author.user.login
+      : commit.author.name;
     const userIndex = graphCommits.findIndex((x: any) => x.label === user);
     if (graphCommits[userIndex] == null) {
       graphCommits.push({
@@ -63,7 +67,9 @@ function userCommitsGraph(commits: any) {
   commits.forEach((commit: any) => {
     const date = new Date(commit.committedDate);
     const indx = date.getDate() + '-' + (date.getMonth() + 1);
-    const commitUser = commit.author.user.login;
+    const commitUser = commit.author.user
+      ? commit.author.user.login
+      : commit.author.name;
     const index = history.findIndex((x: any) => x.date === indx);
     if (history[index] == null) {
       history.push({

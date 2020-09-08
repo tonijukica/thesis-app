@@ -20,7 +20,9 @@ const ProjectCommits: FunctionComponent<Props> = ({ commits }) => {
             key={commit.id}
           >
             <Grid item xs={4}>
-              {commit.author.user.login}
+              {commit.author.user
+                ? commit.author.user.login
+                : commit.author.name}
             </Grid>
             <Grid item xs={4}>
               <a href={commit.commitUrl}>{commit.message}</a>
