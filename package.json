@@ -36,7 +36,7 @@
     "next-transpile-modules": "^3.3.0",
     "next-with-apollo": "^5.0.1",
     "node-cron": "^2.0.3",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-rsa": "^1.0.8",
     "papaparse": "^5.2.0",
     "pg": "^8.1.0",
