@@ -23,7 +23,7 @@ const Footer: FunctionComponent = () => {
   return (
     <Container maxWidth={false} className={classes.footer}>
       <Grid container direction="row" justify="center" alignItems="center">
-        <span>Toni Jukica @FESB 2020</span>
+        <span>Toni Jukica @ FESB 2020</span>
       </Grid>
     </Container>
   );
