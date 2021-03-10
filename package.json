@@ -23,7 +23,7 @@
     "devextreme": "^20.1.6",
     "devextreme-react": "^20.1.6",
     "dotenv": "^8.2.0",
-    "elliptic": "^6.5.3",
+    "elliptic": "^6.5.4",
     "express": "^4.17.1",
     "fuse.js": "^3.6.1",
     "graphql": "^14.6.0",
